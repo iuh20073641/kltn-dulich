@@ -1,0 +1,6 @@
+.travel-footer-flollow a{
+    @apply hover:text-[rgba(255,255,255,1.00)];
+}
+.travel-footer-menu a{
+    @apply hover:text-[rgba(255,255,255,1.00)];
+}
