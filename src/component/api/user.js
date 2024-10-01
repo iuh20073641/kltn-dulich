@@ -31,3 +31,8 @@ export const login = (mailPhone, pass) => {
 export const teamDetail = () => {
   return api.get(`/about.php`);
 };
+
+// api lấy toàn bộ thông tin tài khoản người dùng
+export const selectAllUsers = () => {
+  return api.get(`/admin/get_usernd.php`);
+};

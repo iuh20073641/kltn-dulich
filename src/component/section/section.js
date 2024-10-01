@@ -1,26 +1,48 @@
 import './section.css';
+import React from "react";
+import Slider from "react-slick";
+import { Link } from 'react-router-dom';
 
 function Section(){
+
+    const settings = {
+        dots: true, // Hiển thị chấm tròn ở dưới để điều hướng
+        infinite: true, // Vòng lặp vô hạn
+        speed: 500, // Tốc độ chuyển đổi giữa các slide
+        slidesToShow: 1, // Số slide hiển thị
+        slidesToScroll: 1, // Số slide di chuyển mỗi lần
+        autoplay: true, // Tự động chạy
+        autoplaySpeed: 3000, // Thời gian giữa các slide
+    };
+
     return(
         <main>
             {/* slider */}
-            <div className="slider h-[530px] bg-cover bg-no-repeat bg-bottom">
-                <div className="w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-40">
-                <div className="mx-16 text-white text-center">
-                    <div className="uppercase  text-slate-300 text-sm mb-5">
-                    Explore The World
+            <div className="slider-container h-auto w-[99%] mx-auto overflow-hidden">
+                <Slider {...settings}>
+                    <div className="bg-cover bg-no-repeat bg-bottom h-[530px] w-full">
+                        <img src="https://plus.unsplash.com/premium_photo-1690960644375-6f2399a08ebc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-full h-full object-cover' alt="" />
+                        {/* <div className="w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-40">
+                            <div className="mx-16 text-white text-center">
+                                <div className="uppercase  text-slate-300 text-sm mb-5">
+                                    Explore The World
+                                </div>
+                                <div className="font-medium text-5xl mb-3">Let's The World Together!</div>
+                                <div className="text-lg text-slate-300">
+                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </div>
+                                <div className="flex justify-center mt-4">
+                                    <div className="uppercase bg-white text-black text-sm w-max tracking-wider py-4 px-5 cursor-pointer hover:bg-opacity-95">
+                                        Discover now
+                                    </div>
+                                </div>
+                            </div>
+                        </div> */}
                     </div>
-                    <div className="font-medium text-5xl mb-3">Let's The World Together!</div>
-                    <div className="text-lg text-slate-300">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    <div className='h-[530px] w-full'>
+                        <img src="https://images.unsplash.com/photo-1708402390319-b755d64f3181?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-full h-full object-cover' alt="" />
                     </div>
-                    <div className="flex justify-center mt-4">
-                    <div className="uppercase bg-white text-black text-sm w-max tracking-wider py-4 px-5 cursor-pointer hover:bg-opacity-95">
-                        Discover now
-                    </div>
-                    </div>
-                </div>
-                </div>
+                </Slider>
             </div>
             {/* end-slider */}
             {/* about us */}
@@ -34,35 +56,41 @@ function Section(){
                     </div>
                     <div className='travel-about-decription basis-1/2 text-left mt-5'>
                         <div className="flex items-center mb-3">
-                            <div className='uppercase font-medium text-xl text-[#13357B]'>about us</div>
+                            <div className='uppercase font-medium text-xl text-[#13357B]'>giới thiệu</div>
                             <div className="w-8 h-0.5 bg-[#0d2554] ml-2"></div>
                         </div>
-                        <div className=' font-semibold text-3xl text-[#2658a4] mb-7'>Welcome To Travela</div>
-                        <div className='text-gray-500 mb-6 font-medium'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias, dolorum, doloribus sunt 
-                            dicta, officia voluptatibus libero necessitatibus natus impedit quam ullam assumenda? 
-                            Id atque iste consectetur. Commodi odit ab saepe!</div>
-                        <div className='text-gray-500 font-medium mb-7'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium quos voluptatem suscipit neque enim, 
-                            doloribus ipsum rem eos distinctio, dignissimos nisi saepe nulla? Libero numquam perferendis provident 
-                            placeat molestiae quia?</div>
+                        <div className=' font-semibold text-3xl text-[#2658a4] mb-7'>Chào mừng đến với Venture</div>
+                        <div className='text-gray-500 mb-6 font-medium'>
+                            Venbture là một website du lịch cung cấp giải pháp toàn diện cho du khách. Tại đây, người dùng có thể dễ dàng 
+                            tìm kiếm và đặt tour, khách sạn với giá cả hợp lý. Website còn cung cấp thông tin chi tiết
+                            về các điểm đến, review từ những du khách trước đó, và các hướng dẫn viên bản địa giúp bạn khám phá 
+                            những trải nghiệm độc đáo. Với giao diện thân thiện và hỗ trợ 24/7, Venture là người bạn đồng hành 
+                            đáng tin cậy trong mỗi chuyến hành trình của bạn.
+                        </div>
+                        {/* <div className='text-gray-500 font-medium mb-7'>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium quos voluptatem suscipit 
+                            neque enim, doloribus ipsum rem eos distinctio, dignissimos nisi saepe nulla? Libero numquam 
+                            perferendis provident 
+                            placeat molestiae quia?</div> */}
                         <div className='flex gap-x-16 '>
                             <div className=''>
                                 <div className='flex items-center mb-3'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-[#1f05e6]">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                     </svg>
-                                    <div className='text-gray-500 ml-2'>First Class Flights</div>
+                                    <div className='text-gray-500 ml-2'>Chuyến bay hạng nhất</div>
                                 </div>
                                 <div className='flex items-center mb-3'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-[#1f05e6]">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                     </svg>
-                                    <div className='text-gray-500 ml-2'>5 Star Accommodations</div>
+                                    <div className='text-gray-500 ml-2'>Chỗ ở chất lượng cao</div>
                                 </div>
                                 <div className='flex items-center mb-3'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-[#1f05e6]">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                     </svg>
-                                    <div className='text-gray-500 ml-2'>150 Premium City Tours</div>
+                                    <div className='text-gray-500 ml-2'>Dịch vụ du lịch hấp dẫn</div>
                                 </div>
                             </div>
                             <div className=''>
@@ -70,26 +98,26 @@ function Section(){
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-[#1f05e6]">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                     </svg>
-                                    <div className='text-gray-500 ml-2'>First Class Flights</div>
+                                    <div className='text-gray-500 ml-2'>Nhân viên nhiệt tình</div>
                                 </div>
                                 <div className='flex items-center mb-3'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-[#1f05e6]">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                     </svg>
-                                    <div className='text-gray-500 ml-2'>5 Star Accommodations</div>
+                                    <div className='text-gray-500 ml-2'>Dễ dàng lên lịch trình du lịch</div>
                                 </div>
                                 <div className='flex items-center mb-3'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-[#1f05e6]">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                     </svg>
-                                    <div className='text-gray-500 ml-2'>150 Premium City Tours</div>
+                                    <div className='text-gray-500 ml-2'>Dễ sử dụng</div>
                                 </div>
                             </div>
                         </div>
                         <div className='travel-about'>
                             <a href="https://www.facebook.com/">
                                 <div className='flex justify-center mt-4'>
-                                    <div className='uppercase font-semibold rounded-3xl bg-[#13357b] text-white border-2 border-[#13357b] text-base w-max tracking-wider py-4 px-7 cursor-pointer hover:bg-white hover:text-[#13357b] hover:bg-opacity-90 hover:after:duration-200'>Read More</div>
+                                    <div className='uppercase font-semibold rounded-3xl bg-[#13357b] text-white border-2 border-[#13357b] text-base w-max tracking-wider py-4 px-7 cursor-pointer hover:bg-white hover:text-[#13357b] hover:bg-opacity-90 hover:after:duration-200'>Tìm hiểu thêm</div>
                                 </div>
                             </a>
                         </div>
@@ -102,19 +130,21 @@ function Section(){
                     <div className="flex justify-center items-center mb-5 pt-20">
                         <div className="w-8 h-0.5 bg-[#13357B] mx-3"></div>
                         <div className="text-center text-2xl tracking-wider font-medium text-[#13357B] uppercase">
-                            services
+                            Dịch vụ
                         </div>
                         <div className="w-8 h-0.5 bg-[#13357B] mx-3"></div>
                     </div>
-                    <div className='font-semibold text-4xl mb-9'>Our Services</div>
+                    <div className='font-semibold text-4xl mb-9 uppercase'>danh sách dịch vụ</div>
                 </div>
                 <div className='grid grid-cols-2 gap-7'>
                     <a href='https://www.facebook.com/'>
                         <div className='travel-service-1 group flex rounded-xl border-[1px] border-[#13357B] items-center justify-center hover:bg-[#13357B] hover:text-white duration-300'>
                             <div className='basis-4/5'>
-                                <div className='text-right my-5 mx-3 text-2xl font-medium tracking-wide'>WorldWide Tours</div>
-                                <div className='child group-hover:text-white text-right mx-3 mb-4 text-gray-500'>Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis 
-                                    possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
+                                <div className='text-right my-5 mx-3 text-2xl font-medium tracking-wide'>Tours</div>
+                                <div className='child group-hover:text-white text-right mx-3 mb-4 text-gray-500'>
+                                    Dịch vụ tour du lịch của Venture mang đến cho du khách những hành trình được thiết kế đa dạng, 
+                                    phù hợp với mọi nhu cầu và sở thích. Từ tour khám phá thiên nhiên, tour văn hóa, lịch sử đến tour nghỉ 
+                                    dưỡng cao cấp.
                                 </div>
                             </div>
                             <div  className='basis-1/5 child'>
@@ -129,9 +159,11 @@ function Section(){
                                 <i className="fa-solid fa-hotel fa-3x text-[#13357B] group-hover:text-white my-auto"></i>
                             </div>
                             <div className='basis-4/5'>
-                                <div className='text-left child my-5 mx-3 text-2xl font-medium tracking-wide'>Hotel Reservation</div>
-                                <div className='text-left child group-hover:text-white mx-3 mb-4 text-gray-500'>Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis 
-                                    possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
+                                <div className='text-left child my-5 mx-3 text-2xl font-medium tracking-wide'>Khách sạn</div>
+                                <div className='text-left child group-hover:text-white mx-3 mb-4 text-gray-500'>
+                                    Dịch vụ khách sạn của Venture cung cấp hàng ngàn lựa chọn phù hợp với mọi ngân sách và 
+                                    nhu cầu. Người dùng có thể dễ dàng tìm kiếm và đặt phòng với thông tin chi tiết về 
+                                    tiện nghi, vị trí và đánh giá thực tế từ khách hàng trước đó.
                                 </div>
                             </div>
                         </div>
@@ -140,10 +172,11 @@ function Section(){
                     <a href='https://www.facebook.com/'>
                         <div className='travel-service-1 group flex rounded-xl border-[1px] border-[#13357B] items-center justify-center hover:bg-[#13357B] hover:text-white duration-300'>
                             <div className='basis-4/5'>
-                                <div className='text-right my-5 mx-3 text-2xl font-medium tracking-wide'>Blog</div>
+                                <div className='text-right my-5 mx-3 text-2xl font-medium tracking-wide'>Tin tức</div>
                                 <div className='child group-hover:text-white text-right mx-3 mb-4 text-gray-500'>
-                                    Customised one-to-one service and continued support will be provided to each user during the 
-                                    entire purchasing process.
+                                    Cung cấp những tin tức mới nhất về du lịch để khách hàng không bỏ lỡ những khoảng thời 
+                                    gian thích hợp cho việc du lịch, kèm theo đó là những thông tin hữu ích để sử dụng dịch 
+                                    vụ.
                                 </div>
                             </div>
                             <div  className='basis-1/5 child'>
@@ -158,9 +191,11 @@ function Section(){
                                 <i className="fa-solid fa-pager fa-3x text-[#13357B] group-hover:text-white my-auto"></i>
                             </div>
                             <div className='basis-4/5'>
-                                <div className='text-left child my-5 mx-3 text-2xl font-medium tracking-wide'>Contact Us</div>
+                                <div className='text-left child my-5 mx-3 text-2xl font-medium tracking-wide'>Liên hệ</div>
                                 <div className='text-left child group-hover:text-white mx-3 mb-4 text-gray-500'>
-                                We listen to all customer feedback. Our team will filter comments and develop services to bring the best experience to customers.
+                                    Dịch vụ liên hệ của Venture luôn sẵn sàng hỗ trợ khách hàng 24/7 qua nhiều kênh như 
+                                    hotline, email, và chat trực tuyến. Đội ngũ tư vấn viên chuyên nghiệp, thân thiện sẽ nhanh 
+                                    chóng giải đáp mọi thắc mắc.
                                 </div>
                             </div>
                         </div>
@@ -310,7 +345,7 @@ function Section(){
                 </div>
                 <div className='flex justify-center mt-4'>
                     <div className="uppercase font-medium bg-[#13357B] text-white text-sm w-max rounded-3xl tracking-wider py-4 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200">
-                        More Tours
+                        Tìm hiểu thêm
                     </div>
                 </div>
             </div>
@@ -325,7 +360,7 @@ function Section(){
                 <div className="flex justify-center items-center mb-24 mt-20">
                     <div className="w-8 h-px bg-[#13357B] mx-3" />
                     <div className="text-center font-semibold text-2xl text-[#13357B] uppercase">
-                        Hotel
+                        Khách sạn
                     </div>
                     <div className="w-8 h-px bg-[#13357B] mx-3" />
                 </div>
@@ -425,7 +460,7 @@ function Section(){
                 </div>
                 <div className='flex justify-center mt-16'>
                     <div className="uppercase font-medium bg-[#13357B] text-white text-sm w-max rounded-3xl tracking-wider py-4 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200">
-                        More Hotel
+                        <Link to={"/room"}>Tìm hiểu thêm</Link> 
                     </div>
                 </div>
             </div>

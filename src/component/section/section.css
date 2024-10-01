@@ -1,9 +1,12 @@
 .slider{
     background-image: url('https://images.unsplash.com/photo-1678009859747-9f4620e0c355?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dG91cmlzbXxlbnwwfHwwfHx8MA%3D%3D');
-}
+} 
 .button-Explore-Mug{
     @apply w-11/12  bg-white text-black px-2 py-3 text-center left-1/2 -translate-x-1/2 bottom-4 font-medium hidden group-hover:block group-hover:animate-pulse;
 }
 .travel-paralax-section{
     background-image: url('https://images.unsplash.com/photo-1585287776566-ea01172013c1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+}
+.slick-dotst {
+    position: static !important; /* Hoặc position: unset; */
 }

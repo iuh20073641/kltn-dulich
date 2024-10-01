@@ -26,4 +26,31 @@ export const fetchRoomFeature = (roomId) => {
 export const fetchRoomFacilities = (roomId) => {
   return api.get(`/facilities.php?roomid=${roomId}`);
 };
+
+// api lấy tất cả thông tin của bảng feature
+export const fetchFeatures = () => {
+  return api.get(`/admin/get_features.php`);
+};
+
+// api lấy tất cả thông tin của bảng facilities
+export const fetchFacilities = () => {
+  return api.get(`/admin/get_facilities.php`);
+};
+
+// api lấy tất cả thông tin của mọt phòng theo id
+export const fetchRoomDetails = (roomId) => {
+  return api.get(`/room-details.php?roomid=${roomId}`);
+};
+
+// api thêm thông tin phòng khách sạn
+export const insertRoom = () => {
+  return api.post(`/admin/create-room.php`);
+};
+// api xóa phòng khách sạn
+// export const deleteRoom = (room_id) => {
+//   return api.delete(`/admin/delete_room.php`);
+//   // return axios.delete(`/admin/delete_room.php`, {
+//   //   params: { room_id }
+//   // });
+// };
     

@@ -17,24 +17,24 @@ function Footer(){
                         <div className="uppercase font-semibold mb-4 text-[rgba(255,255,255,1.00)] text-left">Menu</div>
                         <div className="travel-footer-menu text-gray-400 text-left mx-auto">
                             <div>
-                                <a href="https://www.facebook.com/">Home</a>
+                                <a href="https://www.facebook.com/">Trang chủ</a>
                             </div>
                             <div>
-                                <a href="https://www.facebook.com/">Our Products</a>
+                                <a href="https://www.facebook.com/">Dịch vụ</a>
                             </div>
                             <div>
-                                <a href="https://www.facebook.com/">About</a>
+                                <a href="https://www.facebook.com/">Giới thiệu</a>
                             </div>
                             <div>
-                                <a href="https://www.facebook.com/">Contact</a>
+                                <a href="https://www.facebook.com/">Liên hệ</a>
                             </div>
-                            <div>
+                            {/* <div>
                                 <a href="https://www.facebook.com/">Styleguide</a>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="basis-1/6">
-                        <div className="uppercase font-semibold mb-4 text-[rgba(255,255,255,1.00)] text-left">follow us</div>
+                        <div className="uppercase font-semibold mb-4 text-[rgba(255,255,255,1.00)] text-left">Theo dõi chúng tôi</div>
                         <div className="travel-footer-flollow text-gray-400 text-left">
                             <div>
                                 <a href="https://www.facebook.com/">Facebook</a>

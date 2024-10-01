@@ -28,7 +28,7 @@ function Register(){
     const [isButtonBasic, setIsButtonBasic] = useState(true);
     const [isButtonBusines, setIsButtonBusines] = useState(false);
     
-    const [formValue, setFormValue] = useState(initFormValue)
+    const [formValue, setFormValue] = useState(initFormValue);
     const [message, setMessage] = useState('');
     const navigate = useNavigate(); // Khai báo hook useNavigate
     // const [userCheck, setUserCheck] = useState('');

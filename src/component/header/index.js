@@ -41,21 +41,21 @@ function Header(){
           <div className="travel-header-user justify-center flex w-[30%]">
             <div className="travel-header-register flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
               <i className="fa-solid fa-user mx-2"></i>
-              <div className="font-medium"><Link to={"/register"}>register</Link></div>
+              <div className="font-medium"><Link to={"/register"}>Đăng ký</Link></div>
             </div>
 
             <div className="travel-header-login flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
               <i className="fa-solid fa-right-to-bracket mx-2"></i>
-              <div className="font-medium"><Link to={"/login"}>Login</Link></div>
+              <div className="font-medium"><Link to={"/login"}>Đăng nhập</Link></div>
             </div>
 
             <div className="travel-header-dashboard flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
               <i className="fa-solid fa-house-user mx-2"></i>
               <div className="">
                 <div className="relative cursor-pointer font-medium">
-                  <button onClick={toggleDropdown}>My Dashboard</button>
+                  <button onClick={toggleDropdown}>Tài khoản</button>
                 </div>
-                <div id="dropdownMenu" className=" w-[200px] -ml-16 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
+                <div id="dropdownMenu" className="z-20 w-[200px] -ml-24 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
                   <ul className="travel-header-dashboard-item text-[rgba(255,255,255,1.00)]">
                     <li>
                       <div className="flex items-center my-1">
@@ -85,49 +85,50 @@ function Header(){
           <div className="logo basis-2/6 text-center text-xl font-semibold cursor-pointer">
             <Link to={"/"}>TravelVN.</Link> 
           </div>
-          <ul className="tqd-top-menu lg:basis-3/6 hidden lg:flex lg:items-center lg:justify-end lg:gap-8 text-xs text-gray-600 uppercase">
+          <ul className="tqd-top-menu text-sm lg:basis-3/6 font-medium hidden lg:flex lg:items-center lg:justify-center lg:gap-8 text-gray-600 uppercase">
             <li className="ct-top-menu-item">
-              <Link to={"/"}>Home</Link> 
+              <Link to={"/"}>Trang chủ</Link> 
             </li>
             <li className="ct-top-menu-item">
               {/* <a href="https://www.facebook.com/">About</a> */}
-              <Link to={"/about"}>About</Link> 
+              <Link to={"/about"}>Giới thiệu</Link> 
             </li>
             <li className="ct-top-menu-item">
               <div className='relative'>
-                <button className='uppercase' onClick={toggleDropdownService}>Services</button>
+                <button className='uppercase' onClick={toggleDropdownService}>dịch vụ</button>
                 {/* <a href="https://www.facebook.com/">services</a> */}
               </div>
-              <div id="dropdownService" className=" w-[200px] -ml-16 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
+              <div id="dropdownService" className="z-20 w-[200px] -ml-16 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
                 <ul className="travel-header-dashboard-item text-[rgba(255,255,255,1.00)]">
                   <li>
                     <div className="flex items-center my-3">
                       <i className="fa-regular fa-user mx-2"></i> 
                       {/* <a href="https://www.facebook.com/">Hotel</a> */}
-                      <Link to={"/room"}>Hotel</Link> 
+                      <Link to={"/room"}>Khách sạn</Link> 
                     </div>
                   </li>
                   <li>
                     <div className="flex items-center my-1">
                       <i className="fa-solid fa-bell mx-2"></i>
-                      <a href="https://www.facebook.com/">Tour</a>
+                      {/* <a href="https://www.facebook.com/">Tour</a> */}
+                      <Link to={"/tours"}>Tours</Link> 
                     </div>
                   </li>
                 </ul>
               </div>
             </li>
             <li className="ct-top-menu-item">
-              <a href="https://www.facebook.com/">Package</a>
+              <a href="https://www.facebook.com/">Thuê xe</a>
             </li>
             <li className="ct-top-menu-item">
               {/* <a href="https://www.facebook.com/">Contact</a> */}
-              <Link to={"/contact"}>Contact</Link> 
+              <Link to={"/contact"}>Liên hệ</Link> 
             </li>
             <li className="ct-top-menu-item">
-              <a href="https://www.facebook.com/">Blog</a>
+              <a href="https://www.facebook.com/">Tin tức</a>
             </li>
           </ul>
-          <ul className="basis-3/6 lg:basis-1/6 flex justify-end lg:justify-start ml-16 uppercase font-medium">
+          {/* <ul className="basis-3/6 lg:basis-1/6 flex justify-end lg:justify-start ml-16 uppercase font-medium">
             <li>
               <a href="https://www.facebook.com/" className="flex items-center">
                 <svg
@@ -148,7 +149,7 @@ function Header(){
                 <span className="tqd-circle bg-slate-400 text-white">5</span>
               </a>
             </li>
-          </ul>
+          </ul> */}
           <div className="tqd-top-menu-icon lg:hidden basis-1/6 flex items-center px-2 sm:px-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"

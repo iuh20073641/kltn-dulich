@@ -1,0 +1,7 @@
+.nav-link.active {
+    background-color: #007bff; /* Màu xanh cho mục được chọn */
+    color: white;
+}
+#dashboard-menu{
+    width: 20%;
+}
