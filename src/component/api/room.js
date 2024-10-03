@@ -46,6 +46,12 @@ export const fetchRoomDetails = (roomId) => {
 export const insertRoom = () => {
   return api.post(`/admin/create-room.php`);
 };
+
+// api lấy thông tin đánh giá phòng khách sạn
+export const fetchRoomRating = (roomId) => {
+  return api.post(`/rating_room.php?roomid=${roomId}`);
+};
+
 // api xóa phòng khách sạn
 // export const deleteRoom = (room_id) => {
 //   return api.delete(`/admin/delete_room.php`);

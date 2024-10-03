@@ -19,6 +19,8 @@ import DashboardAdminHotel from './admin/admin-staff/dashboard-hotel/dashboard-h
 import Settings from './admin/admin-staff/settings/settings';
 import HomeTour from './component/tours/home-tour';
 import TourDetails from './component/tour-details/tour-details';
+import RoomDetail from './component/room_details/room_detail';
+import ManagerTour from './admin/service-manager/tours/tours';
 
 // app.render(
 //   <BrowserRouter>
@@ -54,6 +56,8 @@ function App() {
                 <Route path="/settings"  element={<Settings  />} /> 
                 <Route path="/tours"  element={<HomeTour  />} /> 
                 <Route path="/tour-details/:id"  element={<TourDetails  />} /> 
+                <Route path="/room-details/:id"  element={<RoomDetail  />} /> 
+                <Route path="/tours-manager"  element={<ManagerTour  />} /> 
                 {/* <Section /> */}
               </Routes>
             </BrowserRouter>

@@ -3,6 +3,7 @@ import Footer from "../footer/footer";
 import { useParams } from 'react-router-dom';
 import { fetchTourDetails } from "../api/tours";
 import { fetchTourSchedule } from "../api/tours";
+import { fetchTourRating } from "../api/tours";
 import React, { useEffect, useState } from 'react';
 import PriceDisplay from "../service/money";
 import DiscountDisplay from "../service/discount";
@@ -12,6 +13,10 @@ function TourDetails(){
     const { id } = useParams();  // Lấy ID từ URL
     const [tourDetails, setTourDetails] = useState(null);
     const [tourSchedule, setTourSchedule] = useState([]);
+    // const [reviews, setReviews] = useState([]);
+    const [tourRating, setTourRating] = useState([]);
+    const [averageRating, setAverageRating] = useState(0);
+    const [totalReviews, setTotalReviews] = useState(0);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -44,38 +49,91 @@ function TourDetails(){
         };
 
         tourDetail();
+
+        const fetchReviews = async () => {
+            try {
+              const responseRating = await fetchTourRating(id);
+              const reviewsData = responseRating.data;
+              setTourRating(reviewsData);
+      
+              // Tính tổng số sao và số lượng đánh giá
+              const totalRating = reviewsData.reduce((sum, review) => sum + Number(review.rating), 0);
+              const totalReviewsCount = reviewsData.length;
+            //   const average = totalRating / totalReviewsCount;
+
+              const average = totalReviewsCount > 0 ? totalRating / totalReviewsCount : 0;
+      
+              setAverageRating(average);
+              setTotalReviews(totalReviewsCount);
+            } catch (error) {
+              console.error("Error fetching reviews:", error);
+            }
+          };
+      
+          fetchReviews();
         
     }, [id]);
+
+    const renderStars = () => {
+        const stars = [];
+        const fullStars = Math.floor(averageRating); // Số sao đầy đủ
+        const halfStar = averageRating % 1 >= 0.5; // Kiểm tra có sao lưng không
+    
+        // Thêm sao đầy đủ
+        for (let i = 0; i < fullStars; i++) {
+          stars.push(<span key={i} className="text-yellow-500">★</span>); // Sao đầy đủ
+        }
+    
+        // Thêm sao lưng nếu có
+        if (halfStar) {
+          stars.push(<span key={fullStars} className="text-yellow-500">☆</span>); // Sao lưng
+        }
+    
+        // Thêm sao rỗng cho đến 5 sao
+        for (let i = fullStars + (halfStar ? 1 : 0); i < 5; i++) {
+          stars.push(<span key={i} className="text-gray-300">☆</span>); // Sao rỗng
+        }
+    
+        return stars;
+    };
+
+    const renderStarsReview = (rating) => {
+        const stars = [];
+        const fullStars = Math.floor(rating); // Số sao đầy đủ
+        const halfStar = rating % 1 >= 0.5; // Kiểm tra có sao lưng không
+    
+        // Thêm sao đầy đủ
+        for (let i = 0; i < fullStars; i++) {
+          stars.push(<span key={i} className="text-yellow-500">★</span>); // Sao đầy đủ
+        }
+    
+        // Thêm sao rỗng cho đến 5 sao
+        for (let i = fullStars + (halfStar ? 1 : 0); i < 5; i++) {
+          stars.push(<span key={i} className="text-gray-300">☆</span>); // Sao rỗng
+        }
+    
+        return stars;
+    };
+    renderStarsReview();
+
     if (error) return <p>{error}</p>;
 
     return(
         <div>
             <Header />
-            <div className="w-full h-8 bg-gray-100"></div>
+            <div className="w-full mt-[115px] h-8 bg-gray-100"></div>
             <div className="tour-details w-[96%] mx-auto">
-                <div className="text-left mt-14 text-3xl font-medium mb-5">Du lịch Hè - Tour Hà Nội - Hạ Long - Ninh Bình - Sapa 5 ngày từ Sài Gòn 2024</div>
-                <div className="flex w-full mb-3">
-                    <div>
-                        <span className="mr-1">
-                            <i className="fa-solid fa-star text-yellow-500"></i>
-                        </span>
-                        <span className="mr-1">
-                            <i className="fa-solid fa-star text-yellow-500"></i>
-                        </span>
-                        <span className="mr-1">
-                            <i className="fa-solid fa-star text-yellow-500"></i>
-                        </span>
-                        <span className="mr-1">
-                            <i className="fa-solid fa-star text-yellow-500"></i>
-                        </span>
-                        <span className="mr-1">
-                            <i className="fa-solid fa-star text-yellow-500"></i>
-                        </span>
-                    </div>
+            {tourDetails && tourDetails.id ? (
+                <div className="text-left mt-14 text-3xl font-medium mb-5">{tourDetails.name}</div>
+            ) : (
+                <p>tên tour...</p> 
+            )}
+                <div className="flex w-full mb-3 items-center">
+                    <div className="flex">{renderStars()}</div> {/* Hiển thị số sao */}
                     <div className='flex justify-center items-center mx-2'>
-                        <p className='font-medium '>4.9</p> 
+                        <p className='font-medium '>{averageRating.toFixed(1)}</p> 
                         <p className='font-medium'>/5</p> 
-                        <p className="mx-1">trong 100 đánh giá</p>
+                        <p className="mx-1">trong {totalReviews} đánh giá</p>
                     </div>
                     <div className="ml-auto bg-[#13357B] text-white rounded-md hover:bg-black duration-100">
                         <button type="button" className="mx-2 my-1 font-medium">Tải về PDF</button>
@@ -87,7 +145,7 @@ function TourDetails(){
                     {tourDetails && tourDetails.id ? (
                     <div className="w-[70%]">
                         <div className="mb-10">
-                            <img src="https://plus.unsplash.com/premium_photo-1690960644375-6f2399a08ebc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-full h-full object-cover' alt="" />
+                            <img src="https://plus.unsplash.com/premium_photo-1690960644375-6f2399a08ebc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[963px] h-[490px] object-cover' alt="" />
                         </div>
                         {/* điểm nhấn hành trình */}
                         <div>
@@ -173,24 +231,23 @@ function TourDetails(){
                                     </div>
                                 </div>
                             ))}
-                                {/* <div>
-                                    <div className="text-left flex bg-[#0194F3] text-white rounded-md items-center">
-                                        <p className="mr-1 py-1 ml-3 font-medium text-lg">Ngày 2</p>
-                                        <p className="py-1 font-normal text-base"> | TP. ĐÀ NẴNG</p>
-                                    </div>
-                                    <div className="w-0 h-0 ml-3 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[20px] border-gray-100"></div>
-                                    <div className="text-left bg-gray-100 rounded-md mb-4">
-                                        <div className="text-sm mx-3 py-4">
-                                            Sáng: Quý khách có mặt tại ga quốc nội, sân bay Tân Sơn Nhất trước giờ bay ít nhất hai tiếng.
-                                            Đại diện công ty Du Lịch Việt đón và hỗ trợ Quý Khách làm thủ tục đón chuyến bay đi Hà Nội.
-                                            Đến sân bay Nội Bài, Hướng Dẫn Viên đón đoàn, Tham quan thủ đô với: Phủ Chủ Tịch, ao cá, nhà sàn Bác Hồ, Chùa Một Cột, Bảo Tàng Hồ Chí Minh.
-                                            (Lăng Chủ tịch Hồ Chí Minh sẽ tạm ngừng đón đồng bào và du khách vào viếng từ ngày 10/06/2024 đến hết ngày 14/08/2024 để thực hiện các công việc duy tu định kỳ...) 
+
+                            </div>
+                            <div className="w-full">
+                                <div className="text-left font-semibold uppercase text-lg mt-11 mb-2">Đánh giá & Bình luận</div>
+                                {tourRating.map((rating) => (
+                                <div className="mb-4">
+                                    <div className="flex items-center">
+                                        <div>
+                                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
                                         </div>
-                                        <div className="w-[95%] mx-auto pb-7">
-                                            <img src="https://images.unsplash.com/photo-1721113411239-3e87d435dda6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-full h-full object-cover' alt="" />
-                                        </div>
+                                        <div className="mx-2 font-medium">{rating.user_name}</div>
                                     </div>
-                                </div> */}
+                                    <div className="text-left">{renderStarsReview(rating.rating)}</div>
+                                    <div className="w-full text-left text-sm">{rating.review}</div>
+                                    {/* <div className="w-full h-[1px] bg-gray-100 mt-2 rounded-sm"></div> */}
+                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -262,8 +319,8 @@ function TourDetails(){
                                 <p className="mr-1">
                                     Giá từ:
                                 </p>
-                                <p className="mr-1 text-2xl font-medium"><DiscountDisplay originalPrice={tourDetails.price} discountPercent={tourDetails.discount} /></p>
-                                <p className="line-through"><PriceDisplay price={tourDetails.price} /></p>
+                                <div className="mr-1 text-2xl font-medium"><DiscountDisplay originalPrice={tourDetails.price} discountPercent={tourDetails.discount} /></div>
+                                <div className="line-through"><PriceDisplay price={tourDetails.price} /></div>
                             </div>
                             <div className="w-full pb-4 text-black">
                                 <select className="w-[95%] rounded-md h-9 outline-none">
@@ -280,7 +337,7 @@ function TourDetails(){
                     </div>
                     ) : (
                         <p>Đang tải...</p> // Hiển thị thông báo đang tải khi chưa có dữ liệu
-                      )}
+                    )}
                   
                 </div>
                 

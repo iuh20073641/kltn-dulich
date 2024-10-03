@@ -143,9 +143,9 @@ function HeaderManager(){
                                     </a> */}
                                 </li>
                                 <li className="">
-                                    <a className="inline-block py-2 px-4 no-underline text-white" href="tours.php">
-                                        Tours
-                                    </a>
+                                    <div className="inline-block py-2 px-4 no-underline text-white" href="tours.php">
+                                        <Link to={"/tours-manager"}>Tours</Link>
+                                    </div>
                                 </li>
                                 <li className="">
                                      <div className="inline-block py-2 px-4 no-underline text-white">

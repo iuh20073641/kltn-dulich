@@ -26,3 +26,8 @@ export const fetchTourDetails = (tourId) => {
 export const fetchTourSchedule = (tourId) => {
   return api.get(`/tour_schedule.php?idtour=${tourId}`);
 };
+
+// hàm gọi API để lấy thông tin đánh giá của một tour
+export const fetchTourRating = (tourId) => {
+  return api.get(`/rating_tour.php?tourid=${tourId}`);
+};

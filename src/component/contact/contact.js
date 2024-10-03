@@ -63,7 +63,7 @@ function Contact (){
     };
 
     return(
-        <div className="contact">
+        <div className="contact mt-[150px]">
             <Header />
             <div className="my-5 px-4">
                 <h2 className="text-3xl font-semibold text-center uppercase">Liên hệ</h2>

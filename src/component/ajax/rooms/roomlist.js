@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 // import { getAllRooms } from '../service/room';
 // import ProductItem from './ProductItem';
-import { fetchRoomFeature } from '../api/room';
-import { fetchRooms } from '../api/room';
-import { fetchRoomFacilities } from '../api/room';
+import { fetchRoomFeature } from '../../api/room';
+import { fetchRooms } from '../../api/room';
+import { fetchRoomFacilities } from '../../api/room';
+import DiscountDisplay from '../../service/discount';
 
 // const RoomList = () => {
 //     const [products, setProducts] = useState([]);
@@ -94,11 +96,11 @@ const HotelRooms = () => {
         <div className=''>
           {rooms.map((room) => (
           <div className='block bg-white my-3' key={room.id}>
-            <div className='flex items-center justify-center gap-2'>
-              <div className='basis-2/5 mx-3 my-3'>
-                <img src='https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG90ZWx8ZW58MHx8MHx8fDA%3D' alt="Hotel 1" className='w-[407px] h-[231px] rounded-md object-cover' />
+            <div className='flex w-full items-center gap-2'>
+              <div className='basis-5/12 mx-3 my-3'>
+                <img src='https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG90ZWx8ZW58MHx8MHx8fDA%3D' alt="Hotel 1" className='w-[400px] h-[231px] rounded-md object-cover' />
               </div>
-              <div className='basis-3/5'>
+              <div className='basis-5/12 flex-grow-0 flex-shrink-0'>
                 <h5 className='text-left my-3 mx-1 font-medium text-xl'>
                   {room.name}
                 </h5>
@@ -107,10 +109,10 @@ const HotelRooms = () => {
                   <h6 className='text-left mx-1 my-2'>Đặc trưng</h6>
                   <div>
                   {roomFeatures[room.id] && Array.isArray(roomFeatures[room.id]) ? (
-                        <div className='flex flex-wrap'>
+                        <div className='flex flex-wrap gap-1'>
                             
                             {roomFeatures[room.id].map((feature) => (
-                                <div className='bg-gray-100 mx-1 rounded-2xl gap-1/4' key={feature.id}>
+                                <div className='bg-gray-100 mx-1 rounded-2xl' key={feature.id}>
                                     <p className='px-3 py-1 text-xs'>{feature.name}</p>
                                 </div>
                             ))}
@@ -157,6 +159,24 @@ const HotelRooms = () => {
                   </div>
                 </div>
                 {/* end-guest */}
+              </div>
+              <div className='basis-2/12 flex-grow-0 flex-shrink-0'>
+                  <div className='w-full text-lg font-medium text-[#FF5E1F] mb-5'>
+                    <DiscountDisplay originalPrice={room.price} discountPercent={room.discount} />
+                  </div>
+                  <div className="uppercase my-1 font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-[#0194F3]">
+                    Đặt ngay
+                  </div> 
+                  {/* <Link to={`/room-details/${room.id}`}>
+                    <div className="uppercase my-1 font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-[#0194F3]">
+                      Đặt ngay
+                    </div>
+                  </Link> */}
+                  <Link to={`/room-details/${room.id}`}>
+                    <div className="uppercase my-1 font-normal hover:text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:border-[rgba(28,41,48,1)] hover:bg-[rgba(28,41,48,1)] text-black duration-100 border-[1px] border-[#0194F3]">
+                      Xem chi tiết
+                    </div>
+                  </Link>
               </div>
             </div>
           </div>

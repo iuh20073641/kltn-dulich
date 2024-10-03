@@ -8,7 +8,7 @@ function HomeTour() {
         <div>
             <Header />
 
-            <div className="container mx-auto sm:px-4 max-w-full bg-gray-100 pb-20">
+            <div className="container mt-[100px] mx-auto sm:px-4 max-w-full bg-gray-100 pb-20">
                 <div className="">
                     <div className="py-10 px-4">
                         <h2 className="font-semibold text-2xl text-center">Tours</h2>

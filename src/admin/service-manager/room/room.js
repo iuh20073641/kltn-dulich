@@ -401,7 +401,7 @@ function RoomManager(){
             {/* Add room modal  */}     
             {isOpenModalAdd && (
             <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed">
-                <div className="lg:w-3/5 mt-6 pr-4 pl-4 mx-auto p-6 bg-white overflow-hidden rounded-md overflow-y-auto">
+                <div className="lg:w-3/5 h-[95%] mt-4 pr-4 pl-4 mx-auto p-6 bg-white overflow-hidden rounded-md overflow-y-auto">
                     <div className="modal " id="add-room" tabIndex={-1}>
                         <div className="modal-dialog modal-lg">
                             <form id="add_room_form" onSubmit={hendleSubmit}>

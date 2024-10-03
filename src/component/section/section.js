@@ -18,7 +18,7 @@ function Section(){
     return(
         <main>
             {/* slider */}
-            <div className="slider-container h-auto w-[99%] mx-auto overflow-hidden">
+            <div className="slider-container mt-[115px] h-auto w-[99%] mx-auto overflow-hidden">
                 <Slider {...settings}>
                     <div className="bg-cover bg-no-repeat bg-bottom h-[530px] w-full">
                         <img src="https://plus.unsplash.com/premium_photo-1690960644375-6f2399a08ebc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-full h-full object-cover' alt="" />
@@ -180,7 +180,7 @@ function Section(){
                                 </div>
                             </div>
                             <div  className='basis-1/5 child'>
-                                <i className="fa-solid fa-globe fa-3x text-[#13357B] group-hover:text-white my-auto"></i>
+                                <i className="fa-solid fa-newspaper fa-3x text-[#13357B] group-hover:text-white my-auto"></i>
                             </div>
                         </div>
                     </a>

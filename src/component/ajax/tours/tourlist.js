@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import { fetchTours } from "../../api/tours";
-import PriceDisplay from "../../service/money";
+// import PriceDisplay from "../../service/money";
+import DiscountDisplay from "../../service/discount";
 
 function TourList() {
 
@@ -83,7 +84,7 @@ function TourList() {
                             </div>
                         </div>
                         <div className="w-1/2 my-3 flex items-end justify-end">
-                            <div className="text-right mr-2 font-medium text-lg text-[#FF5E1F]"><PriceDisplay price={tour.price} /></div>
+                            <div className="text-right mr-2 font-medium text-lg text-[#FF5E1F]"><DiscountDisplay originalPrice={tour.price} discountPercent={tour.discount} /></div>
                         </div>
                     </div>
                 </div>

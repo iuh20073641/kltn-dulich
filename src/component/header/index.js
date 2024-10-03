@@ -14,7 +14,7 @@ function toggleDropdownService() {
 
 function Header(){
     return(
-      <header className="">
+      <header className="fixed top-0 left-0 w-full z-50">
         <div className="flex w-full bg-[rgba(28,41,48,1)] h-10">
           <div className="travel-header-contact flex w-[10%] justify-between pl-8 items-center">
             <div className="header-contact-facebook basis-1/3">
@@ -81,7 +81,7 @@ function Header(){
             </div>
           </div>
         </div>
-        <nav className="flex flex-row justify-between items-center py-6 mx-10">
+        <nav className="w-full mx-auto flex flex-row justify-between items-center py-6 bg-white">
           <div className="logo basis-2/6 text-center text-xl font-semibold cursor-pointer">
             <Link to={"/"}>TravelVN.</Link> 
           </div>
@@ -109,8 +109,7 @@ function Header(){
                   </li>
                   <li>
                     <div className="flex items-center my-1">
-                      <i className="fa-solid fa-bell mx-2"></i>
-                      {/* <a href="https://www.facebook.com/">Tour</a> */}
+                      <i className="fa-solid fa-route mx-2"></i>
                       <Link to={"/tours"}>Tours</Link> 
                     </div>
                   </li>

@@ -217,7 +217,7 @@ function FeatureFacilities(){
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch" style={{ height: 350, overflowY: "scroll" }}>
                                     <table className="w-full max-w-full mb-4 bg-transparent table-hover border text-left">
-                                        <thead>
+                                        <thead className="sticky top-0">
                                             <tr className="bg-gray-900 text-gray-100 h-9">
                                                 <th scope="col" className="px-2">#</th>
                                                 <th scope="col">Name</th>
@@ -257,7 +257,7 @@ function FeatureFacilities(){
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch" style={{ height: 350, overflowY: "scroll" }}>
                                     <table className="w-full max-w-full mb-4 bg-transparent table-hover border text-left">
-                                        <thead>
+                                        <thead className="sticky top-0">
                                             <tr className="bg-gray-900 text-gray-100">
                                                 <th scope="col" className="px-2">#</th>
                                                 <th scope="col">Icon</th>

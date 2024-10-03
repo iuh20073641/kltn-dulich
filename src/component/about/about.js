@@ -26,7 +26,7 @@ function About(){
 
     if (error) return <div>Error: {error.message}</div>;
     return(
-        <div className="about">
+        <div className="about mt-[150px]">
             <Header />
             <div className="my-10 px-4">
                 <h2 className="text-4xl font-medium text-center">ABOUT US</h2>

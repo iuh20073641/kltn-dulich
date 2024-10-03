@@ -9,7 +9,7 @@ const PriceDisplay = ({ price }) => {
     currency: 'VND',
   });
 
-  return <div>{formattedPrice}</div>;
+  return <p>{formattedPrice}</p>;
 };
 
 export default PriceDisplay;

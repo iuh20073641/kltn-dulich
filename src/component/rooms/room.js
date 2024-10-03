@@ -5,7 +5,7 @@ import React from 'react';
 // import ReactDOM from 'react-dom';
 // import ProductList from "../api/room";
 // import RoomList from "../ajax/roomlist";
-import HotelRooms from "../ajax/roomlist";
+import HotelRooms from "../ajax/rooms/roomlist";
 
 function Room() {
 
@@ -120,7 +120,7 @@ function Room() {
         <div className="Travel-room">
             {/* <div className="content-wrapper max-w-screen-2xl text-base mx-auto"> */}
                 <Header />
-                <div className="container mx-auto sm:px-4 max-w-full bg-gray-100">
+                <div className="container mt-[100px] mx-auto sm:px-4 max-w-full bg-gray-100">
                     <div className="">
                         {/* Our Room  */}
                         <div className="py-10 px-4">
