@@ -1,13 +1,25 @@
 import Header from "../header";
 import Footer from "../footer/footer";
+import Slider from "react-slick";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchRoomRating } from "../api/room";
 import { fetchRoomDetails } from "../api/room";
 import { fetchRoomFeature } from "../api/room";
 import { fetchRoomFacilities } from "../api/room";
+import { fetchRoomImages } from "../api/room";
 
 function RoomDetail(){
+
+    const settings = {
+        dots: true, // Hiển thị chấm tròn ở dưới để điều hướng
+        infinite: true, // Vòng lặp vô hạn
+        speed: 500, // Tốc độ chuyển đổi giữa các slide
+        slidesToShow: 1, // Số slide hiển thị
+        slidesToScroll: 1, // Số slide di chuyển mỗi lần
+        autoplay: false, // Tự động chạy
+        autoplaySpeed: 3000, // Thời gian giữa các slide
+    };
 
     const { id } = useParams();  // Lấy ID từ URL
     const [averageRating, setAverageRating] = useState(0);
@@ -15,6 +27,7 @@ function RoomDetail(){
     const [roomDetails, setRoomDetails] = useState(null);
     const [roomFeatures, setRoomFeatures] = useState({});
     const [roomRating, setRoomRating] = useState([]);
+    const [roomImages, setRoomImages] = useState([]);
     const [roomFacilities, setRoomFacilities] = useState({});
     const [error, setError] = useState(null);
 
@@ -42,6 +55,20 @@ function RoomDetail(){
         };
 
         roomDetail();
+
+        const getRoomImages = async () => {
+            try {
+                // Gọi API để lấy thông tin chi tiết của một phòng
+                const roomImagesResponse = await fetchRoomImages(id);
+                const roomImagesData = roomImagesResponse.data; 
+                setRoomImages(roomImagesData);
+
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError('Có lỗi xảy ra khi lấy dữ liệu hình ảnh.');
+            }
+        };
+        getRoomImages();
 
         const roomFeature = async () => {
             try {
@@ -171,10 +198,31 @@ function RoomDetail(){
                 {/* phần thông tin chi tiết */}
                 <div className="w-full flex gap-x-3">
                     <div className="w-[70%]">
-                        <div className="mb-10">
-                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[963px] h-[490px] object-cover' alt="" />
+                    {Array.isArray(roomImages) && roomImages.length > 0 ? (
+                    roomImages.length <2 ? (
+                        
+                        // Trường hợp có duy nhất một hình ảnh
+                       
+                                <div className="mb-10">
+                                    <img src={`http://localhost:88/api_travel/api/Images/room/${roomImages[0].image}`} className='w-[963px] h-[490px] object-cover' alt="" />
+                                </div>
+                            
+                        
+                    ) : (
+                        <Slider {...settings}>
+                            {roomImages.map((image) => (
+                                <div className="mb-10">
+                                    <img src={`http://localhost:88/api_travel/api/Images/room/${image.image}`} className='w-[963px] h-[490px] object-cover' alt="" />
+                                </div>
+                            ))}
+                        </Slider>
+                        )
+                    ) : (
+                        <div className="w-[930px] h-[490px] flex items-center justify-center text-sm mb-3 bg-gray-100 rounded-md">
+                           <p className="mx-3 mt-3">Không có hình ảnh</p>
                         </div>
-                        <div>
+                    )}
+                        <div className="mt-10">
                             <div className="text-left font-semibold uppercase text-lg">Tổng quan</div>
                             {roomDetails && roomDetails.id ? (
                                 <div className="text-left my-5 mx-3 text-gray-500">
@@ -188,19 +236,23 @@ function RoomDetail(){
                             <div className="text-left font-semibold uppercase text-lg mt-11 mb-2">Đánh giá & Bình luận</div>
                             <div className="w-0 h-0 ml-3 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[20px] border-gray-100"></div>
                             <div className="bg-gray-100 pt-2 px-2 rounded-md">
-                            {roomRating.map((rating) => (
-                            <div className="mb-4">
-                                <div className="flex items-center">
-                                    <div>
-                                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
+                            {Array.isArray(roomRating) && roomRating.length > 0 ? (
+                                roomRating.map((rating) => (
+                                <div className="mb-4">
+                                    <div className="flex items-center">
+                                        <div>
+                                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
+                                        </div>
+                                        <div className="mx-2 font-medium">{rating.user_name}</div>
                                     </div>
-                                    <div className="mx-2 font-medium">{rating.user_name}</div>
+                                    <div className="text-left">{renderStarsReview(rating.rating)}</div>
+                                    <div className="w-full text-left text-sm">{rating.review}</div>
+                                    {/* <div className="w-full h-[1px] bg-gray-100 mt-2 rounded-sm"></div> */}
                                 </div>
-                                <div className="text-left">{renderStarsReview(rating.rating)}</div>
-                                <div className="w-full text-left text-sm">{rating.review}</div>
-                                {/* <div className="w-full h-[1px] bg-gray-100 mt-2 rounded-sm"></div> */}
-                            </div>
-                            ))}
+                                ))
+                            ) : (
+                                <div className="text-left text-sm mb-3">Chưa có đánh giá nào.</div>
+                            )}
                             </div>
                         </div>
                     </div>

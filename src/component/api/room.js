@@ -42,6 +42,11 @@ export const fetchRoomDetails = (roomId) => {
   return api.get(`/room-details.php?roomid=${roomId}`);
 };
 
+// api lấy tất cả hình ảnh của một phòng theo id
+export const fetchRoomImages = (roomId) => {
+  return api.get(`/get-room-image.php?roomid=${roomId}`);
+};
+
 // api thêm thông tin phòng khách sạn
 export const insertRoom = () => {
   return api.post(`/admin/create-room.php`);

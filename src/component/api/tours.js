@@ -31,3 +31,8 @@ export const fetchTourSchedule = (tourId) => {
 export const fetchTourRating = (tourId) => {
   return api.get(`/rating_tour.php?tourid=${tourId}`);
 };
+
+// api lấy tất cả hình ảnh của một tour theo id
+export const fetchTourImages = (tourId) => {
+  return api.get(`/get-tour-images.php?tourid=${tourId}`);
+};

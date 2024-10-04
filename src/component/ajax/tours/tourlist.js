@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import { fetchTours } from "../../api/tours";
+import { fetchTourImages } from "../../api/tours";
 // import PriceDisplay from "../../service/money";
 import DiscountDisplay from "../../service/discount";
 
@@ -8,6 +9,7 @@ function TourList() {
 
     const [tours, setTours] = useState([]);
     const [error, setError] = useState(null);
+    const [tourImages, setTourImages] = useState([]);
 
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
@@ -18,6 +20,22 @@ function TourList() {
                 const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
                 setTours(toursData);
 
+                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
+                const imagePromises = roomsData.map(async (tour) => {
+                    const imageResponse = await fetchTourImages(tour.id);
+                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
+                    return { tourId: tour.id, image: imageResponse.data };
+                });
+
+                // Đợi tất cả các lời gọi API hoàn tất
+                const allImages = await Promise.all(imagePromises);
+
+                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
+                const imageMap = {};
+                allImages.forEach(item => {
+                  imageMap[item.tourId] = item.image;
+                });
+                setTourImages(imageMap);
 
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -39,6 +57,7 @@ function TourList() {
                 {tours.map((tour) => (
                 <div className="w-full tqd-products border-[1px] border-b-gray-200" key={tour.id}>
                     <div className='h-[210px] overflow-hidden'>
+                    {tourImages[tour.id] && Array.isArray(tourImages[tour.id]) && tourImages[tour.id].length > 0 ? (
                         <div className="h-[210px] overflow-hidden bg-[url(https://images.unsplash.com/photo-1523345863760-5b7f3472d14f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHRvdXJpc218ZW58MHx8MHx8fDA%3D)] bg-no-repeat bg-center bg-cover transform">
                             <a href="https://www.facebook.com/">
                                 <div className="absolute inset-0 bg-black opacity-0 hover:opacity-50 transition duration-300">
@@ -48,9 +67,15 @@ function TourList() {
                                 </div>
                             </a>
                         </div>
-
+                    ) : (
+                        <div className='basis-5/12 mx-3 my-3'>
+                          <div className='w-[375px] h-[231px] flex items-center justify-center text-xs py-2 bg-gray-100 rounded-md'>
+                            <p>Không có hình ảnh</p>
+                          </div> 
+                        </div>
+                    )}
                     </div>
-                    <div className="text-left px-2 py-2 bg-gray-200">
+                    <div className="text-left h-[70px] px-2 py-2 bg-gray-200">
                         {/* <a href="https://www.facebook.com/" className="text-lg font-normal cursor-pointer hover:text-[#13357B]">
                                             Du lịch Đà Nẵng 3 ngày 2 đêm: Lịch trình chi tiết 
                                         </a> */}

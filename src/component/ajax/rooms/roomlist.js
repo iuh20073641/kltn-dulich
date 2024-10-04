@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchRoomFeature } from '../../api/room';
 import { fetchRooms } from '../../api/room';
 import { fetchRoomFacilities } from '../../api/room';
+import { fetchRoomImages } from "../../api/room";
 import DiscountDisplay from '../../service/discount';
 
 // const RoomList = () => {
@@ -35,6 +36,7 @@ const HotelRooms = () => {
     const [rooms, setRooms] = useState([]);
     const [roomFeatures, setRoomFeatures] = useState({});
     const [roomFacilities, setRoomFacilities] = useState({});
+    const [roomImages, setRoomImages] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -80,6 +82,23 @@ const HotelRooms = () => {
                 });
                 setRoomFacilities(facilitiesMap);
 
+                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
+                const imagePromises = roomsData.map(async (room) => {
+                  const imageResponse = await fetchRoomImages(room.id);
+                  // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
+                  return { roomId: room.id, image: imageResponse.data };
+                });
+
+                // Đợi tất cả các lời gọi API hoàn tất
+                const allImages = await Promise.all(imagePromises);
+
+                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
+                const imageMap = {};
+                allImages.forEach(item => {
+                  imageMap[item.roomId] = item.image;
+                });
+                setRoomImages(imageMap);
+
             } catch (err) {
                 console.error('Error fetching data:', err);
                 setError(err);
@@ -87,6 +106,7 @@ const HotelRooms = () => {
         };
 
         fetchData();
+
     }, []); // Chạy một lần khi component được mount
 
     if({})
@@ -97,9 +117,17 @@ const HotelRooms = () => {
           {rooms.map((room) => (
           <div className='block bg-white my-3' key={room.id}>
             <div className='flex w-full items-center gap-2'>
-              <div className='basis-5/12 mx-3 my-3'>
-                <img src='https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG90ZWx8ZW58MHx8MHx8fDA%3D' alt="Hotel 1" className='w-[400px] h-[231px] rounded-md object-cover' />
-              </div>
+              {roomImages[room.id] && Array.isArray(roomImages[room.id]) && roomImages[room.id].length > 0 ? (
+                <div className='basis-5/12 mx-3 my-3'>
+                  <img src={`http://localhost:88/api_travel/api/Images/room/${roomImages[room.id][0].image}`} alt="Hotel" className='w-[400px] h-[231px] rounded-md object-cover' />
+                </div>
+              ) : (
+                <div className='basis-5/12 mx-3 my-3'>
+                  <div className='w-[375px] h-[231px] flex items-center justify-center text-xs py-2 bg-gray-100 rounded-md'>
+                    <p>Không có hình ảnh</p>
+                  </div> 
+                </div>
+              )}
               <div className='basis-5/12 flex-grow-0 flex-shrink-0'>
                 <h5 className='text-left my-3 mx-1 font-medium text-xl'>
                   {room.name}
