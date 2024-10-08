@@ -1,6 +1,7 @@
 import './header.css';
 
 import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
 function toggleDropdown() {
   var dropdown = document.getElementById("dropdownMenu");
@@ -13,6 +14,26 @@ function toggleDropdownService() {
 }
 
 function Header(){
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Kiểm tra trạng thái đăng nhập
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setIsLoggedIn(true);
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    // console.log(user);
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
     return(
       <header className="fixed top-0 left-0 w-full z-50">
         <div className="flex w-full bg-[rgba(28,41,48,1)] h-10">
@@ -39,46 +60,50 @@ function Header(){
           <div className="w-[60%]"></div>
 
           <div className="travel-header-user justify-center flex w-[30%]">
-            <div className="travel-header-register flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
-              <i className="fa-solid fa-user mx-2"></i>
-              <div className="font-medium"><Link to={"/register"}>Đăng ký</Link></div>
-            </div>
-
-            <div className="travel-header-login flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
-              <i className="fa-solid fa-right-to-bracket mx-2"></i>
-              <div className="font-medium"><Link to={"/login"}>Đăng nhập</Link></div>
-            </div>
-
-            <div className="travel-header-dashboard flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
-              <i className="fa-solid fa-house-user mx-2"></i>
-              <div className="">
-                <div className="relative cursor-pointer font-medium">
-                  <button onClick={toggleDropdown}>Tài khoản</button>
+            {!isLoggedIn ? (
+              <>
+                <div className="travel-header-register flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
+                  <i className="fa-solid fa-user mx-2"></i>
+                  <div className="font-medium"><Link to={"/register"}>Đăng ký</Link></div>
                 </div>
-                <div id="dropdownMenu" className="z-20 w-[200px] -ml-24 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
-                  <ul className="travel-header-dashboard-item text-[rgba(255,255,255,1.00)]">
-                    <li>
-                      <div className="flex items-center my-1">
-                        <i className="fa-regular fa-user mx-2"></i> 
-                        <a href="https://www.facebook.com/">My Profile</a>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex items-center my-1">
-                        <i className="fa-solid fa-bell mx-2"></i>
-                        <a href="https://www.facebook.com/">Notifications</a>
-                      </div>
+
+                <div className="travel-header-login flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
+                  <i className="fa-solid fa-right-to-bracket mx-2"></i>
+                  <div className="font-medium"><Link to={"/login"}>Đăng nhập</Link></div>
+                </div>
+              </>
+            ) : (
+              <div className="travel-header-dashboard flex items-center mx-2 text-[rgba(255,255,255,1.00)]">
+                <img src={`http://localhost:88/api_travel/api/Images/user/${user.profile}`} alt="User Avatar" className="w-8 h-8 rounded-full mx-2" />
+                <div className="">
+                  <div className="relative cursor-pointer font-medium">
+                    <button onClick={toggleDropdown}>Tài khoản</button>
+                  </div>
+                  <div id="dropdownMenu" className="z-20 w-[200px] -ml-24 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
+                    <ul className="travel-header-dashboard-item text-[rgba(255,255,255,1.00)]">
+                      <li>
+                        <div className="flex items-center my-1">
+                          <i className="fa-regular fa-user mx-2"></i> 
+                          <a href="https://www.facebook.com/">My Profile</a>
+                        </div>
                       </li>
-                    <li>
-                      <div className="flex items-center my-1">
-                        <i className="fa-solid fa-arrow-right-from-bracket mx-2"></i>
-                        <a href="https://www.facebook.com/">Log Out</a>
-                      </div>
-                    </li>
-                  </ul>
+                      <li>
+                        <div className="flex items-center my-1">
+                          <i className="fa-solid fa-bell mx-2"></i>
+                          <a href="https://www.facebook.com/">Notifications</a>
+                        </div>
+                      </li>
+                      <li>
+                        <div className="flex items-center my-1">
+                          <i className="fa-solid fa-arrow-right-from-bracket mx-2"></i>
+                          <button onClick={handleLogout}>Log Out</button>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
         <nav className="w-full mx-auto flex flex-row justify-between items-center py-6 bg-white">

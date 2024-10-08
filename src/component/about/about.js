@@ -85,7 +85,7 @@ function About(){
                 <div className="swiper mySwiper">
                     <div className="swiper-wrapper mb-5 flex flex-wrap gap-4">
                         {teamDetailD.map((teamDetail) => (
-                            <div class="swiper-slide basis-1/4" key={teamDetail.sr_no}>
+                            <div className="swiper-slide basis-1/4" key={teamDetail.sr_no}>
                                 <img src={teamDetail.picture} alt="hình" className="h-[300px] w-full object-cover rounded-xl" />
                                 <h5 className="mt-2 mb-24 font-medium text-xl">{teamDetail.name}</h5>
                             </div>

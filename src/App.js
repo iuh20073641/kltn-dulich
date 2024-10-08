@@ -21,6 +21,8 @@ import HomeTour from './component/tours/home-tour';
 import TourDetails from './component/tour-details/tour-details';
 import RoomDetail from './component/room_details/room_detail';
 import ManagerTour from './admin/service-manager/tours/tours';
+import TourSetting from './admin/service-manager/tours/tour-setting';
+import BookingTour from './component/booking-tour/booking-tour';
 
 // app.render(
 //   <BrowserRouter>
@@ -58,6 +60,8 @@ function App() {
                 <Route path="/tour-details/:id"  element={<TourDetails  />} /> 
                 <Route path="/room-details/:id"  element={<RoomDetail  />} /> 
                 <Route path="/tours-manager"  element={<ManagerTour  />} /> 
+                <Route path="/tours-setting/:id"  element={<TourSetting  />} /> 
+                <Route path="/booking-tour/:id"  element={<BookingTour  />} /> 
                 {/* <Section /> */}
               </Routes>
             </BrowserRouter>

@@ -6,6 +6,8 @@ import { fetchTourDetails } from "../api/tours";
 import { fetchTourSchedule } from "../api/tours";
 import { fetchTourRating } from "../api/tours";
 import { fetchTourImages } from "../api/tours";
+import { fetchTourDepart } from "../api/tours";
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import PriceDisplay from "../service/money";
 import DiscountDisplay from "../service/discount";
@@ -22,9 +24,20 @@ function TourDetails(){
         autoplaySpeed: 3000, // Thời gian giữa các slide
     };
 
+    // Bước 1: Tạo state để lưu giá trị được chọn từ select
+    const [selectedTour, setSelectedTour] = useState("");
+
+    // Bước 2: Hàm xử lý khi select thay đổi
+    const handleSelectChange = (event) => {
+        const selectedValue = event.target.value; // Lấy giá trị từ option được chọn
+        setSelectedTour(event.target.value); // Cập nhật giá trị đã chọn
+        console.log('Selected Tour ID:', selectedValue);
+    };
+
     const { id } = useParams();  // Lấy ID từ URL
     const [tourDetails, setTourDetails] = useState(null);
     const [tourSchedule, setTourSchedule] = useState([]);
+    const [tourDepart, setTourDepart] = useState([]);
     // const [reviews, setReviews] = useState([]);
     const [tourRating, setTourRating] = useState([]);
     const [tourImages, setTourImages] = useState([]);
@@ -54,6 +67,12 @@ function TourDetails(){
                 const toursScheduleData = toursScheduleResponse.data; 
                 setTourSchedule(toursScheduleData);
                 // console.log('Dữ liệu từ API:', tourDetails);
+
+                // Gọi API để lấy thông tin chi tiết của một phòng
+                const tourDepartResponse = await fetchTourDepart(id);
+                const toursDepartData = tourDepartResponse.data; 
+                setTourDepart(toursDepartData);
+                // console.log('Dữ liệu từ API:', toursDepartData);
 
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -268,7 +287,7 @@ function TourDetails(){
                                             {tourSchedule.schedule}
                                         </div>
                                         <div className="w-[95%] mx-auto pb-7">
-                                            <img src={`/${tourSchedule.image}`} className='w-full h-full object-cover' alt={tourSchedule.image} />
+                                            <img src={`http://localhost:88/api_travel/api/Images/lichtrinhtour/${tourSchedule.image}`} className='w-full h-full object-cover' alt={tourSchedule.image} />
                                             {/* <img src={tourSchedule.schedule} alt="hình" className="h-[300px] w-full object-cover rounded-xl" /> */}
                                         </div>
                                     </div>
@@ -283,7 +302,7 @@ function TourDetails(){
                                     <div className="mb-4" key={rating.id}>
                                         <div className="flex items-center">
                                             <div>
-                                                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
+                                                <img src={`http://localhost:88/api_travel/api/Images/user/${rating.image_user}`} className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
                                             </div>
                                             <div className="mx-2 font-medium">{rating.user_name}</div>
                                         </div>
@@ -314,6 +333,24 @@ function TourDetails(){
                                 </div>
                                 <div className="w-[70%]">
                                     {tourDetails.id}
+                                </div>
+                            </div>
+                            <div className="h-[1px] mx-3 bg-gray-200"></div>
+                            <div className="flex text-left my-3">
+                                <div className="w-[30%] ml-3 font-medium">
+                                    Kiểu tour:
+                                </div>
+                                <div className="w-[70%]">
+                                    {tourDetails.type}
+                                </div>
+                            </div>
+                            <div className="h-[1px] mx-3 bg-gray-200"></div>
+                            <div className="flex text-left my-3 items-center">
+                                <div className="w-[30%] ml-3 font-medium">
+                                    SL người tham gia:
+                                </div>
+                                <div className="w-[70%] flex items-center">
+                                    {tourDetails.max_participant} <p className="text-xs mx-1">&#40;Cần tối thiểu {tourDetails.min_participant} người&#41;</p>
                                 </div>
                             </div>
                             <div className="h-[1px] mx-3 bg-gray-200"></div>
@@ -370,15 +407,22 @@ function TourDetails(){
                                 <div className="line-through"><PriceDisplay price={tourDetails.price} /></div>
                             </div>
                             <div className="w-full pb-4 text-black">
-                                <select className="w-[95%] rounded-md h-9 outline-none">
-                                    <option value='1'>22-12-2024</option>
-                                    <option value='1'>22-12-2024</option>
+                                <select className="w-[95%] rounded-md h-9 outline-none"  
+                                    
+                                    onChange={handleSelectChange} 
+                                >
+                                    <option value="">Chọn ngày</option> {/* Tùy chọn mặc định */}
+                                    {tourDepart.map((tourDepart) => (
+                                        <option key={tourDepart.id} value={tourDepart.id}>{tourDepart.day_depart}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div className='flex justify-center pb-4'>
+                                <Link className="w-full flex justify-center" to={`/booking-tour/${tourDetails.id}?selectedTour=${selectedTour}`}>
                                 <div className="uppercase font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-black">
                                     Đặt tour
                                 </div>
+                                </Link>
                             </div>
                         </div>
                     </div>

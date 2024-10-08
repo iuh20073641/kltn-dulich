@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 function HeaderManager(){
 
     // khai báo usestate trạng thái menu
-    const [isOpenHotel, setIsOpenHotel] = useState(false);
-    const [isOpenTour, setIsOpenTour] = useState(false);
+    // const [isOpenHotel, setIsOpenHotel] = useState(false);
+    // const [isOpenTour, setIsOpenTour] = useState(false);
 
     // Sự kiện mở menu con
-    const toggleMenuHotel = () => {
-        setIsOpenHotel(!isOpenHotel);
-    };
+    // const toggleMenuHotel = () => {
+    //     setIsOpenHotel(!isOpenHotel);
+    // };
 
-    const toggleMenuTour = () => {
-        setIsOpenTour(!isOpenTour);
-    };
+    // const toggleMenuTour = () => {
+    //     setIsOpenTour(!isOpenTour);
+    // };
 
 
     return(
@@ -25,7 +25,7 @@ function HeaderManager(){
                     LOG OUT
                 </a>
             </div>
-            <div className="lg:w-1/5 pr-4 pl-4 h-screen bg-gray-900 border-t border-3 border-gray-600" id="dashboard-menu">
+            <div className="w-[20%] pr-4 pl-4 h-screen bg-gray-900 border-t border-3 border-gray-600" id="dashboard-menu">
                 <nav className="relative flex flex-wrap items-center content-between py-3 px-4  text-white">
                     <div className="container lg:flex-col items-stretch">
                         <h4 className="mt-2 text-gray-100 text-2xl font-medium">ADMIN PANEL</h4>
@@ -44,7 +44,7 @@ function HeaderManager(){
                                         Dashboard Tour
                                     </a>
                                 </li> */}
-                                <li className="">
+                                {/* <li className="">
                                     <button id="menuButton" onClick={toggleMenuHotel} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between">
                                         <span>Bookings Hotel</span>
                                         <span>
@@ -76,8 +76,8 @@ function HeaderManager(){
                                         </ul>
                                     </div>
                                    
-                                </li>
-                                <li className="">
+                                </li> */}
+                                {/* <li className="">
                                     <button onClick={toggleMenuTour} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
                                         <span>Bookings Tour</span>
                                         <span>
@@ -110,7 +110,7 @@ function HeaderManager(){
                                         </ul>
                                     </div>
                                    
-                                </li>
+                                </li> */}
                                 <li className="">
                                     {/* <a className="inline-block py-2 px-4 no-underline text-white" href="users.php">
                                         User

@@ -10,11 +10,19 @@ const initFormValueFeature = {
     feature_name: ""
 };
 
+const initFormValueFacility = {
+    // id:"",
+    facility_name: "",
+    icon: null,
+    description: ""
+};
+
 function FeatureFacilities(){
 
     const [isOpenModalFeatureAdd, setIsOpenModalFeatureAdd] = useState(false);
     const [isOpenModalFacilitiesAdd, setIsOpenModalFacilitiesAdd] = useState(false);
     const [formValueFeatures, setFormValueFeatures] = useState(initFormValueFeature);
+    const [formValueFacility, setFormValueFacility] = useState(initFormValueFacility);
     const [features, setFeatues] = useState([]);
     const [facilities, setFacilities] = useState([]);
     const [error, setError] = useState(null);
@@ -123,8 +131,21 @@ function FeatureFacilities(){
         setIsOpenModalFacilitiesAdd(!isOpenModalFacilitiesAdd);
     };
 
+    const handleFacilityChange = (event) => {
+        const { value, name } = event.target;
+        setFormValueFacility({
+            ...formValueFacility,
+            [name]: value,
+        });
+    };
+
+    // Hàm xử lý thay đổi cho ô tải lên hình ảnh
+    const handleImageChange = (e) => {
+        setFormValueFacility({ ...formValueFacility, icon: e.target.files[0] });
+    };
+
     const deleteFacilities = (facilityId) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa facility này?')) {
           fetch('http://localhost:88/api_travel/api/admin/delete_facilities.php', {
             method: 'DELETE',
             headers: {
@@ -156,6 +177,50 @@ function FeatureFacilities(){
             console.error('Chi tiết lỗi:', error);
           });
         }
+    };
+
+    // thêm facilities
+    const hendleSubmitFacility = async (event) => {
+        event.preventDefault(); //để không tự động reset
+        const formFacility = new FormData();
+        formFacility.append("name", formValueFacility.facility_name);
+        formFacility.append("icon", formValueFacility.icon); // File sẽ được gửi dưới dạng multipart
+        formFacility.append("description", formValueFacility.description);
+        
+        console.log("formValue", formValueFacility);
+        fetch('http://localhost:88/api_travel/api/admin/create_facilities.php', {
+            method: 'POST',
+            // headers: {
+            //   'Content-Type': 'application/json',
+            // },
+            body: formFacility,
+          })
+          .then(response => response.json())
+            // .then(response => {
+            //     console.log("Response status:", response.status); // Kiểm tra mã phản hồi HTTP
+            //     return response.json();
+            // })
+          .then(data => {
+            if (data.status === 'success') {
+                toast.success(data.message);
+                setFormValueFacility(initFormValueFeature); // Đặt lại form về rỗng
+                // setFeatues([...features, data.newFeature]);
+                // Gọi lại hàm fetchFeatures để load lại danh sách features
+                 // Thêm feature mới vào danh sách features
+                // const newFeature = { id: features.id, name: formValueFeatures.feature_name }; // Giả sử API trả về `id` của feature mới
+                // setFeatues([...features, newFeature]); // Thêm feature mới vào state hiện tại
+
+            } else if (data.status === 'error'){
+                toast.error(data.message);
+                setFormValueFacility(initFormValueFacility); // Đặt lại form về rỗng nếu có lỗi
+            }
+          })
+          .catch(error => {
+            // console.error('Có lỗi xảy ra:', error);
+            toast.error('lỗi.');
+            console.log('Có lỗi xảy ra:');
+            setFormValueFeatures(initFormValueFacility); // Đặt lại form về rỗng nếu có lỗi
+          });
     };
 
 
@@ -273,7 +338,8 @@ function FeatureFacilities(){
                                             <tr className="h-10 border-b-[1px]" key={facilitie.id}>
                                                 <td className="px-2">{facilitie.id}</td>
                                                 <td>
-                                                    <i className="fa-solid fa-martini-glass"></i>
+                                                    {/* <i className="fa-solid fa-martini-glass"></i> */}
+                                                    <img src={`http://localhost:88/api_travel/api/Images/facilities/${facilitie.icon}`} className='w-[30px] h-[30px] object-cover' alt="" />
                                                 </td>
                                                 <td>{facilitie.name}</td>
                                                 <td>{facilitie.description}</td>
@@ -346,7 +412,7 @@ function FeatureFacilities(){
             <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed">
                 <div className="modal bg-white w-[35%] mx-auto mt-8 rounded-md" id="facility-s" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog">
-                        <form id="facility_s_form">
+                        <form id="facility_s_form" onSubmit={hendleSubmitFacility}>
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title font-medium text-lg text-left mx-3 pt-3 mb-3 tracking-normal">Add Facility</h5>
@@ -357,6 +423,7 @@ function FeatureFacilities(){
                                         <input
                                             type="text"
                                             name="facility_name"
+                                            value={formValueFacility.facility_name} onChange={handleFacilityChange}
                                             className="block appearance-none w-[95%] mx-auto py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 focus:border-blue-200 focus:border-[2px] outline-none rounded shadow-none"
                                             required=""
                                         />
@@ -366,6 +433,7 @@ function FeatureFacilities(){
                                         <input
                                             type="file"
                                             name="facility_icon"
+                                            onChange={handleImageChange}
                                             accept=".svg"
                                             className="block appearance-none w-[95%] mx-auto py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none"
                                             required=""
@@ -374,7 +442,8 @@ function FeatureFacilities(){
                                     <div className="mb-3">
                                         <div className="form-label font-medium mx-3 mt-4 mb-2">Description</div>
                                         <textarea
-                                            name="facility_desc"
+                                            name="description"
+                                            value={formValueFacility.description} onChange={handleFacilityChange}
                                             className="block appearance-none w-[95%] mx-auto py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 focus:border-blue-200 focus:border-[2px] outline-none rounded shadow-none"
                                             rows={3}
                                             defaultValue={""}
@@ -392,7 +461,7 @@ function FeatureFacilities(){
                                         CANCEL
                                     </button>
                                     <button
-                                        type="submit"
+                                        onClick={(event) => hendleSubmitFacility(event)}
                                         className="inline-block mx-1 bg-[#2ec1ac] align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none"
                                     >
                                         SUBMIT

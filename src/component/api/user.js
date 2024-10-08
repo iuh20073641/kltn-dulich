@@ -36,3 +36,8 @@ export const teamDetail = () => {
 export const selectAllUsers = () => {
   return api.get(`/admin/get_usernd.php`);
 };
+
+// api lấy toàn bộ thông tin của một người dùng
+export const getUsersData = (iduser) => {
+  return api.get(`/get_user_by_id.php?userid=${iduser}`);
+};

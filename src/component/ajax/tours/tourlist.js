@@ -21,7 +21,7 @@ function TourList() {
                 setTours(toursData);
 
                 // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
-                const imagePromises = roomsData.map(async (tour) => {
+                const imagePromises = toursData.map(async (tour) => {
                     const imageResponse = await fetchTourImages(tour.id);
                     // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
                     return { tourId: tour.id, image: imageResponse.data };
@@ -58,19 +58,21 @@ function TourList() {
                 <div className="w-full tqd-products border-[1px] border-b-gray-200" key={tour.id}>
                     <div className='h-[210px] overflow-hidden'>
                     {tourImages[tour.id] && Array.isArray(tourImages[tour.id]) && tourImages[tour.id].length > 0 ? (
-                        <div className="h-[210px] overflow-hidden bg-[url(https://images.unsplash.com/photo-1523345863760-5b7f3472d14f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHRvdXJpc218ZW58MHx8MHx8fDA%3D)] bg-no-repeat bg-center bg-cover transform">
-                            <a href="https://www.facebook.com/">
+                        <div className="h-[210px] overflow-hidden bg-no-repeat bg-center bg-cover transform" style={{
+                            backgroundImage: `url('http://localhost:88/api_travel/api/Images/tour/${tourImages[tour.id][0].image}')`
+                          }}>
+                            <Link to={`/tour-details/${tour.id}`}>
                                 <div className="absolute inset-0 bg-black opacity-0 hover:opacity-50 transition duration-300">
                                     <p className="text-white text-left text-sm mx-2 my-2 leading-6 line-clamp-4">
                                        Lịch trình:{tour.timeTour} ngày Khởi hành{tour.depart}
                                     </p>
                                 </div>
-                            </a>
+                            </Link>
                         </div>
                     ) : (
                         <div className='basis-5/12 mx-3 my-3'>
-                          <div className='w-[375px] h-[231px] flex items-center justify-center text-xs py-2 bg-gray-100 rounded-md'>
-                            <p>Không có hình ảnh</p>
+                          <div className='w-[375px] h-[231px] flex items-center text-xs py-2 bg-gray-100 rounded-md'>
+                            <p className="text-center">Không có hình ảnh</p>
                           </div> 
                         </div>
                     )}

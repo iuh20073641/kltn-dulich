@@ -1,12 +1,16 @@
 import HeaderManager from "../header-manager/header-manager";
 import React, { useEffect, useState } from 'react';
-import { fetchTours } from "../../../component/api/tours";
+import { fetchTourImages, fetchTours } from "../../../component/api/tours";
 import { toast } from 'react-toastify';
 // import { Formik, Form, Field } from 'formik';
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+// import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import { Link } from "react-router-dom";
 
 const initFormValue = {
     name: "",
+    type: "",
+    min_participant: "",
+    max_participant: "",
     price: "",
     description: "",
     timetour: "",
@@ -16,6 +20,12 @@ const initFormValue = {
     itinerary: "",
     vehicle: ""
 };
+
+// const initImage = [
+//     {
+//         image: null,
+//     },
+//     ];
 
 const initFormSchedule = [
 {
@@ -43,18 +53,26 @@ const selectFormValue = {
 function ManagerTour(){
 
     const [isOpenModalAdd, setIsOpenModalAdd] = useState(false);
-    const [isOpenModalSchedule, setIsOpenModalSchedule] = useState(false);
+    const [isOpenModalImage, setIsOpenModalImage] = useState(false);
     const [tours, setTours] = useState([]);
+    const [tourImages, setTourImages] = useState([]);
     const [error, setError] = useState(null);
     const [formValue, setFormValue] = useState(initFormValue);
     const [formSchedule, setFormSchedule] = useState(initFormSchedule);
+    // const [image, setImage] = useState(initImage);
     // const [scheduleList, setScheduleList] = useState([])
     const [selectedTour, setSelectedTour] = useState(selectFormValue);
+    const [selectedImage, setSelectedImage] = useState(null); // Lưu hình ảnh được chọn
 
     // Hàm xử lý thay đổi cho ô tải lên hình ảnh
     const handleImageChange = (e) => {
         setFormSchedule({ ...formSchedule, image: e.target.files[0] });
     };
+
+    // // Hàm xử lý thay đổi cho ô tải lên hình ảnh
+    // const handleImageChange = (e) => {
+    //     setFormSchedule({ ...formSchedule, image: e.target.files[0] });
+    // };
 
     // Bật của sổ thêm tour
     const handleModalClick = () => {
@@ -70,7 +88,7 @@ function ManagerTour(){
     };
 
      // thêm tour
-     const hendleSubmit = async (event) => {
+    const hendleSubmit = async (event) => {
         event.preventDefault(); //để không tự động reset
         console.log("formValue", formValue);
         fetch('http://localhost:88/api_travel/api/admin/create-tour.php', {
@@ -79,7 +97,10 @@ function ManagerTour(){
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
-                name: formValue.name, 
+                name: formValue.name,
+                type: formValue.type, 
+                min_participant: formValue.min_participant,
+                max_participant: formValue.max_participant,   
                 price: formValue.price, 
                 description: formValue.description,
                 timetour: formValue.timetour, 
@@ -93,21 +114,12 @@ function ManagerTour(){
           .then(response => response.json())
           .then(data => {
             if (data.status === 'success') {
-                toast.success('Tour đã được thêm thành công');
+                toast.success(data.message);
                 setFormValue(initFormValue); // Đặt lại form về rỗng nếu có lỗi
-            } else if (data.status === 'error1'){
-                toast.error('Dữ liệu JSON không hợp lệ');
+            } else if (data.status === 'error'){
+                toast.error(data.message);
                 setFormValue(initFormValue); // Đặt lại form về rỗng nếu có lỗi
-            } else if (data.status === 'error2'){
-                toast.error('Thiếu hoặc không hợp lệ các tham số');
-                setFormValue(initFormValue); // Đặt lại form về rỗng nếu có lỗi
-            } else if (data.status === 'error3'){
-                toast.error('Tour đã tồn tại');
-                setFormValue(initFormValue); // Đặt lại form về rỗng nếu có lỗi
-            } else{
-                toast.error('Thêm tour không thành công. Vui lòng thử lại.');
-                setFormValue(initFormValue); // Đặt lại form về rỗng nếu có lỗi
-            }
+            } 
           })
           .catch(error => {
 
@@ -115,11 +127,6 @@ function ManagerTour(){
             console.log('Có lỗi xảy ra:', error);
             setFormValue(initFormValue); // Đặt lại form về rỗng nếu có lỗi
           });
-    };
-
-    // Bật của sổ thêm lịch trình tour
-    const handleModalTourSchedule = () => {
-        setIsOpenModalSchedule(!isOpenModalSchedule);
     };
 
     const handleScheduleChange = (event) => {
@@ -147,63 +154,34 @@ function ManagerTour(){
     //     setScheduleList([...scheduleList, newTour]);
     // };
 
-    const addTourSchedule = async (tour) => {
-        console.log('Tour ID:', tour.id);
-        // setLoading(true);
-        setSelectedTour(tour.id); // Lưu thông tin room được chọn
-        setIsOpenModalSchedule(!isOpenModalSchedule);
-        
-    };
-
-    // thêm lịch trình tour
-    const hendleScheduleSubmit = async (event) => {
+    // thêm hình ảnh tour
+    const hendleImageSubmit = async (event) => {
         event.preventDefault(); //để không tự động reset
         // Tạo FormData
-        const formDataSchedule = new FormData();
+        const formImage = new FormData();
 
         // Append từng trường vào formData
         // initFormSchedule.forEach((tour, index) => {
-        formDataSchedule.append("id_tour", selectedTour);
-        formDataSchedule.append("day", formSchedule.day);
-        formDataSchedule.append("image", formSchedule.image); // File sẽ được gửi dưới dạng multipart
-        formDataSchedule.append("schedule", formSchedule.schedule);
-        formDataSchedule.append("locations", formSchedule.locations);
+            formImage.append("id_tour", selectedTour);
+            formImage.append("image", formSchedule.image); // File sẽ được gửi dưới dạng multipart
         // });
-            console.log("formDataSchedule", selectedTour);
-        fetch('http://localhost:88/api_travel/api/admin/create-schedule.php', {
+            console.log("formDataSchedule", formSchedule.image);
+        fetch('http://localhost:88/api_travel/api/admin/create_tour_image.php', {
             method: 'POST',
             // headers: {
             //   'Content-Type': 'application/json',
             // },
-            body: formDataSchedule,
+            body: formImage,
           })
           .then(response => response.json())
           .then(data => {
             if (data.status === 'success') {
-                toast.success('Lịch trình tour đã được thêm thành công');
+                toast.success(data.message);
                 setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            } else if (data.status === 'error1'){
-                toast.error('Không có file hình ảnh hoặc có lỗi xảy ra.');
+            } else if (data.status === 'error'){
+                toast.error(data.message);
                 setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            } else if (data.status === 'error2'){
-                toast.error('Thiếu hoặc không hợp lệ các tham số');
-                setFormSchedule(initFormValue); // Đặt lại form về rỗng nếu có lỗi
-            } else if (data.status === 'error3'){
-                toast.error('id_tour không tồn tại');
-                setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            }else if (data.status === 'error4'){
-                toast.error('File không phải là hình ảnh hợp lệ');
-                setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            }else if (data.status === 'error5'){
-                toast.error('Kích thước file quá lớn');
-                setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            }else if (data.status === 'error6'){
-                toast.error('Thư mục tải lên không tồn tại');
-                setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            } else{
-                toast.error('Tải lên hình ảnh thất bại');
-                setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
-            }
+            } 
           })
           .catch(error => {
 
@@ -231,22 +209,131 @@ function ManagerTour(){
         fetchData();
     }, []); // Chạy một lần khi component được mount
 
-    
-        // const [formList, setFormList] = useState([{ day: '', image: null, locations: '', description: '' }]);
+    // hiện modal thêm image
+    const handleModalImage = (tour) => {
+        console.log('Tour ID:', tour.id);
+        // setLoading(true);
+        setSelectedTour(tour.id); // Lưu thông tin tour được chọn
+        // console.log(tour);
+        setIsOpenModalImage(!isOpenModalImage);
+        getDataImage(tour.id);
+    };
+
+    // Ẩn modal image
+    const handleSutdownModalImage = () => {
+        setIsOpenModalImage(!isOpenModalImage);
+    };
+
+    // Xử lý khi người dùng chọn checkbox
+    const handleCheckboxChange = (imageId) => {
+        setSelectedImage(imageId); // Cập nhật hình ảnh được chọn
+    };
+
+
+    const getDataImage = async (tourId) => {
         
+        try {
+            // Gọi API để lấy danh sách Facilities
+            const ImageResponse = await fetchTourImages(tourId);
+            const imagesData = ImageResponse.data; // Giả sử API trả về mảng các Facilities
+            setTourImages(imagesData);
+            
+            // Kiểm tra nếu có hình ảnh nào có `thumb === 1`, chọn hình đó
+            const thumbImage = Array.isArray(imagesData) ? imagesData.find(image => image.thumb >0) : null;
+            if (thumbImage) {
+                setSelectedImage(thumbImage.id); // Lưu ID của hình ảnh có `thumb === 1`
+            }
+            // console.log(roomid);
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            // setError(err);
+        }
+    };
+
+    // update room thumb
+    const updateTourThumb = (tourId, imageId) => {
+        // console.log(roomId, imageId);
+        // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+            fetch('http://localhost:88/api_travel/api/admin/update_tour_thumb.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    tour_id: tourId,
+                    image_id: imageId
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // console.log('Đang gửi dữ liệu:', { room_id: roomId, image_id: imageId });
+                    if (data.status === 'success') {
+                        // setTourImages(tourImages.filter(tourImage => tourImage.id !== imageId));
+                        toast.success(data.message);
+                    } else if (data.status === 'error') {
+                        toast.error(data.message);
+                    } 
+                })
+                .catch(error => {
+                    // console.error('Có lỗi xảy ra:', error);
+                    toast.error('lỗi.');
+                    console.log('Có lỗi xảy ra:');
+                });
+       
+    };
+
+    const deleteRoomImage = (imageId) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')) {
+            fetch('http://localhost:88/api_travel/api/admin/delete_tour_image.php', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tour_image_id: imageId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        setTourImages(tourImages.filter(tourImage => tourImage.id !== imageId));
+                        toast.success(data.message);
+                    } else if (data.status === 'error') {
+                        toast.error(data.message);
+                    } 
+                })
+                .catch(error => {
+                    // console.error('Có lỗi xảy ra:', error);
+                    toast.error('lỗi.');
+                    console.log('Có lỗi xảy ra:');
+                });
+        }
+    };
+
+    const deleteTour = (tourId) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+            fetch('http://localhost:88/api_travel/api/admin/delete_tour.php', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tour_id: tourId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        setTours(tours.filter(tour => tour.id !== tourId));
+                        toast.success(data.message);
+                    } else if (data.status === 'error') {
+                        toast.error(data.message);
+                    } 
+                })
+                .catch(error => {
+                    // console.error('Có lỗi xảy ra:', error);
+                    toast.error('lỗi.');
+                    console.log('Có lỗi xảy ra:');
+                });
+        }
+    };
     
-        // const handleAddForm = () => {
-        //     setFormList([...formList, { day: '', image: null, locations: '', description: '' }]);
-        // };
-    
-        const initialValues = {
-            friends: [
-              {
-                name: '',
-                email: '',
-              },
-            ],
-          };
 
     if (error) return <div>Error: {error.message}</div>;
 
@@ -266,12 +353,15 @@ function ManagerTour(){
                                     </button> 
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch" style={{ height: 450, overflowY: "scroll" }}>
-                                    <table className="w-[1250px] mb-4 bg-transparent table-hover border text-center">
+                                    <table className="w-[1700px] mb-4 bg-transparent table-hover border text-center">
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-9">
                                                 <th scope="col" className="">ID</th>
                                                 <th scope="col" className="w-[300px]">Tên</th>
                                                 <th scope="col" className="w-[150px]">Giá</th>
+                                                <th scope="col" className="w-[150px]">Loại tour</th>
+                                                <th scope="col" className="w-[150px]">Số lượng khách tối thiểu</th>
+                                                <th scope="col" className="w-[150px]">Số lượng khách tối đa</th>
                                                 <th scope="col" className="w-[150px]">Xuất phát</th>
                                                 <th scope="col" className="w-[100px]">Thời gian</th>
                                                 <th scope="col" className="w-[200px]">Khởi hành</th>
@@ -284,7 +374,10 @@ function ManagerTour(){
                                             <tr className="h-16" key={tour.id}>
                                                 <td>{tour.id}</td>
                                                 <td>{tour.name}</td>
+                                                <td>{tour.type}</td>
                                                 <td>{tour.price}</td>
+                                                <td>{tour.min_participant}</td>
+                                                <td>{tour.max_participant}</td>
                                                 <td>{tour.departurelocation}</td>
                                                 <td>{tour.timeTour}</td>
                                                 <td>{tour.depart}</td>
@@ -300,13 +393,18 @@ function ManagerTour(){
                                                                     <button type="button"  className='py-1 font-semibold text-sm'><i className="fa-solid fa-pen-to-square text-white"></i></button>
                                                                 </div>
                                                                 <div className="bg-[#0dcaf0] px-2 rounded-md">
-                                                                    <button type='submit' className='py-1 font-semibold text-sm'><i className="fa-solid fa-image"></i></button>
+                                                                    <button type='button' onClick={() => handleModalImage(tour)} className='py-1 font-semibold text-sm'><i className="fa-solid fa-image"></i></button>
                                                                 </div>
                                                                 <div className="bg-[#dc3545] px-2 rounded-md">
-                                                                    <button  className='py-1 font-semibold text-sm'><i className="fa-solid fa-trash text-white"></i></button>
+                                                                    <button type="button" onClick={() => deleteTour(tour.id)} className='py-1 font-semibold text-sm'><i className="fa-solid fa-trash text-white"></i></button>
                                                                 </div>
-                                                                <div className="bg-[#FF6600] px-2 rounded-md">
+                                                                {/* <div className="bg-[#FF6600] px-2 rounded-md">
                                                                     <button onClick={() => addTourSchedule(tour)} className='py-1 font-semibold text-sm'><i className="fa-solid fa-gears text-white"></i></button>
+                                                                </div> */}
+                                                                <div className="bg-[#FF6600] px-2 rounded-md">
+                                                                    <Link to={`/tours-setting/${tour.id}`}>
+                                                                        <i className="fa-solid fa-gears text-white py-1 font-semibold text-sm"></i>
+                                                                    </Link>
                                                                 </div>
                                                         </div>
                                                     {/* </form> */}
@@ -337,39 +435,51 @@ function ManagerTour(){
                                     <div className="modal-body my-3">
                                         <div className="flex flex-wrap ">
                                             <div className="w-full pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Name</label>
+                                                <label className="form-label font-semibold">Tên tour</label>
                                                 <input type="text" name="name" value={formValue.name} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="w-full pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Departure Location</label>
+                                                <label className="form-label font-semibold">Kiểu tour</label>
+                                                <input type="text" name="type" value={formValue.type} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
+                                            </div>
+                                            <div className="w-full pr-4 pl-4 mb-3 text-left">
+                                                <label className="form-label font-semibold">SL người tham gia tối thiểu</label>
+                                                <input type="number" name="min_participant" value={formValue.min_participant} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
+                                            </div>
+                                            <div className="w-full pr-4 pl-4 mb-3 text-left">
+                                                <label className="form-label font-semibold">SL người tham gia tối đa</label>
+                                                <input type="number" name="max_participant" value={formValue.max_participant} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
+                                            </div>
+                                            <div className="w-full pr-4 pl-4 mb-3 text-left">
+                                                <label className="form-label font-semibold">Địa điểm khởi hành</label>
                                                 <input type="text" name="departurelocation" value={formValue.departurelocation} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="md:w-1/2 pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Price</label>
+                                                <label className="form-label font-semibold">Giá tiền</label>
                                                 <input type="number" min={1} name="price" value={formValue.price} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="md:w-1/2 pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Discount</label>
+                                                <label className="form-label font-semibold">Khuyến mãi &#40;%&#41;</label>
                                                 <input type="number" min={1} name="discount" value={formValue.discount} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="md:w-1/2 pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">TimeTour(day)</label>
+                                                <label className="form-label font-semibold">Thời gian diễn ra tour &#40;ngày&#41;</label>
                                                 <input type="number" min={1} name="timetour" value={formValue.timetour} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="md:w-1/2 pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Depart</label>
+                                                <label className="form-label font-semibold">Những ngày tour bắt đầu</label>
                                                 <input type="text" min={1} name="depart" value={formValue.depart} onChange={handleChange} placeholder="07,14,17,21,28/09/2024" className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="md:w-1/2 pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Vehicle</label>
+                                                <label className="form-label font-semibold">Phương tiện</label>
                                                 <input type="text" min={1} name="vehicle" value={formValue.vehicle} onChange={handleChange} className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="md:w-1/2 pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Itinerary</label>
+                                                <label className="form-label font-semibold">Hành trình</label>
                                                 <input type="text" min={1} name="itinerary" value={formValue.itinerary} onChange={handleChange} placeholder="Hà Nội - Vịnh Hạ Long " className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" />
                                             </div>
                                             <div className="w-full pr-4 pl-4 mb-3 text-left">
-                                                <label className="form-label font-semibold">Description</label>
+                                                <label className="form-label font-semibold">Mô tả</label>
                                                 <textarea name="description" value={formValue.description} onChange={handleChange} className="w-full h-[100px] block appearance-none py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none">
 
                                                 </textarea>
@@ -403,148 +513,84 @@ function ManagerTour(){
             </div>
             )}
 
-            {/* add tour schedule modal  */}
-            {isOpenModalSchedule && (
-            <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed overflow-y-auto">
-                <div className="modal lg:w-3/5 h-[95%] mb-5 mt-6 mx-auto overflow-auto bg-white rounded-md" id="edit-room" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-lg">
-                        {/* <form id="edit_room_form">
-                            <div className="modal-content">
-                                <div className="modal-header mb-5 mx-3 pt-5">
-                                    <h5 className="modal-title text-left font-semibold text-xl">Add Tour Schedule</h5>
-                                </div>
-                                <div className="h-[1px] w-full bg-gray-300"></div>
-                                <div className="modal-body">
-                                    
-                                    <div className="flex flex-wrap">
-                                        <div className="w-full pr-4 pl-4 my-3 text-left">
-                                            <label className="form-label fw-bold">Day</label>
-                                            <input type="text" name="day"   
-                                                value={formValue.day} onChange={handleScheduleChange}
-                                                className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" 
-                                            />
-                                        </div>
-                                        <div className="w-full pr-4 pl-4 my-3 text-left">
-                                            <label className="form-label fw-bold">Image</label>
-                                            <input type="file" min={1} 
-                                                name="image" 
-                                                
-                                                className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" 
-                                            />
-                                        </div>
-                                        <div className="w-full pr-4 pl-4 mb-3 text-left">
-                                            <label className="form-label fw-bold">Locations</label>
-                                            <input type="text" min={1} 
-                                                name="locations"  
-                                                value={formValue.locations} onChange={handleScheduleChange}
-                                                className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" required="" 
-                                            />
-                                        </div>
-                                        <div className="w-full pr-4 pl-4 mb-3 text-left">
-                                            <label className="form-label fw-bold">Quantity</label>
-                                            <textarea name="description" value={formValue.description} onChange={handleChange} className="w-full h-[100px] block appearance-none py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none">
-
-                                            </textarea>
-                                        </div>
-                                        
-                                        
-                                    </div>
-                                    
-                                </div>
-                                <div className="modal-footer pb-4">
-                                    <button type="reset" onClick={handleModalTourSchedule} className="mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-gray-600 shadow-none" data-bs-dismiss="modal">
-                                        CANCEL
-                                    </button>
-                                    <button type="submit" onClick={(event) => hendleScheduleSubmit(event)} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                        SUBMIT
+            {/* cài đặt hình ảnh của phòng */}
+            {isOpenModalImage && (
+            <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed overflow-y-auto flex items-center">
+                <div className="bg-white modal w-[70%] mx-auto h-[95%] rounded-sm" id="room-images" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-lg w-full">
+                        <div className="modal-content w-full px-2">
+                            <div className="modal-header flex w-full justify-between mt-3 mb-5">
+                            {Array.isArray(tourImages) && tourImages.length > 0 ? (
+                                <h5 className="modal-title font-medium text-xl">{tourImages[0].tour_name}</h5>
+                            ) : (
+                                <h5 className="modal-title font-medium text-xl">không có tên</h5>
+                            )}
+                                <div className="mr-3">
+                                    <button type="submit" onClick={handleSutdownModalImage} className="">
+                                        <span className=""><i className="fa-solid fa-xmark"></i></span>  
                                     </button>
                                 </div>
                             </div>
-                        </form> */}
-                        <div className="modal-header mb-5 mx-3 pt-5">
-                            <h5 className="modal-title text-left font-semibold text-xl">Add Tour Schedule</h5>
-                        </div>
-                        <Formik initialValues={initialValues} onSubmit={async (values) => {
-                                await new Promise((r) => setTimeout(r, 500));
-                                alert(JSON.stringify(values, null, 2));
-                            }}
-                        >
-                            {({ values }) => (
-                                <Form onSubmit={hendleScheduleSubmit}>
-                                <FieldArray name="friends">
-                                    {({ insert, remove, push }) => (
-                                    <div className="bg-white">
-                                        {values.friends.length > 0 &&
-                                        values.friends.map((friend, index) => (
-                                            <div className="row w-[98%] mt-3 mx-auto border-[1px] bg-gray-100 border-gray-200 rounded-sm" key={index}>
-                                                <div className="col text-right mr-4 my-3">
-                                                    <button type="button" className="secondary" onClick={() => remove(index)}>
-                                                        <i className="fa-solid fa-square-xmark"></i>
-                                                    </button>
-                                                </div>
-                                                <div className="col w-[95%] text-left mb-3 ">
-                                                    {/* <div className="w-full" htmlFor={`friends.${index}.name`}>Day: </div> */}
-                                                    <Field name='id_tour' value={formSchedule.id_tour} onChange={handleScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="hidden" />
-                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
-                                                </div>
-                                                <div className="col w-[95%] text-left mx-auto mb-3">
-                                                    <div className="w-full" htmlFor={`friends.${index}.name`}>Day: </div>
-                                                    {/* <Field name={`friends.${index}.name`} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="number" />
-                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" /> */}
-                                                    <Field name='day' value={formSchedule.day} onChange={handleScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="number" />
-                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
-                                                </div>
-                                                <div className="col w-[95%] text-left mx-auto mb-3">
-                                                    <div className="w-full" htmlFor={`friends.${index}.name`}>Locations: </div>
-                                                    <Field name='locations' value={formSchedule.locations} onChange={handleScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="text" />
-                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
-                                                </div>
-                                                <div className="col w-[95%] text-left mx-auto mb-3">
-                                                    <div className="w-full" htmlFor={`friends.${index}.name`}>Image: </div>
-                                                    {/* <Field name='image' value={formSchedule.image} onChange={handleScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="file" /> */}
-                                                    <input type="file" name="image"  onChange={handleImageChange} 
-                                                        className="border-[1px] border-gray-200 rounded-md w-full py-2 px-2" required="" 
-                                                    />
-                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
-                                                </div>
-                                                <div className="col w-[95%] text-left mx-auto mb-4">
-                                                    <div htmlFor={`friends.${index}.email`}>Schedule: </div>
-                                                    {/* <Field name={`friends.${index}.email`} className='h-[150px] border-[1px] border-gray-200 rounded-md w-[95%]' type="email" /> */}
-                                                    <textarea name='schedule' value={formSchedule.schedule} onChange={handleScheduleChange} className='h-[150px] px-2 py-2 border-[1px] border-gray-200 rounded-md w-full' type="email">
-
-                                                    </textarea>
-                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
-                                                </div>
-                                                {/* <div className="col">
-                                                    <button type="button" className="secondary" onClick={() => remove(index)}>
-                                                    X
-                                                    </button>
-                                                </div> */}
-                                            </div>
-                                        ))}
-                                        <div className="mt-5 mb-3 bg-[#0d6efd] text-white mx-2 inline-block align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline border-[2px] border-[#0d6efd]  hover:text-[#0d6efd] hover:bg-white duration-100 shadow-none">
-                                            <button type="button" className="secondary" onClick={() => push({ name: '', email: '' })}>
-                                                One More Day
-                                            </button>
-                                        </div>
-                                    </div>
-                                    )}
-                                </FieldArray>
-                                <div className="flex bg-white justify-center mb-4">
-                                    <div>
-                                        <button type="reset" onClick={handleModalTourSchedule} className="mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-gray-600 shadow-none" data-bs-dismiss="modal">
-                                            CANCEL
+                            <div className="h-[1px] bg-gray-200"></div>
+                            <div className="modal-body">
+                                <div id="image-alert"></div>
+                                <div className="border-b border-3 pb-3 mb-3 text-left mt-5">
+                                    <form id="add_image_form" onSubmit={hendleImageSubmit}>
+                                        <div className="form-label fw-bold font-semibold mb-2">Add Image</div>
+                                        <input
+                                            type="file"
+                                            name="image"
+                                            onChange={handleImageChange}
+                                            accept=".jpg, .png, .webp, .jpeg"
+                                            className="block appearance-none w-full py-1 px-2 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none mb-3"
+                                            required=""
+                                        />
+                                        <button onClick={(event) => hendleImageSubmit(event)} className="inline-block bg-[#0d6efd] hover:bg-[#0d49fd] align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
+                                            ADD
                                         </button>
-                                    </div>
-                                    <div>
-                                        <button type="submit" onClick={(event) => hendleScheduleSubmit(event)} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                            Invite
-                                        </button>
-                                    </div>
+                                        <input type="hidden" value={formSchedule.id_tour} onChange={handleScheduleChange} name="id_tour" />
+                                    </form>
                                 </div>
-                                </Form>
-                            )}
-                            </Formik>
+                                <div
+                                    className="block w-full overflow-auto scrolling-touch"
+                                    style={{ height: 350, overflowY: "scroll" }}
+                                >
+                                    {Array.isArray(tourImages) && tourImages.length > 0 ? (
+                                    <table className="w-full max-w-full mb-4 bg-transparent table-hover border text-center">
+                                        <thead>
+                                            <tr className="bg-gray-900 text-gray-100 sticky-top h-[40px]">
+                                                <th scope="col" width="60%">
+                                                    Image
+                                                </th>
+                                                <th scope="col">Thumb</th>
+                                                <th scope="col">Delete</th>
+                                            </tr>
+                                        </thead>
+                                        {tourImages.map((image) => (
+                                        <tbody id="room-image-data" key={image.id}>
+                                            <tr className="">
+                                                <td><img src={`http://localhost:88/api_travel/api/Images/tour/${image.image}`} className='w-full h-[300px] object-cover' alt="" /></td>
+                                                <td><input type="checkbox"
+                                                        className="cursor-pointer"
+                                                        name="thumb"
+                                                        checked={selectedImage === image.id} // Nếu ID hình ảnh bằng `selectedImage` thì checkbox được chọn
+                                                        onChange={() => handleCheckboxChange(image.id)} // Cập nhật trạng thái khi chọn hình ảnh 
+                                                        onClick={() => updateTourThumb(image.tour_id, image.id)}
+                                                        />
+                                                </td>
+                                                <td>
+                                                    <button onClick={() => deleteRoomImage(image.id)}><i className="fa-solid fa-trash text-[#dc3545] cursor-pointer"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        ))}
+                                    </table>
+                                     ) : (
+                                        <div className="w-full h-[200px] flex items-center justify-center text-sm mb-3">Chưa có hình ảnh.</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -19,7 +19,7 @@ function AdminLogin(){
                     </div>
                     <div className='bg-gray-100 basis-1/2 h-24 rounded-lg border-solid border-2 border-black cursor-pointer flex items-center justify-center hover:bg-[rgba(28,41,48,1)] hover:text-white duration-100'>
                         {/* <p className='font-medium text-lg uppercase'><Link to={"/login-manager"}>nhân viên quản lý dịch vụ</Link> </p> */}
-                        <p className='font-medium text-lg uppercase'><Link to={"/dashboard-hotel"}>nhân viên quản lý dịch vụ</Link> </p>
+                        <p className='font-medium text-lg uppercase'><Link to={"/User"}>nhân viên quản lý dịch vụ</Link> </p>
                     </div>
                     <div className='bg-gray-100 basis-1/2 h-24 rounded-lg border-solid border-2 border-black cursor-pointer flex items-center justify-center hover:bg-[rgba(28,41,48,1)] hover:text-white duration-100'>
                         <p className='font-medium text-lg uppercase'>Hướng dẫn viên</p>

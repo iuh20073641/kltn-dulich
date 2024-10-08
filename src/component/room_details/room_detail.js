@@ -241,7 +241,7 @@ function RoomDetail(){
                                 <div className="mb-4">
                                     <div className="flex items-center">
                                         <div>
-                                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
+                                            <img src={`http://localhost:88/api_travel/api/Images/user/${rating.image_user}`} className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
                                         </div>
                                         <div className="mx-2 font-medium">{rating.user_name}</div>
                                     </div>
