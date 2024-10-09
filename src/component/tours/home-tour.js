@@ -14,31 +14,7 @@ function HomeTour() {
                         <h2 className="font-semibold text-2xl text-center">Tours</h2>
                         <div className="h-[2px] w-[150px] my-2 mx-auto bg-gray-900" />
                     </div>
-                    <div className="flex">
-                        <div className="lg:w-1/4 md:w-full pr-4 pl-4 lg:mb-0 mb-4 ps-4">
-                            <nav className="relative flex flex-wrap items-center content-between py-3 px-2  text-black">
-                                <div className="container max-w-full mx-auto sm:px-4 lg:flex-col items-stretch bg-[#008fea]">
-                                    <h4 className="my-2 font-semibold text-left text-white">Bạn muốn khởi hành từ đâu?</h4>
-                                    {/* <button className="py-1 px-2 text-md leading-normal bg-transparent border border-transparent rounded" type="button" data-bs-toggle="collapse" data-bs-target="#filterDropdown" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                            <span className="px-5 py-1 border border-gray-600 rounded" />
-                                        </button> */}
-
-                                    {/* Area  */}
-                                    <div className="bg-[#008fea] font-medium mb-3">
-                                        <div className="w-full text-left bg-white rounded-md mb-1">
-                                            <input type="checkbox" value='1' className="mx-2 my-3" />Hồ Chí Minh
-                                        </div>
-                                        <div className="w-full text-left bg-white rounded-md mb-1">
-                                            <input type="checkbox" value='2' className="mx-2 my-3" />Hà Nội
-                                        </div>
-                                        <div className="w-full text-left bg-white rounded-md mb-1">
-                                            <input type="checkbox" value='3' className="mx-2 my-3" />Đà Nẵng
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </nav>
-                        </div>
+                    {/* <div className="flex"> */}
                         {/* danh sách tours */}
                         <TourList />
                         {/* <div className="lg:w-3/4 md:w-full pr-4 pl-4 px-4" id="rooms-data">
@@ -316,7 +292,7 @@ function HomeTour() {
                                 </div>
                             </div>
                         </div> */}
-                    </div>
+                    {/* </div> */}
                 </div>
             </div>
             <Footer />

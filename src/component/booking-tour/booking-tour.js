@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { fetchTourDetails } from "../api/tours";
 import { fetchDayDepart } from "../api/tours";
 import { getUsersData } from "../api/user";
+import { toast } from 'react-toastify';
 import TotalDisplay from "../service/total-price";
 // import { fetchTourSchedule } from "../api/tours";
 // import { fetchTourRating } from "../api/tours";
@@ -60,7 +61,8 @@ function BookingTour(){
     // const [numPeople, setNumPeople] = useState(1);  // Mặc định 1 người
     // const [totalPrice, setTotalPrice] = useState(0);  // Giá mặc định cho 1 người
     const [inputValue, setInputValue] = useState(''); // State để quản lý giá trị nhập
-
+    const [originalPrice, setOriginalPrice] = useState(0); // Giá gốc
+    const [discountPercent, setDiscountPercent] = useState(0); // Tỷ lệ giảm giá
 
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
@@ -165,6 +167,76 @@ function BookingTour(){
         setInputValue(value);
     };
 
+    // Hàm tính giá đã giảm
+    const calculateDiscountedPrice = (originalPrice, discountPercent) => {
+        console.log(originalPrice);
+        if (!originalPrice || !discountPercent) {
+          return originalPrice; // Nếu không có giá gốc hoặc tỷ lệ giảm giá, trả về giá gốc
+        }
+        const discountAmount = (originalPrice * discountPercent) / 100; // Tính số tiền giảm giá
+        return originalPrice - discountAmount; // Trả về giá sau khi đã giảm
+        
+    };
+    
+      // Tính giá đã giảm
+      const discountedPrice = calculateDiscountedPrice(originalPrice, discountPercent);
+      
+      // Tính giá cuối cùng dựa trên số lượng người
+      const finalPrice = discountedPrice * inputValue;
+
+    const handlePayment = async () => {
+        const response = await fetch('http://localhost:88/api_travel/api/create-payment-url.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                amount: finalPrice,  // Tổng tiền thanh toán
+                orderId: id,    // Mã đơn hàng
+                bankCode: null    // Mã ngân hàng (nếu cần)
+            }),
+        });
+    
+        const data = await response.json();
+        if (data.paymentUrl) {
+            window.location.href = data.paymentUrl; // Điều hướng đến URL thanh toán
+        }
+    };
+
+    const hendleDepartSubmit = async (event) => {
+        const userData = localStorage.getItem('user');
+        const user = JSON.parse(userData);
+        event.preventDefault(); //để không tự động reset
+        console.log("formValue", tourData.participant);
+        fetch('http://localhost:88/api_travel/api/create_booking_tour.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                user_id: user.id,
+                id_tour: id,
+                depar_id: selectedTour,
+                participant: tourData.participant,
+             }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+                toast.success(data.message);
+               
+            } else if (data.status === 'error'){
+                toast.error(data.message);
+                
+            }
+          })
+          .catch(error => {
+
+            toast.error('lỗi.');
+            console.log('Có lỗi xảy ra:', error);
+           
+          });
+    };
 
     if (error) return <p>{error}</p>;
 
@@ -268,6 +340,28 @@ function BookingTour(){
                                     </input>
                                 </div>
                             </div>
+                            <div className="text-left mb-2">
+                                {/* <div>giá tour</div> */}
+                                <div>
+                                    <input type='number' 
+                                        name='nametour' 
+                                        value={tourData.price}
+                                        onChange={(e) => setOriginalPrice(parseFloat(e.target.value))}
+                                        className='w-[97%] bg-white outline-none px-2 py-1 rounded-md' hidden>
+                                    </input>
+                                </div>
+                            </div>
+                            <div className="text-left mb-2">
+                                {/* <div>Tỉ lệ khuyến mãi</div> */}
+                                <div>
+                                    <input type='number' 
+                                        name='nametour' 
+                                        value={tourData.discount}
+                                        onChange={(e) => setDiscountPercent(parseFloat(e.target.value))}
+                                        className='w-[97%] bg-white outline-none px-2 py-1 rounded-md' hidden>
+                                    </input>
+                                </div>
+                            </div>
                             <div className="flex gap-x-3">
                                 <div className="text-left mb-2 w-1/2">
                                     <div>Số người tham gia</div>
@@ -316,8 +410,8 @@ function BookingTour(){
                             <div className="w-[35%] ml-auto text-left">
                                 <div className="text-lg font-semibold">Tổng tiền</div>
                                 <div>
-                                    {/* <input type='number' name='total_price' value='1000000' className='w-[300px] outline-none px-2 py-1 rounded-md' disabled></input> */}
-                                    <TotalDisplay  originalPrice={tourData.price} discountPercent={tourData.discount} numberOfPeople={inputValue} />
+                                    {/* <input type='number' name='total_price' value='1000000' className='w-[300px] outline-none px-2 py-1 rounded-md' disabled></input>  */}
+                                    <TotalDisplay  originalPrice={tourData.price} discountPercent={tourData.discount} numberOfPeople={inputValue} /> 
                                 </div>
                             </div>
                         </div>
@@ -328,12 +422,12 @@ function BookingTour(){
                     <div className="w-[60%] mx-auto mb-6">
                         <div className="flex justify-center">
                             <div>
-                                <button type="submit"  className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
+                                <button type="submit" onClick={handlePayment} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
                                     Thanh toán online
                                 </button>
                             </div>
                             <div>
-                                <button type="submit" className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
+                                <button type="submit" onClick={(event) => hendleDepartSubmit(event)} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
                                     Đặt giữ chỗ
                                 </button>
                             </div>
