@@ -81,7 +81,7 @@ function Login() {
                                 {/* <button id='login-business'> */}
                                     {/* className={isButtonBusines ? 'active' : ''} */}
                                     {/* <p>Business</p> */}
-                                    <Link to={"/admin-service"}><p>Business</p></Link> 
+                                    <Link to={"/login-nv"}><p>Business</p></Link> 
                                 {/* </button> */}
                             </div>
                         </div>

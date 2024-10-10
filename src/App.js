@@ -24,6 +24,22 @@ import ManagerTour from './admin/service-manager/tours/tours';
 import TourSetting from './admin/service-manager/tours/tour-setting';
 import BookingTour from './component/booking-tour/booking-tour';
 
+import LoginNV from './admin/NhanVienLogin';
+
+//quản trị viên
+import CreateNV from "./admin/admin-staff/Create-NV/create-nv";
+import QuanLyNV from "./admin/admin-staff/QuanLy-NV/quanly-nv";
+
+// hướng dẫn viên
+import DashboardHDV from "./admin/huongdanvien/dashboard/dashboard-hotel";
+import CapNhatNV from "./admin/huongdanvien/CapNhatThongTin/cap-nhat";
+
+// kiểm duyệt viên
+import DashboardKDV from "./admin/kiemduyetvien/dashboard/dashboard-hotel";
+import CapNhatNVKD from "./admin/kiemduyetvien/CapNhatThongTin/cap-nhat";
+
+
+
 // app.render(
 //   <BrowserRouter>
 //     <Routes>
@@ -62,6 +78,29 @@ function App() {
                 <Route path="/tours-manager"  element={<ManagerTour  />} /> 
                 <Route path="/tours-setting/:id"  element={<TourSetting  />} /> 
                 <Route path="/booking-tour/:id"  element={<BookingTour  />} /> 
+
+                <Route path="/login-nv" element={<LoginNV />} />
+
+
+                {/* Quản trị viên */}
+                <Route path="/create-nv" element={<CreateNV />} />
+                <Route path="/quanly-nv" element={<QuanLyNV />} />
+
+                {/* Hướng dẫn viên */}
+            <Route
+              path="/dashboard-huong-dan-vien"
+              element={<DashboardHDV />}
+            />
+            <Route path="/cap-nhat" element={<CapNhatNV />} />
+
+            {/* kiểm duyệt viên */}
+            <Route
+              path="/dashboard-kiem-duyet-vien"
+              element={<DashboardKDV />}
+            />
+            <Route path="/cap-nhat-kd" element={<CapNhatNVKD />} />
+
+            {/* khach hang */}
                 {/* <Section /> */}
               </Routes>
             </BrowserRouter>

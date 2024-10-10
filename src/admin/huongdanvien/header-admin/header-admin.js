@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function HeaderManager() {
+function HeaderAdmin() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,7 +23,7 @@ function HeaderManager() {
     <div>
       <div className="container mx-auto sm:px-4 max-w-full bg-gray-900 text-gray-100 p-6 flex align-items-center justify-between sticky-top">
         <h3 className="font-medium text-xl mx-5">
-          <Link to="/user">VENTURE</Link>
+          <Link to="/cap-nhat">VENTURE</Link>
         </h3>
         <button
           onClick={handleLogout}
@@ -46,24 +46,14 @@ function HeaderManager() {
               <ul className="list-none pl-0 mb-0">
                 <li className="">
                   <div className="inline-block py-2 px-4 no-underline text-white">
-                        <Link to={"/user"}>User</Link>
+                    <Link to="/cap-nhat">Cập Nhật Thông Tin</Link>
                   </div>
                 </li>
-                <li className="">
+                {/* <li className="">
                   <div className="inline-block py-2 px-4 no-underline text-white">
-                  < Link to={"/room-manager"}>Rooms</Link>
+                    <Link to="/">Quản Lý Nhân Viên</Link>
                   </div>
-                </li>
-                <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
-                  <Link to={"/tours-manager"}>Tours</Link>
-                  </div>
-                </li>
-                <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
-                  <Link to={"/features-facilities"}>Features &amp; Facilities</Link>
-                  </div>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -73,4 +63,4 @@ function HeaderManager() {
   );
 }
 
-export default HeaderManager;
+export default HeaderAdmin;
