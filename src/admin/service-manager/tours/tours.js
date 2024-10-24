@@ -229,7 +229,7 @@ function ManagerTour(){
         setSelectedImage(imageId); // Cập nhật hình ảnh được chọn
     };
 
-
+  
     const getDataImage = async (tourId) => {
         
         try {
@@ -249,6 +249,8 @@ function ManagerTour(){
             // setError(err);
         }
     };
+   
+
 
     // update room thumb
     const updateTourThumb = (tourId, imageId) => {

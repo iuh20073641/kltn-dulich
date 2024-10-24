@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Routes,useLocation } from "react-router-dom";
+import { Route, Routes,useLocation } from "react-router-dom";
 
 import Home from './component/home/home';
 import Login from './component/login/login';
@@ -22,7 +22,16 @@ import TourDetails from './component/tour-details/tour-details';
 import RoomDetail from './component/room_details/room_detail';
 import ManagerTour from './admin/service-manager/tours/tours';
 import TourSetting from './admin/service-manager/tours/tour-setting';
+// import BookingTour2 from './component/booking-tour/booking-tour';
 import BookingTour from './component/booking-tour/booking-tour';
+import BookingSuccess from './component/booking-tour/booking-success';
+import InfoBookingTour from './component/info-booking-tour/info-booking-tour';
+
+// tour
+import LuxuryTour from './component/tours/luxury-tour';
+import StandardTour from './component/tours/standard-tour';
+import SaveTour from './component/tours/save-tour';
+import DiscountTour from './component/tours/discount-tour';
 
 import LoginNV from './admin/NhanVienLogin';
 
@@ -37,7 +46,10 @@ import CapNhatNV from "./admin/huongdanvien/CapNhatThongTin/cap-nhat";
 // kiểm duyệt viên
 import DashboardKDV from "./admin/kiemduyetvien/dashboard/dashboard-hotel";
 import CapNhatNVKD from "./admin/kiemduyetvien/CapNhatThongTin/cap-nhat";
-
+import NewBookingTour from './admin/kiemduyetvien/new-booking-tour/new-booking-tour';
+import RefundBookingTour from './admin/kiemduyetvien/refund-booking-tour/refund-booking-tour';
+import BookingRecord from './admin/kiemduyetvien/booking-records/booking-records';
+import ApprovedApplication from './admin/kiemduyetvien/approved-application/approved-application';
 
 
 // app.render(
@@ -55,7 +67,7 @@ function App() {
     <div className="App">
         <div className="content-wrapper max-w-screen-2xl text-base mx-auto">
             {/* <Header /> */}
-            <BrowserRouter>
+            {/* <BrowserRouter> */}
             <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -77,7 +89,15 @@ function App() {
                 <Route path="/room-details/:id"  element={<RoomDetail  />} /> 
                 <Route path="/tours-manager"  element={<ManagerTour  />} /> 
                 <Route path="/tours-setting/:id"  element={<TourSetting  />} /> 
-                <Route path="/booking-tour/:id"  element={<BookingTour  />} /> 
+                <Route path="/booking-tour/:id"  element={<BookingTour  />} />
+                <Route path="/success/:id"  element={<BookingSuccess  />} />
+                <Route path="/info-booking-tour"  element={<InfoBookingTour  />} /> 
+
+                {/* tour */}
+                <Route path="/luxury-tour"  element={<LuxuryTour  />} />
+                <Route path="/standard-tour"  element={<StandardTour  />} />
+                <Route path="/save-tour"  element={<SaveTour  />} />
+                <Route path="/discount-tour"  element={<DiscountTour  />} />
 
                 <Route path="/login-nv" element={<LoginNV />} />
 
@@ -99,11 +119,15 @@ function App() {
               element={<DashboardKDV />}
             />
             <Route path="/cap-nhat-kd" element={<CapNhatNVKD />} />
+            <Route path="/new-booking-tour" element={<NewBookingTour />} />
+            <Route path="/refund-booking-tour" element={<RefundBookingTour />} />
+            <Route path="/booking-records" element={<BookingRecord />} />
+            <Route path="/approved-application" element={<ApprovedApplication />} />
 
             {/* khach hang */}
                 {/* <Section /> */}
               </Routes>
-            </BrowserRouter>
+            {/* </BrowserRouter> */}
             
             {/* <Footer /> */}
         </div>

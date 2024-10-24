@@ -7,10 +7,11 @@ import { fetchTourSchedule } from "../api/tours";
 import { fetchTourRating } from "../api/tours";
 import { fetchTourImages } from "../api/tours";
 import { fetchTourDepart } from "../api/tours";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import PriceDisplay from "../service/money";
 import DiscountDisplay from "../service/discount";
+import { toast } from 'react-toastify';
 
 function TourDetails(){
 
@@ -44,6 +45,7 @@ function TourDetails(){
     const [averageRating, setAverageRating] = useState(0);
     const [totalReviews, setTotalReviews] = useState(0);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
@@ -102,15 +104,21 @@ function TourDetails(){
               const reviewsData = responseRating.data;
               setTourRating(reviewsData);
       
-              // Tính tổng số sao và số lượng đánh giá
-              const totalRating = reviewsData.reduce((sum, review) => sum + Number(review.rating), 0);
-              const totalReviewsCount = reviewsData.length;
-            //   const average = totalRating / totalReviewsCount;
+               // Kiểm tra nếu reviewsData là mảng và không rỗng
+                if (Array.isArray(reviewsData) && reviewsData.length > 0) {
+                    // Tính tổng số sao và số lượng đánh giá
+                    const totalRating = reviewsData.reduce((sum, review) => sum + Number(review.rating), 0);
+                    const totalReviewsCount = reviewsData.length;
+                    //   const average = totalRating / totalReviewsCount;
 
-              const average = totalReviewsCount > 0 ? totalRating / totalReviewsCount : 0;
-      
-              setAverageRating(average);
-              setTotalReviews(totalReviewsCount);
+                    const average = totalReviewsCount > 0 ? totalRating / totalReviewsCount : 0;
+            
+                    setAverageRating(average);
+                    setTotalReviews(totalReviewsCount);
+                } else {
+                    // Xử lý khi không có dữ liệu reviews
+                    console.log('Chưa có đánh giá nào.');
+                }
             } catch (error) {
               console.error("Error fetching reviews:", error);
             }
@@ -161,6 +169,23 @@ function TourDetails(){
         return stars;
     };
     renderStarsReview();
+
+    const handleBookingClick = () => {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const userData = localStorage.getItem('user');
+        const user = JSON.parse(userData);
+        console.log("User ID:", user.id); // Lấy ID người dùng 
+           
+        
+        if (user) {
+            // Nếu đã đăng nhập, chuyển hướng đến trang đặt tour
+            navigate(`/booking-tour/${tourDetails.id}?selectedTour=${selectedTour}`);
+        } else {
+            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            navigate('/login');
+            toast.warning('Bạn cần đăng nhập để đặt tour')
+        }
+    };
 
     if (error) return <p>{error}</p>;
 
@@ -275,7 +300,8 @@ function TourDetails(){
                             </div>
                             <div className="h-[1px] bg-gray-300 my-3"></div>
                             <div>
-                            {tourSchedule.map((tourSchedule) => (
+                            {tourSchedule && Array.isArray(tourSchedule) && tourSchedule.length > 0 ? (
+                            tourSchedule.map((tourSchedule) => (
                                 <div key={tourSchedule.id}>
                                     <div className="text-left flex bg-[#0194F3] text-white rounded-md items-center">
                                         <p className="mr-1 py-1 ml-3 font-medium text-lg">Ngày {tourSchedule.date}</p>
@@ -292,8 +318,10 @@ function TourDetails(){
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-
+                            ))
+                            ) : (
+                                <p>Chưa có lịch trình</p>
+                            )}
                             </div>
                             <div className="w-full">
                                 <div className="text-left font-semibold uppercase text-lg mt-11 mb-2">Đánh giá & Bình luận</div>
@@ -376,7 +404,15 @@ function TourDetails(){
                                     Khởi hành:
                                 </div>
                                 <div className="w-[70%]">
-                                    {tourDetails.depart}   
+                                {tourDepart && Array.isArray(tourDepart) && tourDepart.length > 0 ? (
+                                        tourDepart.map((tourDepart) => (  
+                                            <div key={tourDepart.id}>
+                                                {new Date(tourDepart.day_depart).toLocaleDateString('vi-VN')}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div>Chưa có ngày khởi hành</div>
+                                    )}
                                 </div>
                             </div>
                             <div className="h-[1px] mx-3 bg-gray-200"></div>
@@ -408,21 +444,34 @@ function TourDetails(){
                             </div>
                             <div className="w-full pb-4 text-black">
                                 <select className="w-[95%] rounded-md h-9 outline-none"  
-                                    
+                                    value={selectedTour}
                                     onChange={handleSelectChange} 
                                 >
                                     <option value="">Chọn ngày</option> {/* Tùy chọn mặc định */}
-                                    {tourDepart.map((tourDepart) => (
-                                        <option key={tourDepart.id} value={tourDepart.id}>{tourDepart.day_depart}</option>
-                                    ))}
+                                    {tourDepart && Array.isArray(tourDepart) && tourDepart.length > 0 ? (
+                                         tourDepart
+                                         .filter((tour) => new Date(tour.day_depart) > new Date()) // Lọc chỉ ngày > ngày hiện tại
+                                         .map((tour) => (
+                                            <option key={tour.id} value={tour.id}>{tour.day_depart}</option>
+                                        ))
+                                    ) : (
+                                        <option value="">Chưa được lên lịch</option> /* Tùy chọn mặc định */
+                                    )}
                                 </select>
                             </div>
-                            <div className='flex justify-center pb-4'>
+                            {/* <div className='flex justify-center pb-4'>
                                 <Link className="w-full flex justify-center" to={`/booking-tour/${tourDetails.id}?selectedTour=${selectedTour}`}>
                                 <div className="uppercase font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-black">
                                     Đặt tour
                                 </div>
                                 </Link>
+                            </div> */}
+                             <div className='flex justify-center pb-4'>
+                                {/* <Link className="w-full flex justify-center" to={`/booking-tour/${tourDetails.id}?selectedTour=${selectedTour}`}> */}
+                                <div onClick={handleBookingClick} className="uppercase font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-black">
+                                    Đặt tour
+                                </div>
+                                {/* </Link> */}
                             </div>
                         </div>
                     </div>

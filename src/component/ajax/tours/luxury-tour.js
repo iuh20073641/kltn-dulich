@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import { fetchTours } from "../../api/tours";
 import { fetchTourImages } from "../../api/tours";
-import { fetchTourSeachFull } from "../../api/tours";
-import { toast } from 'react-toastify';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 // import PriceDisplay from "../../service/money";
 import DiscountDisplay from "../../service/discount";
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { fetchTourSeach } from "../../api/tours";
+import { toast } from 'react-toastify';
 
-function TourList() {
+function LuxuryTourList() {
 
     const [tours, setTours] = useState([]);
     const [error, setError] = useState(null);
@@ -18,12 +18,11 @@ function TourList() {
     const [filteredTours, setFilteredTours] = useState([]);
     // const [filterLocation, setFilterLocation] = useState([]);
     const [selectedTourTypes, setSelectedTourTypes] = useState([]);
+    const [selectedPrice, setSelectedPrice] = useState("");
     const [destination, setDestination] = useState(""); // Địa danh
     // const [departureDate, setDepartureDate] = useState(""); // Ngày đi
     const [selectedDate, setSelectedDate] = useState('');
-    const [selectedPrice, setSelectedPrice] = useState("");
-
-
+    
     const priceRanges = [
         { label: 'Dưới 5 triệu', value: { min: 0, max: 5000000 } },
         { label: 'Từ 5 đến 10 triệu', value: { min: 5000000, max: 10000000 } },
@@ -42,6 +41,7 @@ function TourList() {
             setSelectedPrice(selectedRange);
         }
     };
+    
 
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
@@ -50,7 +50,10 @@ function TourList() {
                 // Gọi API để lấy danh sách phòng
                 const toursResponse = await fetchTours();
                 const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-                setTours(toursData);
+
+                // Lọc những tour loại cao cấp
+                const premiumTours = toursData.filter(tour => tour.style === 'Cao cấp');
+                setTours(premiumTours); // Cập nhật state với danh sách tour cao cấp        
 
                 // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
                 const imagePromises = toursData.map(async (tour) => {
@@ -105,22 +108,6 @@ function TourList() {
     //     }
     // }, [filterLocation, tours]);
 
-    // useEffect(() => {
-    //     let filtered = filteredTours.length > 0 ? [...filteredTours] : [...tours];
-        
-    //     // Lọc theo địa điểm nếu có
-    //     // if (filterLocation.length > 0) {
-    //     //     filtered = filtered.filter((tour) => filterLocation.includes(tour.departurelocation));
-    //     // }
-
-    //     // Lọc theo kiểu tour nếu có
-    //     if (selectedTourTypes.length > 0) {
-    //         filtered = filtered.filter((tour) => selectedTourTypes.includes(tour.type));
-    //     }
-
-    //     setFilteredTours(filtered); // Cập nhật lại danh sách các tour đã được lọc
-    // }, [selectedPrice, destination, selectedTourTypes, tours, filteredTours]); // Chạy khi filterLocation, selectedTourTypes hoặc tours thay đổi
-
     useEffect(() => {
         let filtered = tours;
 
@@ -130,56 +117,89 @@ function TourList() {
         // }
 
         // Lọc theo kiểu tour nếu có
-    if (selectedTourTypes.length > 0) {
-            filtered = filtered.filter((filteredTours) => selectedTourTypes.includes(filteredTours.type));
+
+         // Lọc theo địa điểm
+        // if (destination) {
+        //     filtered = filtered.filter(tour => tour.area.toLowerCase().includes(destination.toLowerCase()));
+        // }
+
+        // Lọc theo khoảng giá
+        // if (selectedPrice) {
+        //     const { min, max } = setSelectedPrice;
+        //     filtered = filtered.filter(tour => tour.price >= min && tour.price <= max);
+        // }
+
+        // Lọc theo ngày đi
+        // if (departureDate) {
+        //     filtered = filtered.filter(tour => new Date(tour.departureDate).toDateString() === new Date(departureDate).toDateString());
+        // }
+
+        if (selectedTourTypes.length > 0) {
+            filtered = filtered.filter((tour) => selectedTourTypes.includes(tour.type));
         }
 
         setFilteredTours(filtered); // Cập nhật lại danh sách các tour đã được lọc
-    }, [ selectedTourTypes, tours]); // Chạy khi filterLocation, selectedTourTypes hoặc tours thay đổi
+    }, [selectedPrice,destination,selectedTourTypes, tours]); // Chạy khi filterLocation, selectedTourTypes hoặc tours thay đổi
+
+   
+        // Hàm gọi API
+        // const seachTour = async () => {
+            
+        //     try {
+        //         const response = await fetchTourSeach(destination, selectedDate, selectedPrice);
+                
+        //         setFilteredTours(response.data); // Lưu kết quả booking data
+        //         console.log('Booking Data:', response.data);
+                
+        //     } catch (err) {
+        //         console.error("Error fetching booking data:", err);
+        //     }
+        // };
     
-    const seachTour = async () => {
-
-        if (!destination || !selectedDate || !selectedPrice) {
-            toast.warning("Vui lòng nhập đầy đủ thông tin tìm kiếm!");
-            return; // Dừng lại nếu thiếu điều kiện
-        }
-        try {
-            // Gọi API để lấy danh sách phòng
-            const toursResponse = await fetchTourSeachFull(destination, selectedDate, selectedPrice);
-            const toursData = toursResponse.data || []; // Giả sử API trả về mảng các tour
-
-            if (Array.isArray(toursData)) {
-                setFilteredTours(toursData);
-                console.log(toursData);
-
-                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
-                const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
-                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
-                    return { tourId: tour.id, image: imageResponse.data };
-                });
-
-                // Đợi tất cả các lời gọi API hoàn tất
-                const allImages = await Promise.all(imagePromises);
-
-                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
-                const imageMap = {};
-                allImages.forEach(item => {
-                    imageMap[item.tourId] = item.image;
-                });
-                setTourImages(imageMap);
-            } else {
-                // console.error("Data fetched is not an array");
-                setFilteredTours([]);
+        const seachTour = async () => {
+            const style = 'Cao cấp';
+            if (!destination || !selectedDate || !selectedPrice) {
+                toast.warning("Vui lòng nhập đầy đủ thông tin tìm kiếm!");
+                return; // Dừng lại nếu thiếu điều kiện
             }
+            try {
+                // Gọi API để lấy danh sách phòng
+                const toursResponse = await fetchTourSeach(destination, selectedDate, selectedPrice, style);
+                const toursData = toursResponse.data || []; // Giả sử API trả về mảng các tour
 
-        } catch (err) {
-            console.error('Error fetching data:', err);
-            setError(err);
-        }
-    };
+                if (Array.isArray(toursData)) {
+                    setFilteredTours(toursData);
+                    console.log(toursData);
+
+                    // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
+                    const imagePromises = toursData.map(async (tour) => {
+                        const imageResponse = await fetchTourImages(tour.id);
+                        // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
+                        return { tourId: tour.id, image: imageResponse.data };
+                    });
+
+                    // Đợi tất cả các lời gọi API hoàn tất
+                    const allImages = await Promise.all(imagePromises);
+
+                    // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
+                    const imageMap = {};
+                    allImages.forEach(item => {
+                        imageMap[item.tourId] = item.image;
+                    });
+                    setTourImages(imageMap);
+                } else {
+                    // console.error("Data fetched is not an array");
+                    setFilteredTours([]);
+                }
+
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError(err);
+            }
+        };
 
     if (error) return <div>Error: {error.message}</div>;
+
 
     return (
         <div>
@@ -195,11 +215,11 @@ function TourList() {
                     <div className="font-semibold text-base ml-3">Ngày đi</div>
                     <div>
                         <input type="date" value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            className="w-full px-3 py-2"
+                            onChange={(e) => setSelectedDate(e.target.value)} 
+                            className="w-full px-3 py-2"  
                         />
                     </div>
-                </div>
+                </div> 
                 <div className="h-[70px] w-[1px] bg-gray-200"></div>
                 <div className="ml-2 my-3 w-1/5 text-left text-black">
                     <div className="font-semibold text-base ml-3">Ngân sách</div>
@@ -217,7 +237,7 @@ function TourList() {
                                 <em>None</em>
                             </MenuItem>
                             {priceRanges.map((range, index) => (
-                                <MenuItem key={index} value={JSON.stringify(range.value)}>{range.label}</MenuItem>
+                            <MenuItem key={index} value={JSON.stringify(range.value)}>{range.label}</MenuItem>
                             ))}
                         </Select>
                     </div>
@@ -231,36 +251,12 @@ function TourList() {
             <div className="flex">
                 <div className="w-[25%] pr-4 pl-4 lg:mb-0 mb-4 ps-4">
                     <nav className="relative flex flex-wrap items-center content-between py-3 px-2  text-black">
-                        <div className="container max-w-full mx-auto sm:px-4 lg:flex-col items-stretch bg-[#008fea]">
-                            <h4 className="my-2 font-semibold text-left text-white">Bạn muốn khởi hành từ đâu?</h4>
-                            {/* <button className="py-1 px-2 text-md leading-normal bg-transparent border border-transparent rounded" type="button" data-bs-toggle="collapse" data-bs-target="#filterDropdown" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                            <span className="px-5 py-1 border border-gray-600 rounded" />
-                                        </button> */}
-
-                            {/* Area  */}
-                            {/* <div className="bg-[#008fea] font-medium mb-3">
-                            <div className="w-full text-left bg-white rounded-md mb-1">
-                                <input type="checkbox" onChange={handleFilterChange} value='Hồ Chí Minh' className="mx-2 my-3" />Hồ Chí Minh
-                            </div>
-                            <div className="w-full text-left bg-white rounded-md mb-1">
-                                <input type="checkbox" value="Hà Nội"
-                                    onChange={handleFilterChange} className="mx-2 my-3" />Hà Nội
-                            </div>
-                            <div className="w-full text-left bg-white rounded-md mb-1">
-                                <input type="checkbox" value="Đà Nẵng"
-                                    onChange={handleFilterChange} className="mx-2 my-3" />Đà Nẵng
-                            </div>
-                        </div> */}
-
-                        </div>
+                        
 
                         <div className="container max-w-full mx-auto sm:px-4 lg:flex-col items-stretch bg-[#008fea]">
                             <h4 className="my-2 font-semibold text-left text-white">Kiểu tour?</h4>
-                            {/* <button className="py-1 px-2 text-md leading-normal bg-transparent border border-transparent rounded" type="button" data-bs-toggle="collapse" data-bs-target="#filterDropdown" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                            <span className="px-5 py-1 border border-gray-600 rounded" />
-                                        </button> */}
 
-                            {/* Area  */}
+                            {/* kiểu tour  */}
                             <div className="bg-[#008fea] font-medium mb-3">
                                 <div className="w-full text-left bg-white rounded-md mb-1">
                                     <input type="checkbox" onChange={handleTourTypeChange} value='Gia đình' className="mx-2 my-3" />Gia đình
@@ -282,6 +278,7 @@ function TourList() {
                 {Array.isArray(filteredTours) && filteredTours.length > 0 ? (
                     <div className="grid grid-cols-3 gap-x-6 gap-y-4">
                         {/* đây là nơi chứa sản phẩm */}
+                        
                         {filteredTours.map((tour) => (
                             <div className="w-full tqd-products border-[1px] border-b-gray-200" key={tour.id}>
                                 <div className='h-[210px] overflow-hidden'>
@@ -307,8 +304,8 @@ function TourList() {
                                 </div>
                                 <div className="text-left h-[70px] px-2 py-2 bg-gray-200">
                                     {/* <a href="https://www.facebook.com/" className="text-lg font-normal cursor-pointer hover:text-[#13357B]">
-                                                Du lịch Đà Nẵng 3 ngày 2 đêm: Lịch trình chi tiết 
-                                            </a> */}
+                                            Du lịch Đà Nẵng 3 ngày 2 đêm: Lịch trình chi tiết 
+                                        </a> */}
                                     <Link to={`/tour-details/${tour.id}`}><p className="text-lg font-normal line-clamp-2 cursor-pointer hover:text-[#13357B]">
                                         {tour.name}
                                     </p></Link>
@@ -353,6 +350,6 @@ function TourList() {
                 </div>
             </div>
         </div>
-    );
+    )
 }
-export default TourList;
+export default LuxuryTourList;

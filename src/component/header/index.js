@@ -82,21 +82,28 @@ function Header(){
                   <div id="dropdownMenu" className="z-20 w-[200px] -ml-24 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
                     <ul className="travel-header-dashboard-item text-[rgba(255,255,255,1.00)]">
                       <li>
-                        <div className="flex items-center my-1">
+                        <div className="flex items-center my-2">
                           <i className="fa-regular fa-user mx-2"></i> 
-                          <a href="https://www.facebook.com/">My Profile</a>
+                          <a href="https://www.facebook.com/"><p className='text-sm'>Người dùng</p></a>
                         </div>
                       </li>
                       <li>
-                        <div className="flex items-center my-1">
+                        <div className="flex items-center my-2">
                           <i className="fa-solid fa-bell mx-2"></i>
-                          <a href="https://www.facebook.com/">Notifications</a>
+                          <Link to={"/info-booking-tour"}><p className='text-sm'>Trạng thái đơn</p></Link>
+                          {/* <a href="https://www.facebook.com/"><p className='text-sm'>Trạng thái đơn</p></a> */}
                         </div>
                       </li>
                       <li>
-                        <div className="flex items-center my-1">
+                        <div className="flex items-center my-2">
+                          <i className="fa-solid fa-bell mx-2"></i>
+                          <a href="https://www.facebook.com/"><p className='text-sm'>Thông báo</p></a>
+                        </div>
+                      </li>
+                      <li>
+                        <div className="flex items-center my-2">
                           <i className="fa-solid fa-arrow-right-from-bracket mx-2"></i>
-                          <button onClick={handleLogout}>Log Out</button>
+                          <button onClick={handleLogout}><p className='text-sm'>Đăng xuất</p></button>
                         </div>
                       </li>
                     </ul>
@@ -141,9 +148,9 @@ function Header(){
                 </ul>
               </div>
             </li>
-            <li className="ct-top-menu-item">
+            {/* <li className="ct-top-menu-item">
               <a href="https://www.facebook.com/">Thuê xe</a>
-            </li>
+            </li> */}
             <li className="ct-top-menu-item">
               {/* <a href="https://www.facebook.com/">Contact</a> */}
               <Link to={"/contact"}>Liên hệ</Link> 

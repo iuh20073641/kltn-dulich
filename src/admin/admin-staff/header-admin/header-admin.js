@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
 function HeaderAdmin() {
+
+  const [isOpenTour, setIsOpenTour] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -17,6 +20,10 @@ function HeaderAdmin() {
 
     // Chuyển hướng đến trang đăng nhập
     navigate("/login-nv");
+  };
+
+  const toggleMenuTour = () => {
+    setIsOpenTour(!isOpenTour);
   };
 
   return (
@@ -53,6 +60,39 @@ function HeaderAdmin() {
                   <div className="inline-block py-2 px-4 no-underline text-white">
                     <Link to="/quanly-nv">Quản Lý Nhân Viên</Link>
                   </div>
+                </li>
+                <li className="">
+                  <button onClick={toggleMenuTour} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
+                    <span>Bookings Tour</span>
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+
+                    </span>
+                  </button>
+
+                  <div className={`mt-1 px-3 text-xs mb-1 transition-all duration-500 ease-in-out transform ${isOpenTour ? 'opacity-100 max-h-96 scale-100' : 'opacity-0 max-h-0 scale-95'
+                    } overflow-hidden`} id="bookingLinksTour">
+                    <ul className="flex flex-wrap list-none pl-0 mb-0  flex-col rounded border border-gray-600">
+                      <li className="">
+                        <a className="inline-block py-2 px-4 no-underline text-white" href="new_bookings1.php">
+                          New Bookings
+                        </a>
+                      </li>
+                      <li className="">
+                        <a className="inline-block py-2 px-4 no-underline text-white" href="refund_bookings1.php">
+                          Refund Bookings
+                        </a>
+                      </li>
+                      <li className="">
+                        <a className="inline-block py-2 px-4 no-underline text-white" href="booking_records1.php">
+                          Booking Records
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+
                 </li>
               </ul>
             </div>

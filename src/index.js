@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// import { browserRouter } from "react-router-dom";
+import { BrowserRouter } from 'react-router-dom';
 // cấu hình react-toastify
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,12 +14,12 @@ import "slick-carousel/slick/slick-theme.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    {/* <browserRouter> */}
+  // <React.StrictMode>
+    <BrowserRouter> 
       <App />
       <ToastContainer />
-    {/* </browserRouter> */}
-  </React.StrictMode>
+    </BrowserRouter>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

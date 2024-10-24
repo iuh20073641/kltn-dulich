@@ -1,9 +1,9 @@
-import HeaderAdmin from "../header-admin/header-admin";
+import HeaderCensor from "../header-admin/header-admin";
 
 function DashboardKDV() {
   return (
     <div>
-      <HeaderAdmin />
+      <HeaderCensor />
     </div>
   );
 }

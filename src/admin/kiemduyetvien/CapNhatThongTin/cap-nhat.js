@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import HeaderAdmin from "../header-admin/header-admin";
+import HeaderCensor from "../header-admin/header-admin";
 //import Chat from "../../../chat/Chat"; // Đường dẫn tới file Chat.js
 import { toast } from "react-toastify";
 
@@ -90,7 +90,7 @@ function CapNhatNVKD() {
 
   return (
     <div className="bg-gray-100 w-full">
-      <HeaderAdmin />
+      <HeaderCensor />
       <div
         className="container mx-auto sm:px-4 max-w-full -mt-[650px]"
         id="main-content"

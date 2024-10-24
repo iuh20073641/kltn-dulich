@@ -7,6 +7,7 @@ import { fetchDayDepart } from "../api/tours";
 import { getUsersData } from "../api/user";
 import { toast } from 'react-toastify';
 import TotalDisplay from "../service/total-price";
+import { loadStripe } from "@stripe/stripe-js";
 // import { fetchTourSchedule } from "../api/tours";
 // import { fetchTourRating } from "../api/tours";
 // import { fetchTourImages } from "../api/tours";
@@ -16,7 +17,7 @@ import React, { useEffect, useState } from 'react';
 // import DiscountDisplay from "../service/discount";
 
 const formTour = {
-    id_tour: "",
+    id: "",
     nametour: "",
     type: "",
     participant: "",
@@ -27,9 +28,29 @@ const formTour = {
     discount:"",
     itinerary: "",
     vehicle: "",
-    name: "",
+    nam_tk:"",
+    namend: "",
     cccd: "",
+    phone: "",
+    address: "",
 };
+
+const formUser = {
+    nametk: '',
+    email: '',
+    dob: '',
+    phone: '',
+    address: '',
+    namend: '',
+    cccd: ''
+};
+
+const formInput = {
+    namend: '',
+    cccd: '',
+    participant: ''
+};
+
 
 const dayDepart = {
     day: ""
@@ -42,7 +63,9 @@ function BookingTour(){
     // const [tourDetails, setTourDetails] = useState(null);
     const [tourData, setTourData] = useState({formTour});
     const [departData, setDepartData] = useState({dayDepart});
-    const [userData, setUserData] = useState({});
+    const [userDatas, setUserData] = useState({formUser});
+    const [formValue, setFormValue] = useState(formInput);
+    
     // const [tourSchedule, setTourSchedule] = useState([]);
     // const [tourDepart, setTourDepart] = useState([]);
     // // const [reviews, setReviews] = useState([]);
@@ -61,8 +84,17 @@ function BookingTour(){
     // const [numPeople, setNumPeople] = useState(1);  // Mặc định 1 người
     // const [totalPrice, setTotalPrice] = useState(0);  // Giá mặc định cho 1 người
     const [inputValue, setInputValue] = useState(''); // State để quản lý giá trị nhập
-    const [originalPrice, setOriginalPrice] = useState(0); // Giá gốc
-    const [discountPercent, setDiscountPercent] = useState(0); // Tỷ lệ giảm giá
+    // const [originalPrice, setOriginalPrice] = useState(tourData.price); // Giá gốc
+    // const [discountPercent, setDiscountPercent] = useState(0); // Tỷ lệ giảm giá
+    const [customers, setCustomers] = useState([]);
+    
+    // Hàm để xử lý thay đổi thông tin của từng khách hàng
+    const handleCustomerChange = (index, event) => {
+        const { name, value } = event.target;
+        const updatedCustomers = [...customers];
+        updatedCustomers[index][name] = value;
+        setCustomers(updatedCustomers);
+    };
 
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
@@ -167,47 +199,132 @@ function BookingTour(){
         setInputValue(value);
     };
 
-    // Hàm tính giá đã giảm
-    const calculateDiscountedPrice = (originalPrice, discountPercent) => {
-        console.log(originalPrice);
-        if (!originalPrice || !discountPercent) {
-          return originalPrice; // Nếu không có giá gốc hoặc tỷ lệ giảm giá, trả về giá gốc
-        }
-        const discountAmount = (originalPrice * discountPercent) / 100; // Tính số tiền giảm giá
-        return originalPrice - discountAmount; // Trả về giá sau khi đã giảm
-        
+    // Hàm xử lý khi thay đổi dữ liệu input
+    const handleInputChangeUser = (e) => {
+        const { name, value } = e.target;
+        userDatas({ ...userDatas, [name]: value });
+        setInputValue(value);
     };
+
+    const handleChangeInput = (event) => {
+        const { value, name } = event.target;
+        setFormValue({
+            ...formValue,
+            [name]: value,
+        });
+
+        // Nếu field name là "participants", thì cập nhật danh sách khách hàng
+        if (name === 'participant') {
+            const participantCount = parseInt(value, 10);
+            
+            // Tạo mảng khách hàng mới dựa trên số lượng người tham gia
+            const newCustomers = Array.from({ length: participantCount }, () => ({
+                name: '',
+                cccd: '',
+            }));
+            
+            // Cập nhật state customers
+            setCustomers(newCustomers);
+        }
+    };
+
+    // Hàm tính giá đã giảm
+    // const calculateDiscountedPrice = (originalPrice, discountPercent) => {
+    //     console.log(originalPrice);
+    //     if (!originalPrice || !discountPercent) {
+    //       return originalPrice; // Nếu không có giá gốc hoặc tỷ lệ giảm giá, trả về giá gốc
+    //     }
+    //     const discountAmount = (originalPrice * discountPercent) / 100; // Tính số tiền giảm giá
+    //     return originalPrice - discountAmount; // Trả về giá sau khi đã giảm
+        
+    // };
     
       // Tính giá đã giảm
-      const discountedPrice = calculateDiscountedPrice(originalPrice, discountPercent);
+    //   const discountedPrice = calculateDiscountedPrice(originalPrice, discountPercent);
       
       // Tính giá cuối cùng dựa trên số lượng người
-      const finalPrice = discountedPrice * inputValue;
+    //   const finalPrice = discountedPrice * inputValue;
+
+    // const handlePayment = async () => {
+    //     const response = await fetch('http://localhost:88/api_travel/api/create-payment-url.php', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             amount: finalPrice,  // Tổng tiền thanh toán
+    //             orderId: id,    // Mã đơn hàng
+    //             bankCode: null    // Mã ngân hàng (nếu cần)
+    //         }),
+    //     });
+    
+    //     const data = await response.json();
+    //     if (data.paymentUrl) {
+    //         window.location.href = data.paymentUrl; // Điều hướng đến URL thanh toán
+    //     }
+    // };
+
+    const stripePromise = loadStripe(
+        "pk_test_51Q8m79Rqz8axCXq0oW0OaP1KhZHGkV5Wl1sYMRgVPYgsZwOy78KJnDCwpHh28VRJYSvVoHDP4Jr9UGbBICFD3xxm00NkH3YI5w"
+      );
+
+    //   const finalPrice = (tourData.price - (tourData.price/100*tourData.discount)) * formValue.participant;
+    //   console.log(finalPrice);
 
     const handlePayment = async () => {
-        const response = await fetch('http://localhost:88/api_travel/api/create-payment-url.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                amount: finalPrice,  // Tổng tiền thanh toán
-                orderId: id,    // Mã đơn hàng
-                bankCode: null    // Mã ngân hàng (nếu cần)
-            }),
-        });
+        const userData = localStorage.getItem('user');
+        const user = JSON.parse(userData);
+        const finalPrice = (tourData.price - (tourData.price/100*tourData.discount)) * formValue.participant;
+        console.log(tourData.name);
+        try {
+          const response = await fetch(
+            "http://localhost:88/api_travel/api/create-checkout-session.php",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                amount: finalPrice, // Stripe expects the amount in cents
+                // user_id: user.id,
+                // id_tour: tourData.id,
+                // depar_id: selectedTour,
+                // participant: formValue.participant,
+                // price_tour: tourData.price,
+                // name_user: formValue.namend,
+                // phone: userDatas.phone,
+                // address: userDatas.address,
+                // tour_name: tourData.name,
+                success_url: `http://localhost:3000/success/${tourData.id}?user_id=${user.id}&depar_id=${selectedTour}&participant=${formValue.participant}&price_tour=${tourData.price}&total_pay=${finalPrice}&name_user='${encodeURIComponent(formValue.namend)}'&phone=${userDatas.phone}&address='${encodeURIComponent(userDatas.address)}'&tour_name='${encodeURIComponent(tourData.name)}'`,
+                // cancel_url: "http://localhost:3000/cancel",
+              }),
+            }
+          );
     
-        const data = await response.json();
-        if (data.paymentUrl) {
-            window.location.href = data.paymentUrl; // Điều hướng đến URL thanh toán
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+    
+          const { id } = await response.json();
+          const stripe = await stripePromise;
+          const { error } = await stripe.redirectToCheckout({ sessionId: id });
+    
+          if (error) {
+            console.error("Error redirecting to checkout:", error);
+            alert("Failed to redirect to checkout. Please try again later.");
+          }
+        } catch (error) {
+            console.log(tourData.id_tour);
+        //   console.error("Error creating payment session:", `http://localhost:3000/success/${tourData.id}?user_id=${user.id}&depar_id=${selectedTour}&participant=${formValue.participant}&price_tour=${tourData.price}&total_pay=${finalPrice}&name_user='${encodeURIComponent(formValue.namend)}'&phone=${userDatas.phone}&address='${encodeURIComponent(userDatas.address)}'&tour_name='${encodeURIComponent(tourData.name)}'`);
+          alert("Failed to create payment session. Please try again later.");
         }
-    };
+      };
 
     const hendleDepartSubmit = async (event) => {
         const userData = localStorage.getItem('user');
         const user = JSON.parse(userData);
         event.preventDefault(); //để không tự động reset
-        console.log("formValue", tourData.participant);
+        console.log("formValue", formValue.cccd);
         fetch('http://localhost:88/api_travel/api/create_booking_tour.php', {
             method: 'POST',
             headers: {
@@ -217,7 +334,14 @@ function BookingTour(){
                 user_id: user.id,
                 id_tour: id,
                 depar_id: selectedTour,
-                participant: tourData.participant,
+                participant: formValue.participant,
+                price_tour: tourData.price,
+                name_user: formValue.namend,
+                cccd: formValue.cccd,
+                phone: userDatas.phone,
+                address: userDatas.address,
+                tour_name: tourData.name,
+                customers: customers
              }),
           })
           .then(response => response.json())
@@ -247,20 +371,20 @@ function BookingTour(){
                 <div className="w-[80%] mt-[150px] mx-auto">
                     <div className="font-semibold uppercase text-2xl text-center mb-5">Thông tin đặt tour</div>
                     <div className="w-[60%] mx-auto bg-gray-100 px-2 py-3 rounded-md mb-4">
-                    {userData && userData.id ? (
+                    {userDatas && userDatas.id ? (
                         <div className="mt-5 pl-3">
                             <div className="text-left text-lg font-medium mb-5">Thông tin người dùng</div>
                             <div className="flex gap-x-3">
                                 <div className="text-left mb-2 w-1/2">
                                     <div>Tên tài khoản</div>
                                     <div>
-                                        <input type='text' value={userData.nametk} name='name_tk' className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
+                                        <input type='text' value={userDatas.nametk} name='nametk' onChange={handleInputChangeUser} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' readOnly></input>
                                     </div>
                                 </div>
                                 <div className="text-left mb-2 w-1/2">
                                     <div>Email</div>
                                     <div>
-                                        <input type='text' name='email' value={userData.email} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
+                                        <input type='text' name='email' value={userDatas.email} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
                                     </div>
                                 </div>
                             </div>
@@ -268,33 +392,37 @@ function BookingTour(){
                                 <div className="text-left mb-2 w-1/2">
                                     <div>Ngày sinh</div>
                                     <div>
-                                        <input type='text' name='dob' value={userData.dob} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
+                                        <input type='text' name='dob' value={userDatas.dob} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
                                     </div>
                                 </div>
                                 <div className="text-left w-1/2">
                                     <div>Số điện thoại</div>
                                     <div>
-                                        <input type='text' name='phonenum' value={userData.phone} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
+                                        <input type='text' name='phonenum' value={userDatas.phone} className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
                                     </div>
                                 </div>
                             </div>
                             <div className="text-left mb-2">
                                 <div>Địa chỉ</div>
                                 <div>
-                                    <input type='text' name='address' value={userData.address} className='w-[97%] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
+                                    <input type='text' name='address' value={userDatas.address} onChange={handleInputChangeUser} className='w-[97%] bg-white outline-none px-2 py-1 rounded-md' disabled></input>
                                 </div>
                             </div>
                             <div className="flex gap-x-3 mb-2">
                                 <div className="text-left mb-2 w-1/2">
                                     <div>Họ tên</div>
                                     <div>
-                                        <input type='text' name='name' className='w-[300px] outline-none px-2 py-1 rounded-md' required></input>
+                                        <input type='text' name='namend' value={formValue.namend} 
+                                                onChange={handleChangeInput} 
+                                                className='w-[300px] outline-none px-2 py-1 rounded-md' 
+                                                required>
+                                        </input>
                                     </div>
                                 </div>
                                 <div className="text-left mb-2 w-1/2">
                                     <div>CCCD/CMND</div>
                                     <div>
-                                        <input type='text' name='cccd' className='w-[300px] outline-none px-2 py-1 rounded-md' required></input>
+                                        <input type='text' name='cccd' value={formValue.cccd} onChange={handleChangeInput} className='w-[300px] outline-none px-2 py-1 rounded-md' required></input>
                                     </div>
                                 </div>
                             </div>
@@ -310,7 +438,7 @@ function BookingTour(){
                                     <div>Mã tour</div>
                                     <div>
                                         <input type='text' 
-                                            name='id_tour'
+                                            name='id'
                                             value={tourData.id}
                                             onChange={handleInputChange}
                                             className='w-[300px] bg-white outline-none px-2 py-1 rounded-md' disabled>
@@ -346,7 +474,8 @@ function BookingTour(){
                                     <input type='number' 
                                         name='nametour' 
                                         value={tourData.price}
-                                        onChange={(e) => setOriginalPrice(parseFloat(e.target.value))}
+                                        // onChange={(e) => setOriginalPrice(parseFloat(e.target.value))}
+                                        onChange={handleInputChange}
                                         className='w-[97%] bg-white outline-none px-2 py-1 rounded-md' hidden>
                                     </input>
                                 </div>
@@ -356,8 +485,8 @@ function BookingTour(){
                                 <div>
                                     <input type='number' 
                                         name='nametour' 
-                                        value={tourData.discount}
-                                        onChange={(e) => setDiscountPercent(parseFloat(e.target.value))}
+                                        // value={tourData.discount}
+                                        // onChange={(e) => setDiscountPercent(parseFloat(e.target.value))}
                                         className='w-[97%] bg-white outline-none px-2 py-1 rounded-md' hidden>
                                     </input>
                                 </div>
@@ -368,8 +497,8 @@ function BookingTour(){
                                     <div>
                                         <input type='number' 
                                             name='participant' 
-                                            value={tourData.participant}
-                                            onChange={handleInputChange}
+                                            value={formValue.participant} 
+                                            onChange={handleChangeInput}
                                             className='w-[300px] outline-none px-2 py-1 rounded-md' required>
                                         </input>
                                     </div>
@@ -405,6 +534,39 @@ function BookingTour(){
                         ) : (
                             <p>Đang tải...</p> // Hiển thị thông báo đang tải khi chưa có dữ liệu
                         )}
+                        
+                        <div className="mx-3 mt-5">
+                            <div className="text-left text-lg font-medium mb-5">Thông tin thành viên</div>
+                            {customers.map((customer, index) => (
+                            <div key={index} className="customer-form text-left mt-4 bg-white rounded-md py-3">
+                                <h3 className="font-medium mb-3 mx-2">Khách hàng {index + 1}</h3>
+                                <div className="flex gap-4 mx-2">
+                                    <div>
+                                        <label>Tên:</label>
+                                        <input
+                                            type="text"
+                                            className="mx-2 border-[1px] border-gray-200 rounded-sm px-1 py-[2px] outline-none focus:border-gray-400 focus:border-[2px]"
+                                            name="name"
+                                            value={customer.name}
+                                            onChange={(e) => handleCustomerChange(index, e)}
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label>CCCD/CMND:</label>
+                                        <input
+                                            type="text"
+                                            className="mx-2 border-[1px] border-gray-200 rounded-sm px-1 py-[2px] outline-none focus:border-gray-400 focus:border-[2px]"
+                                            name="cccd"
+                                            value={customer.cccd}
+                                            onChange={(e) => handleCustomerChange(index, e)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
                         {tourData && tourData.id ? (
                         <div className="mt-5">
                             <div className="w-[35%] ml-auto text-left">
