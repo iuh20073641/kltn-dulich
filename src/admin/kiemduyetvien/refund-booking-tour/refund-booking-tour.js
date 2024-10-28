@@ -176,10 +176,10 @@ function RefundBookingTour() {
                                     <table className="w-full max-h-[370px] text-left max-w-full mb-4 bg-transparent table-hover border" style={{ minWidth: 1200 }}>
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-[40px]">
-                                                <th scope="col" className="pl-3">Mã đơn</th>
-                                                <th scope="col">Người đặt</th>
-                                                <th scope="col">Đơn đặt</th>
-                                                <th scope="col">Tiền hoàn</th>
+                                                <th scope="col" className="px-3 w-[100px]">Mã đơn</th>
+                                                <th scope="col" className="px-3 w-[300px]">Người đặt</th>
+                                                <th scope="col" className="px-3 w-[400px]">Đơn đặt</th>
+                                                <th scope="col" >Tiền hoàn</th>
                                                 <th scope="col">Trạng thái</th>
                                             </tr>
                                         </thead>
@@ -187,7 +187,7 @@ function RefundBookingTour() {
                                         {filteredBookings.map((refundBooking, index) => (
                                             <tr key={refundBooking.booking_id}>
                                                 <td className="pl-3">{refundBooking.booking_id}</td>
-                                                <td>
+                                                <td className="px-3">
                                                     <span class='bg-[#0d6efd] text-white text-xs px-2 py-[2px] rounded-md'>
                                                         Mã thanh toán : {refundBooking.order_id}
                                                     </span>
@@ -196,7 +196,7 @@ function RefundBookingTour() {
                                                     <br />
                                                     <b>SĐT :</b> {refundBooking.phonenum}
                                                 </td>
-                                                <td>
+                                                <td className="px-3">
                                                     <b>Tên :</b> {refundBooking.tour_name}
                                                     <br />
                                                     <b>Ngày khởi hành :</b> {refundBooking.departure_id} 
@@ -207,11 +207,11 @@ function RefundBookingTour() {
                                                 <div className="flex">
                                                     <b className="mr-2">Tổng tiền :</b>  <PriceDisplay price={refundBooking.total_pay} />
                                                 </div>
-                                                {refundBookings.map((booking) => (
+                                                {/* {refundBookings.map((booking) => ( */}
                                                     <div className="flex">
-                                                        <b className="mr-2">Tiền hoàn :</b>  <PriceDisplay price={booking.refundAmount ? booking.refundAmount : refundBooking.total_pay} />
+                                                        <b className="mr-2">Tiền hoàn :</b>  <PriceDisplay price={refundBooking.refundAmount ? refundBooking.refundAmount : refundBooking.total_pay} />
                                                     </div>
-                                                ))}
+                                                {/* ))} */}
                                                 </td>
                                                 <td>
                                                     <button type='button' onClick={() => updateConfirmBooking(refundBooking.booking_id)} class='text-sm bg-[#198754] hover:bg-[#21784f] text-white px-2 py-1 rounded-md shadow-none'>

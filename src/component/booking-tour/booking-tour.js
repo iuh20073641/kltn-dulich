@@ -275,6 +275,9 @@ function BookingTour(){
         const userData = localStorage.getItem('user');
         const user = JSON.parse(userData);
         const finalPrice = (tourData.price - (tourData.price/100*tourData.discount)) * formValue.participant;
+
+        const customersString = JSON.stringify(customers); // Chuyển đổi thành chuỗi JSON
+
         console.log(tourData.name);
         try {
           const response = await fetch(
@@ -295,7 +298,7 @@ function BookingTour(){
                 // phone: userDatas.phone,
                 // address: userDatas.address,
                 // tour_name: tourData.name,
-                success_url: `http://localhost:3000/success/${tourData.id}?user_id=${user.id}&depar_id=${selectedTour}&participant=${formValue.participant}&price_tour=${tourData.price}&total_pay=${finalPrice}&name_user='${encodeURIComponent(formValue.namend)}'&phone=${userDatas.phone}&address='${encodeURIComponent(userDatas.address)}'&tour_name='${encodeURIComponent(tourData.name)}'`,
+                success_url: `http://localhost:3000/success/${tourData.id}?user_id=${user.id}&depar_id=${selectedTour}&participant=${formValue.participant}&price_tour=${tourData.price}&total_pay=${finalPrice}&name_user=${encodeURIComponent(formValue.namend)}&phone=${userDatas.phone}&address=${encodeURIComponent(userDatas.address)}&tour_name=${encodeURIComponent(tourData.name)}&cccd=${formValue.cccd}&customers=${encodeURIComponent(customersString)}`,
                 // cancel_url: "http://localhost:3000/cancel",
               }),
             }

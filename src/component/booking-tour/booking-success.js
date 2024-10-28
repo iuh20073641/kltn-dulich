@@ -15,11 +15,16 @@ function BookingSuccess(){
     const participant = queryParams.get('participant');
     const priceTour = queryParams.get('price_tour');
     const totalPay = queryParams.get('total_pay');
-    const nameUser = decodeURIComponent(queryParams.get('name_user')).replace(/^'|'$/g, '');
+    const nameUser = decodeURIComponent(queryParams.get('name_user'));
     const phone = queryParams.get('phone');
-    const address = decodeURIComponent(queryParams.get('address')).replace(/^'|'$/g, '');
-    const tourName = decodeURIComponent(queryParams.get('tour_name')).replace(/^'|'$/g, '');
-
+    const address = decodeURIComponent(queryParams.get('address'));
+    const tourName = decodeURIComponent(queryParams.get('tour_name'));
+    const cccd = queryParams.get('cccd');
+    // Do dữ liệu customers bị mã hóa thành chuỗi, cần xử lý lại
+    const customers = JSON.parse(decodeURIComponent(queryParams.get('customers'))); 
+    // const rawCustomers = decodeURIComponent(queryParams.get('customers'));
+    // const cleanedCustomers = rawCustomers.replace(/^'|'$/g, '');
+    // const customers = JSON.parse(cleanedCustomers);
     // Log các giá trị đã lấy
     console.log({
         userId,
@@ -30,7 +35,9 @@ function BookingSuccess(){
         nameUser,
         phone,
         address,
-        tourName
+        tourName,
+        cccd,
+        customers
     });
 
     useEffect(() => {
@@ -52,7 +59,9 @@ function BookingSuccess(){
                     phone: phone,
                     address: address,
                     tour_name: tourName,
-                    totalPay: totalPay
+                    totalPay: totalPay,
+                    cccd: cccd,
+                    customers: customers
                 }),
             })
                 .then(response => response.json())

@@ -174,8 +174,6 @@ function TourDetails(){
         // Kiểm tra xem người dùng đã đăng nhập chưa
         const userData = localStorage.getItem('user');
         const user = JSON.parse(userData);
-        console.log("User ID:", user.id); // Lấy ID người dùng 
-           
         
         if (user) {
             // Nếu đã đăng nhập, chuyển hướng đến trang đặt tour

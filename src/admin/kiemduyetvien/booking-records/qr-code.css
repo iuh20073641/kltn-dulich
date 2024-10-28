@@ -1,0 +1,16 @@
+.qr-scanner-overlay {
+    position: fixed; /* Sử dụng fixed để khung nằm ở vị trí cố định */
+    top: 50%; /* Đặt ở giữa theo chiều dọc */
+    left: 50%; /* Đặt ở giữa theo chiều ngang */
+    width: 350px; /* Kích thước khung quét */
+    height: 350px; /* Kích thước khung quét */
+    border: 4px solid #f2f6f2; /* Màu sắc và độ dày của khung */
+    transform: translate(-50%, -50%); /* Để khung nằm chính giữa */
+    pointer-events: none; /* Để không ảnh hưởng đến các sự kiện chuột */
+    /* box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);  */
+}
+/* .qr-scanner-container {
+    width: 300px !important;
+    height: 200px !important;
+    position: relative !important;
+} */

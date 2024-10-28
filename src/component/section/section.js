@@ -58,7 +58,7 @@ function Section() {
 
 
 
-    const [tours, setTours] = useState([]);
+    const [toursDiscount, setToursDiscount] = useState([]);
     // const [error, setError] = useState(null);
     const [tourImages, setTourImages] = useState([]);
 
@@ -72,148 +72,50 @@ function Section() {
     const [tourStandardImages, setTourStandardImages] = useState([]);
 
     useEffect(() => {
-        // Hàm để gọi API và cập nhật state
-        const fetchData = async () => {
+        const fetchAllTours = async () => {
             try {
-                // Gọi API để lấy danh sách phòng
                 const toursResponse = await fetchTours();
                 const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-
-                // Lọc những tour loại cao cấp
-                const premiumTours = toursData.filter(tour => tour.discount > 0);
-                setTours(premiumTours); // Cập nhật state với danh sách tour cao cấp        
-
-                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
-                const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
-                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
-                    return { tourId: tour.id, image: imageResponse.data };
-                });
-
-                // Đợi tất cả các lời gọi API hoàn tất
-                const allImages = await Promise.all(imagePromises);
-
-                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
-                const imageMap = {};
-                allImages.forEach(item => {
-                    imageMap[item.tourId] = item.image;
-                });
-                setTourImages(imageMap);
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                // setError(err);
-            }
-        };
-
-        fetchData();
-
-        const fetchDataLuxury = async () => {
-            try {
-                // Gọi API để lấy danh sách phòng
-                const toursResponse = await fetchTours();
-                const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-
-                // Lọc những tour loại cao cấp
+    
+                // Lọc các loại tour khác nhau
+                const discountTours = toursData.filter(tour => tour.discount > 0);
                 const premiumTours = toursData.filter(tour => tour.style === 'Cao cấp');
-                setToursLuxury(premiumTours); // Cập nhật state với danh sách tour cao cấp        
-
-                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
+                const saveTours = toursData.filter(tour => tour.style === 'Tiết kiệm');
+                const standardTours = toursData.filter(tour => tour.style === 'Tiêu chuẩn');
+    
+                // Cập nhật state cho các loại tour
+                setToursDiscount(discountTours);
+                setToursLuxury(premiumTours);
+                setToursSave(saveTours);
+                setToursStandard(standardTours);
+    
+                // Tạo promises để lấy ảnh cho từng tour trong tất cả các loại
                 const imagePromises = toursData.map(async (tour) => {
                     const imageResponse = await fetchTourImages(tour.id);
-                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
                     return { tourId: tour.id, image: imageResponse.data };
                 });
-
-                // Đợi tất cả các lời gọi API hoàn tất
+    
                 const allImages = await Promise.all(imagePromises);
-
-                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
+    
+                // Tạo imageMap để dễ dàng truy xuất hình ảnh
                 const imageMap = {};
                 allImages.forEach(item => {
                     imageMap[item.tourId] = item.image;
                 });
+    
+                // Cập nhật state cho hình ảnh của từng loại tour
                 setTourLuxuryImages(imageMap);
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                // setError(err);
-            }
-        };
-
-        fetchDataLuxury();
-
-        const fetchDataSave = async () => {
-            try {
-                // Gọi API để lấy danh sách phòng
-                const toursResponse = await fetchTours();
-                const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-
-                // Lọc những tour loại cao cấp
-                const premiumTours = toursData.filter(tour => tour.style === 'Tiết kiệm');
-                setToursSave(premiumTours); // Cập nhật state với danh sách tour cao cấp        
-
-                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
-                const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
-                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
-                    return { tourId: tour.id, image: imageResponse.data };
-                });
-
-                // Đợi tất cả các lời gọi API hoàn tất
-                const allImages = await Promise.all(imagePromises);
-
-                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
-                const imageMap = {};
-                allImages.forEach(item => {
-                    imageMap[item.tourId] = item.image;
-                });
                 setTourSaveImages(imageMap);
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                // setError(err);
-            }
-        };
-
-        fetchDataSave();
-
-        const fetchDataStandard = async () => {
-            try {
-                // Gọi API để lấy danh sách phòng
-                const toursResponse = await fetchTours();
-                const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-
-                // Lọc những tour loại cao cấp
-                const premiumTours = toursData.filter(tour => tour.style === 'Tiêu chuẩn');
-                setToursStandard(premiumTours); // Cập nhật state với danh sách tour cao cấp        
-
-                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
-                const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
-                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
-                    return { tourId: tour.id, image: imageResponse.data };
-                });
-
-                // Đợi tất cả các lời gọi API hoàn tất
-                const allImages = await Promise.all(imagePromises);
-
-                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
-                const imageMap = {};
-                allImages.forEach(item => {
-                    imageMap[item.tourId] = item.image;
-                });
                 setTourStandardImages(imageMap);
-
+                setTourImages(imageMap);
+    
             } catch (err) {
                 console.error('Error fetching data:', err);
-                // setError(err);
             }
         };
-
-        fetchDataStandard();
-
-    }, [tourSaveImages, toursSave]); // Chạy một lần khi component được mount
+    
+        fetchAllTours();
+    }, []); // Chỉ chạy một lần khi component được mount
 
     return (
         <main>
@@ -266,7 +168,7 @@ function Section() {
                 </div>
 
                 <Slider {...settingsTour}>
-                    {tours.map((tour) => (
+                    {toursDiscount.map((tour) => (
                         <div className="w-[200px] tqd-products border-[3px] border-white" key={tour.id}>
                             <div className='h-[210px] overflow-hidden'>
                                 {tourImages[tour.id] && Array.isArray(tourImages[tour.id]) && tourImages[tour.id].length > 0 ? (

@@ -102,3 +102,17 @@ export const fetchTourSeach = (destination, selectedDate, selectedPrice, style) 
 export const fetchTourDiscountSeach = (destination, selectedDate, selectedPrice) => {
   return api.get(`get_tour_discount_seach.php?destination=${destination}&date=${selectedDate}&priceRange=${selectedPrice}`);
 };
+
+// api lấy thông tin người tham gia của đơn đặt tour
+export const fetchParticipantsTourByBookingid = (bookingId) => {
+  return api.post(`/admin/get_participant_by_bookingId.php`, {
+    booking_id: bookingId, // Truyền booking_id trong body
+  });
+};
+
+// api lấy thông tin người tham gia của đơn đặt tour
+export const fetchBookingByQrcode = (bookingId) => {
+  return api.post(`/admin/qr_code.php`, {
+    booking_id: bookingId, // Truyền booking_id trong body
+  });
+};

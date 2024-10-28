@@ -227,11 +227,11 @@ function NewBookingTour() {
                                                     </td>
                                                     <td className="">
                                                         <button type='button' onClick={() => updateConfirmBooking(newBooking.booking_id)} className='btn text-white px-2 py-1 bg-[#2ec1ac] hover:bg-[#2c7c70] rounded-md text-sm custom-bg shadow-none' data-bs-toggle='modal' data-bs-target='#assign-room'>
-                                                            <i className="fa-regular fa-square-check"></i> Assign Room
+                                                            <i className="fa-regular fa-square-check"></i> Duyệt đơn
                                                         </button>
                                                         <br></br>
                                                         <button type='button' onClick={() => cancelBookingTour(newBooking.booking_id)} className='mt-2 px-2 py-1 rounded-md btn border-[1px] border-[#dc3545] text-[#dc3545] hover:bg-[#dc3545] hover:text-white text-sm shadow-none'>
-                                                            <i className='bi bi-trash'></i> Cancel Booking
+                                                            <i className='bi bi-trash'></i> Hủy đơn
                                                         </button>
                                                     </td>
                                                 </tr>

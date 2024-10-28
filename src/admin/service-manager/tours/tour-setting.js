@@ -51,7 +51,7 @@ function TourSetting(){
                 const toursScheduleResponse = await fetchTourSchedule(id);
                 const toursScheduleData = toursScheduleResponse.data; 
                 setTourSchedule(toursScheduleData);
-                // console.log('Dữ liệu từ API:', tourDetails);
+                
 
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -414,19 +414,23 @@ function TourSetting(){
                         <div className="font-semibold mb-3">
                             Lịch trình cụ thể
                         </div>
-                        {tourSchedule.map((tourSchedule) => (
-                        <div className="mb-2" key={tourSchedule.id}>
-                            <div className="flex">
-                                <div className="font-medium">Ngày {tourSchedule.date}</div>
-                                <div className="mx-2">
-                                    | {tourSchedule.locations}
+                        {Array.isArray(tourSchedule) && tourSchedule.length > 0 ? (
+                            tourSchedule.map((tourSchedule) => (
+                            <div className="mb-2" key={tourSchedule.id}>
+                                <div className="flex">
+                                    <div className="font-medium">Ngày {tourSchedule.date}</div>
+                                    <div className="mx-2">
+                                        | {tourSchedule.locations}
+                                    </div>
+                                </div> 
+                                <div>
+                                    {tourSchedule.schedule}
                                 </div>
-                            </div> 
-                            <div>
-                                {tourSchedule.schedule}
                             </div>
-                        </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p>Chưa có dữ liệu lịch trình cho tour.</p>
+                        )}
                     </div>
                     
                 </div>

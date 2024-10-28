@@ -1,9 +1,14 @@
 import HeaderCensor from "../header-admin/header-admin";
 import PriceDisplay from "../../../component/service/money";
 import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
 import React, { useEffect, useState } from 'react';
 import { fetchBookingRecordTour } from "../../../component/api/tours";
 import { fetchBookingRecordTourById } from "../../../component/api/tours";
+import { fetchParticipantsTourByBookingid } from "../../../component/api/tours";
+import { Link } from "react-router-dom";
+
+import '../../../component/font-times-new-roman-normal';
 
 function BookingRecord() {
 
@@ -15,6 +20,8 @@ function BookingRecord() {
     const [error, setError] = useState(null);
     const [isOpenModalInfo, setIsOpenModalInfo] = useState(false);
     const [bookingDetails, setBookingDetails] = useState(null);
+    const [participants, setParticipants] = useState([]);
+    // const [scannedData, setScannedData] = useState(null);
 
     // Bật/ẩn của sổ thông tin đơn đặt tour
     const handleModalClick = () => {
@@ -48,6 +55,8 @@ function BookingRecord() {
                 });
 
                 setBookingRecord(updatedRefundBookings);
+
+                
 
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -98,7 +107,7 @@ function BookingRecord() {
             // Lọc theo mã đơn hoặc tên người đặt (case-insensitive)
             // const searchLowerCase = searchQuery.toLowerCase();
             // Kiểm tra search query
-            console.log('Search Query:', searchQuery);
+            // console.log('Search Query:', searchQuery);
             const matchesSearchQuery = searchQuery
             ? booking.booking_id && booking.booking_id.toString().toLowerCase().includes(searchQuery.toLowerCase())
             : true; // Không lọc nếu không có searchQuery
@@ -132,32 +141,119 @@ function BookingRecord() {
         }
     };
 
-    const generatePDF = (bookingTour) => {
+    
+    const generatePDF = async(bookingTour) => {
+
+        const participantResponse = await fetchParticipantsTourByBookingid(bookingTour.booking_id);
+            const participantData = participantResponse.data; // Giả sử API trả về mảng các tour
+            setParticipants(participantData);
+
+            
+        console.log(participantData);
+       
         const doc = new jsPDF();
     
-        // Thêm tiêu đề và nội dung cho PDF
-        doc.setFontSize(18);
-        doc.text('Tour History Report', 20, 20);
-    
+        doc.setFont('font-times-new-roman', 'normal');
+
+        // Tạo mã QR dựa trên thông tin đơn tour (sử dụng booking_id làm ví dụ)
+        const qrData = bookingTour.booking_id; // Hoặc nội dung bạn muốn mã hóa
+        const qrCodeUrl = await QRCode.toDataURL(String(qrData || 'N/A'), { errorCorrectionLevel: 'M' });
+
+        const maxWidth = 130;
+
+        //Tiêu đề
+        const text = "HÓA ĐƠN TOUR";
+        const textWidth = doc.getTextWidth(text);
+        // Tính toán vị trí x để căn giữa
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const x = (pageWidth - textWidth) / 2; // Căn giữa
+        // Thêm văn bản vào PDF
+        doc.text(text, x, 10);
+
+         // Chèn mã QR vào PDF
+        const qrSize = 50; // Kích thước mã QR trong PDF
+        doc.addImage(qrCodeUrl, 'PNG', 160, 10, qrSize, qrSize); // Vị trí góc phải trên cùng
+
+        doc.setFontSize(14);
+        const textTour = "THÔNG TIN TOUR";
+        doc.text(textTour, 20, 35);
+
         doc.setFontSize(12);
-        doc.text(`Tour Name: ${bookingTour.tour_name}`, 20, 40);
-        doc.text(`Start Date: ${bookingTour.datetime}`, 20, 50);
-        // doc.text(`End Date: ${tour.endDate}`, 20, 60);
-        // doc.text(`Price: ${tour.price}`, 20, 70);
-        // doc.text(`Description: ${tour.description}`, 20, 80);
-    
-        // Thêm các thông tin khác của tour vào PDF
-        // Ví dụ thêm lịch sử tour
-        if (bookingTour.address) {
-          doc.text('Tour History:', 20, 90);
-          bookingTour.history.forEach((entry, index) => {
-            doc.text(`${index + 1}. ${entry.date} - ${entry.details}`, 20, 100 + index * 10);
-          });
+
+        doc.text(`Mã đơn: ${bookingTour.booking_id || 'N/A'}`, 20, 43);
+        
+        const tourName = doc.splitTextToSize(`Tên tour: ${bookingTour.tour_name + 1 || 'N/A'}`, maxWidth);
+        tourName.forEach((line, index) => {
+            doc.text(line, 20, 51 + (index * 5)); // Cách nhau 8 đơn vị
+        });
+
+        // const formattedPrice = (bookingTour.price || 0).toLocaleString('vi-VN', {
+        //     style: 'currency',
+        //     currency: 'VND'
+        // });
+        // doc.text(`Giá tour: ${formattedPrice || 'N/A'}`, 20, 51);
+        // doc.text(`Khuyến mãi: ${bookingTour.discount  || 'N/A'} %`, 70, 51);
+        doc.text(`Số người tham gia đi cùng: ${bookingTour.participant + 1 || 'N/A'}`, 20, 65);
+
+        const formattedTotal = (bookingTour.total_pay || 0).toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
+        doc.text(`Tổng giá: ${formattedTotal || 'N/A'}`, 20, 73);
+        doc.text(`Start Date: ${bookingTour.datetime || 'N/A'}`, 20, 81);
+        
+        doc.setFontSize(14);
+        const textCustomer = "THÔNG TIN KHÁCH HÀNG";
+        doc.text(textCustomer, 20, 89);
+
+        doc.setFontSize(12);
+        
+        doc.text(`Mã khách hàng: ${bookingTour.user_id || 'N/A'}`, 20, 97);
+        doc.text(`Tên khách hàng: ${bookingTour.user_name || 'N/A'}`, 20, 105);
+        doc.text(`Cccd: ${bookingTour.cccd || 'N/A'}`, 20, 113);
+        doc.text(`Số điện thoại: ${bookingTour.phonenum || 'N/A'}`, 20, 121);
+        doc.text(`Địa chỉ: ${bookingTour.address || 'N/A'}`, 20, 129);
+
+        const text3 = "Danh sách người đi cùng";
+        const textWidth2 = doc.getTextWidth(text3);
+        // Tính toán vị trí x để căn giữa
+        const pageWidth2 = doc.internal.pageSize.getWidth();
+        const x2 = (pageWidth2 - textWidth2) / 2; // Căn giữa
+        doc.text(text3, x2, 139);
+
+        // Vẽ bảng
+        const startY = 147; // Vị trí Y bắt đầu cho bảng
+        const rowHeight = 10; // Chiều cao của mỗi hàng
+        const columns = ["STT", "Tên", "CCCD"]; // Tiêu đề các cột
+
+        // Vẽ tiêu đề bảng
+        doc.setFontSize(12);
+        columns.forEach((col, index) => {
+            doc.text(col, 20 + (index * 60), startY); // Cách nhau 60 đơn vị
+        });
+
+        // Duyệt qua mảng participants và thêm từng người vào bảng
+        let yPosition = startY + rowHeight; // Bắt đầu vị trí Y cho dữ liệu
+        if (Array.isArray(participantData) && participantData.length > 0) {
+            console.log(participants);
+            participantData.forEach((participant, index) => {
+                doc.text(`${index + 1}`, 20, yPosition); // Số thứ tự
+                doc.text(participant.name || 'N/A', 80, yPosition); // Tên
+                doc.text(participant.cccd || 'N/A', 140, yPosition); // CCCD
+
+                // Vẽ đường kẻ ngang dưới mỗi hàng
+                doc.line(20, yPosition + 3, 190, yPosition + 3); // Đường kẻ ngang dưới hàng
+                yPosition += rowHeight; // Tăng vị trí Y
+            });
+        } else {
+            doc.text("Không có dữ liệu người tham gia.", 20, yPosition);
         }
+
     
         // Lưu file PDF với tên 'tour-history.pdf'
         doc.save('tour-history.pdf');
     };
+    
 
     if (error) return <div>Error: {error.message}</div>;
 
@@ -168,7 +264,17 @@ function BookingRecord() {
             <div className="container -mt-[590px] mx-auto sm:px-4 max-w-full" id="main-content">
                 <div className="flex flex-wrap ">
                     <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
-                        <h3 className="mb-4 text-left font-semibold text-2xl uppercase">Lịch sử đặt tour</h3>
+                        <div className="flex items-center">
+                            <h3 className="mb-4 text-left font-semibold text-2xl uppercase w-[50%]">Lịch sử đặt tour</h3>
+                            <div className="w-[50%] text-right">
+                                <Link to="/qr-code">
+                                    <div className="cursor-pointer">
+                                        <i className="fa-solid fa-qrcode text-2xl"></i>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+                       
                         <div className="relative flex flex-col min-w-0 rounded break-words border bg-white border-1 border-gray-300 shadow -mb-[9px]">
                             <div className="flex-auto p-6">
                                 <div className="flex">
@@ -204,12 +310,12 @@ function BookingRecord() {
                                     <table className="w-full max-h-[300px] text-left max-w-full mb-4 bg-transparent table-hover border" style={{ minWidth: 1200 }}>
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-[40px] sticky top-0 z-10">
-                                                <th scope="col" className="pl-3 sticky top-0 z-10">Mã đơn</th>
-                                                <th scope="col" className="sticky top-0 z-10">Người đặt</th>
-                                                <th scope="col" className="sticky top-0 z-10">Tour</th>
-                                                <th scope="col" className="sticky top-0 z-10">Thông tin đặt tour</th>
-                                                <th scope="col" className="sticky top-0 z-10">Trạng thái</th>
-                                                <th scope="col" className="sticky top-0 z-10">Tùy chọn</th>
+                                                <th scope="col" className="pl-3 sticky top-0 z-10 w-[80px]">Mã đơn</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[300px]">Người đặt</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[350px]">Tour</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[300px]">Thông tin đặt tour</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[150px]">Trạng thái</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[100px]">Tùy chọn</th>
                                             </tr>
                                         </thead>
                                         <tbody id="table-data">
@@ -246,21 +352,21 @@ function BookingRecord() {
                                                         </div>
                                                     ): bookingRecord.refund === 0 &&  bookingRecord.arrival === 1 ? (
                                                         <div className="w-[80%] bg-[#198754] text-white rounded-md">
-                                                        <p className="px-2 py-1 text-center">Đã hủy, chưa hoàn tiền</p>
+                                                            <p className="px-2 py-1 text-center">Đã hủy, chưa hoàn tiền</p>
                                                         </div>
                                                     ): bookingRecord.refund === null &&  bookingRecord.arrival === 1 ? (
                                                         <div className="w-[80%] bg-[#198754] text-white rounded-md">
-                                                        <p className="px-2 py-1 text-center">Đã duyệt</p>
+                                                            <p className="px-2 py-1 text-center">Đã duyệt</p>
                                                         </div>
-                                                    ) : bookingRecord.refund === 1 &&  bookingRecord.arrival === 1 (
+                                                    ): bookingRecord.refund === 1 &&  bookingRecord.arrival === 1 &&(
                                                         <div className="w-[70%] text-sm bg-[#dc3545] text-white rounded-md">
-                                                          <p className="px-2 py-1 text-center">Đã hủy</p>
+                                                            <p className="px-2 py-1 text-center">Đã hủy</p>
                                                         </div>
                                                     )}
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <button type='button' onClick={() => generatePDF(bookingRecords)} class='border-[1px] border-[#198754] text-[#198754] hover:bg-[#198754] hover:text-white py-[2px] px-[5px] duration-100 shadow-none'>
+                                                    <button type='button' onClick={() => generatePDF(bookingRecord)} className='border-[1px] border-[#198754] text-[#198754] hover:bg-[#198754] hover:text-white py-[2px] px-[5px] duration-100 shadow-none'>
                                                         <i className="fa-regular fa-file-pdf "></i>
                                                     </button>
                                                     <button type='button' onClick={() => fetchApproveDetailData(bookingRecord.booking_id)} className='mx-3 border-[1px] border-[#0d6efd] text-[#0d6efd] hover:bg-[#356ec4] hover:text-white py-[2px] px-[7px] duration-100 shadow-none'>

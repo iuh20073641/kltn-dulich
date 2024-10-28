@@ -214,12 +214,12 @@ function ApprovedApplication() {
                                     <table className="w-full max-h-[370px] text-left max-w-full mb-4 bg-transparent table-hover border-[1px] border-gray-200" style={{ minWidth: 1200 }}>
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-[40px] sticky top-0 z-10">
-                                                <th scope="col" className="pl-3 sticky top-0 z-10">Mã đơn</th>
-                                                <th scope="col" className="sticky top-0 z-10">Người đặt</th>
-                                                <th scope="col" className="sticky top-0 z-10">Tour</th>
-                                                <th scope="col" className="sticky top-0 z-10">Đơn đặt</th>
-                                                <th scope="col" className="sticky top-0 z-10">Trạng thái</th>
-                                                <th scope="col" className="sticky top-0 z-10">Tùy chọn</th>
+                                                <th scope="col" className="pl-3 sticky top-0 z-10 w-[80px]">Mã đơn</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[300px]">Người đặt</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[350px]">Tour</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[300px]">Đơn đặt</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[150px]">Trạng thái</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[100px]">Tùy chọn</th>
                                             </tr>
                                         </thead>
                                         <tbody id="table-data" className="overflow-y-auto ">
@@ -254,7 +254,7 @@ function ApprovedApplication() {
                                                         <b>Ngày đặt :</b> {newBooking.datetime}
                                                     </td>
                                                     <td className="">
-                                                        <button type='button' onClick={() => cancelBookingTour(newBooking.booking_id)} className='mt-2 px-2 py-1 rounded-md btn border-[1px] border-[#dc3545] text-[#dc3545] hover:bg-[#dc3545] hover:text-white text-sm shadow-none'>
+                                                        <button type='button' onClick={() => cancelBookingTour(newBooking.booking_id)} className='px-2 py-1 rounded-md btn border-[1px] border-[#dc3545] text-[#dc3545] hover:bg-[#dc3545] hover:text-white text-sm shadow-none'>
                                                             <i className='bi bi-trash'></i> Cancel Booking
                                                         </button>
                                                     </td>

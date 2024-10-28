@@ -50,7 +50,7 @@ import NewBookingTour from './admin/kiemduyetvien/new-booking-tour/new-booking-t
 import RefundBookingTour from './admin/kiemduyetvien/refund-booking-tour/refund-booking-tour';
 import BookingRecord from './admin/kiemduyetvien/booking-records/booking-records';
 import ApprovedApplication from './admin/kiemduyetvien/approved-application/approved-application';
-
+import QRScannerComponent from './admin/kiemduyetvien/booking-records/qr-code';
 
 // app.render(
 //   <BrowserRouter>
@@ -123,6 +123,7 @@ function App() {
             <Route path="/refund-booking-tour" element={<RefundBookingTour />} />
             <Route path="/booking-records" element={<BookingRecord />} />
             <Route path="/approved-application" element={<ApprovedApplication />} />
+            <Route path="/qr-code" element={<QRScannerComponent />} /> 
 
             {/* khach hang */}
                 {/* <Section /> */}
