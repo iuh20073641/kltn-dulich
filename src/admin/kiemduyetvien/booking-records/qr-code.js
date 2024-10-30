@@ -247,11 +247,11 @@ function QRScannerComponent() {
                                     <div className='text-lg font-medium text-[#2658a4] uppercase'>Trạng thái đơn</div>
                                     <div className="w-[30%] mx-3">
                                         {data.refund === 1 && data.arrival === 0 ? (
-                                            <div className="w-[80%] text-sm bg-[#dc3545] text-white rounded-md ">
+                                            <div className="w-[100%] text-sm bg-[#dc3545] text-white rounded-md ">
                                                 <p className="px-2 py-1 text-center">Đã hủy và hoàn tiền</p>
                                             </div>
                                         ) : data.refund === 0 && data.arrival === 1 ? (
-                                            <div className="w-[80%] bg-[#198754] text-white rounded-md">
+                                            <div className="w-[100%] bg-[#198754] text-white rounded-md">
                                                 <p className="px-2 py-1 text-center">Đã hủy, chưa hoàn tiền</p>
                                             </div>
                                         ) : data.refund === null && data.arrival === 1 ? (
@@ -259,7 +259,7 @@ function QRScannerComponent() {
                                                 <p className="px-2 py-1 text-center">Đã duyệt</p>
                                             </div>
                                         ) : data.refund === null && data.arrival === 2 ? (
-                                            <div className="w-[80%] bg-[#198754] text-white rounded-md">
+                                            <div className="w-[100%] bg-[#198754] text-white rounded-md">
                                                 <p className="px-2 py-1 text-center">Khách hàng đã nhận tour</p>
                                             </div>
                                         ) : data.refund === null && data.arrival === 0 ? (
@@ -319,28 +319,32 @@ function QRScannerComponent() {
                                 </div>
                                 <div className=' my-3 text-left text-xl font-semibold'>Thông tin người đi cùng</div>
                                 <div className=''>
-                                    <table className='border-[1px] border-gray-400 mx-auto'>
-                                        <tr className='border-[1px] border-gray-400'>
-                                            <th className='border-[1px] border-gray-400 w-[50px]'>STT</th>
-                                            <th className='border-[1px] border-gray-400 w-[300px]'>Họ tên</th>
-                                            <th className='border-[1px] border-gray-400 w-[150px]'>Cccd</th>
-                                        </tr>
-                                        {Array.isArray(participants) && participants.length > 0 ? (
-                                            participants.map((participant, index) => (
-                                                <tr>
-                                                    <td className='border-[1px] border-gray-400 text-left px-2'>{index + 1}</td>
-                                                    <td className='border-[1px] border-gray-400 text-left px-2'>{participant.name}</td>
-                                                    <td className='border-[1px] border-gray-400 text-left px-2'>{participant.cccd}</td>
+                                    {Array.isArray(participants) && participants.length > 0 ? (
+                                        <table className='border-[1px] border-gray-400 mx-auto'>
+                                            <thead>
+                                                <tr className='border-[1px] border-gray-400'>
+                                                    <th className='border-[1px] border-gray-400 w-[50px]'>STT</th>
+                                                    <th className='border-[1px] border-gray-400 w-[300px]'>Họ tên</th>
+                                                    <th className='border-[1px] border-gray-400 w-[150px]'>Cccd</th>
                                                 </tr>
-                                            ))
-                                        ) : (
-                                            <div className="text-left text-sm mb-3">Chưa có đánh giá nào.</div>
-                                        )}
-                                    </table>
+                                            </thead>
+                                                <tbody>
+                                                {participants.map((participant, index) => (
+                                                    <tr key={participant.id}>
+                                                        <td className='border-[1px] border-gray-400 text-left px-2'>{index + 1}</td>
+                                                        <td className='border-[1px] border-gray-400 text-left px-2'>{participant.name}</td>
+                                                        <td className='border-[1px] border-gray-400 text-left px-2'>{participant.cccd}</td>
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                        </table>
+                                     ) : (
+                                        <div className="text-left text-sm mb-3">Chưa có đánh giá nào.</div>
+                                    )}
                                 </div>
                                 <div>
                                     {data.refund === null && data.arrival === 1 ? (
-                                        <div className='mt-4 flex gap-2 justify-center'>
+                                        <div className='mt-10 flex gap-2 justify-center'>
                                             <div>
                                                 <button type='button' onClick={() => updateConfirmBooking(data.booking_id)} className='btn text-white px-2 py-1 bg-[#2ec1ac] hover:bg-[#2c7c70] border-[1px] border-[#2ec1ac] hover:border-[#2c7c70] rounded-md text-sm custom-bg shadow-none'>
                                                     <i className="fa-regular fa-square-check"></i> Xác nhận
@@ -353,7 +357,7 @@ function QRScannerComponent() {
                                             </div>
                                         </div>
                                     ) : data.refund === 0 && (
-                                        <div className="w-[70%] text-sm bg-[#198754] text-white rounded-md">
+                                        <div className="w-[70%] mx-auto mt-10 text-sm bg-[#198754] text-white rounded-md">
                                             <p className="px-2 py-1 text-center">Hoàn tiền</p>
                                         </div>
                                     )}

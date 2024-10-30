@@ -64,6 +64,11 @@ function HeaderManager() {
                   <Link to={"/features-facilities"}>Features &amp; Facilities</Link>
                   </div>
                 </li>
+                <li className="">
+                  <div className="inline-block py-2 px-4 no-underline text-white">
+                    <Link to={"/quanly-tintuc"}>Quản Lý Tin Tức</Link>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>

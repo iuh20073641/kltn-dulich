@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { fetchTours } from "../../api/tours";
-import { fetchTourImages } from "../../api/tours";
+import { fetchTourThumb } from "../../api/tours";
 import { fetchTourDiscountSeach } from "../../api/tours";
 // import PriceDisplay from "../../service/money";
 import DiscountDisplay from "../../service/discount";
@@ -57,7 +57,7 @@ function DiscountTourList() {
 
                 // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
                 const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
+                    const imageResponse = await fetchTourThumb(tour.id);
                     // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
                     return { tourId: tour.id, image: imageResponse.data };
                 });
@@ -79,7 +79,7 @@ function DiscountTourList() {
         };
 
         fetchData();
-    }, []); // Chạy một lần khi component được mount
+    }, [tourImages, tours]); // Chạy một lần khi component được mount
 
     // const handleFilterChange = (event) => {
     //     const value = event.target.value;
@@ -134,7 +134,7 @@ function DiscountTourList() {
 
                 // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
                 const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
+                    const imageResponse = await fetchTourThumb(tour.id);
                     // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
                     return { tourId: tour.id, image: imageResponse.data };
                 });

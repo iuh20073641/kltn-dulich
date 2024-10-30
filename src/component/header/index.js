@@ -156,7 +156,7 @@ function Header(){
               <Link to={"/contact"}>Liên hệ</Link> 
             </li>
             <li className="ct-top-menu-item">
-              <a href="https://www.facebook.com/">Tin tức</a>
+              <Link to={"/news"}>Tin Tức</Link> 
             </li>
           </ul>
           {/* <ul className="basis-3/6 lg:basis-1/6 flex justify-end lg:justify-start ml-16 uppercase font-medium">

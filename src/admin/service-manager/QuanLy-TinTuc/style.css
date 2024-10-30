@@ -1,0 +1,47 @@
+/* Định dạng cho bảng quản lý tin tức */
+.table-hover th, .table-hover td {
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .table-hover th {
+    background-color: #141415;
+  }
+  
+  .table-hover td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Giới hạn chiều rộng của cột summary */
+  }
+  
+  .table-hover td.summary {
+    max-width: 300px; /* Giới hạn chiều rộng của cột summary */
+  }
+  /* Định dạng cho modal */
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 500px;
+    max-width: 90%;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+  }

@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 function HeaderAdmin() {
 
   const [isOpenTour, setIsOpenTour] = useState(false);
+  const [isOpenDashboard, setIsOpenDoard] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -24,6 +26,10 @@ function HeaderAdmin() {
 
   const toggleMenuTour = () => {
     setIsOpenTour(!isOpenTour);
+  };
+
+  const toggleDashboard = () => {
+    setIsOpenDoard(!isOpenDashboard);
   };
 
   return (
@@ -52,12 +58,40 @@ function HeaderAdmin() {
             >
               <ul className="list-none pl-0 mb-0">
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
+                  <button onClick={toggleDashboard} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
+                    <span>Thống kê</span>
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+
+                    </span>
+                  </button>
+
+                  <div className={`mt-1 px-3 text-xs mb-1 transition-all duration-500 ease-in-out transform ${isOpenDashboard ? 'opacity-100 max-h-96 scale-100' : 'opacity-0 max-h-0 scale-95'
+                    } overflow-hidden`} id="bookingLinksTour">
+                    <ul className="flex flex-wrap list-none pl-0 mb-0  flex-col rounded border border-gray-600">
+                      <li className="">
+                        <div className="inline-block py-2 px-4 no-underline text-white">
+                          <Link to="/dashboard-tours">Đơn đặt tour</Link>
+                        </div>
+                      </li>
+                      <li className="">
+                        <a className="inline-block py-2 px-4 no-underline text-white" href="refund_bookings1.php">
+                          Đơn đặt phòng
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+
+                </li>
+                <li className="">
+                  <div className="inline-block py-2 px-3 no-underline text-white">
                     <Link to="/create-nv">Tạo Nhân Viên</Link>
                   </div>
                 </li>
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
+                  <div className="inline-block py-2 px-3 no-underline text-white">
                     <Link to="/quanly-nv">Quản Lý Nhân Viên</Link>
                   </div>
                 </li>
@@ -93,6 +127,11 @@ function HeaderAdmin() {
                     </ul>
                   </div>
 
+                </li>
+                <li className="">
+                  <div className="inline-block py-2 px-3 no-underline text-white">
+                    <Link to={"/settings"}>Cài đặt</Link>
+                  </div>
                 </li>
               </ul>
             </div>

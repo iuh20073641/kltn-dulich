@@ -4,7 +4,8 @@ import Slider from "react-slick";
 import { Link } from 'react-router-dom';
 import DiscountDisplay from '../service/discount';
 import { fetchTours } from '../api/tours';
-import { fetchTourImages } from '../api/tours';
+// import { fetchTourImages } from '../api/tours';
+import { fetchTourThumb } from '../api/tours';
 import React, { useEffect, useState } from 'react';
 
 // Tùy chỉnh nút next
@@ -91,7 +92,7 @@ function Section() {
     
                 // Tạo promises để lấy ảnh cho từng tour trong tất cả các loại
                 const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
+                    const imageResponse = await fetchTourThumb(tour.id);
                     return { tourId: tour.id, image: imageResponse.data };
                 });
     
@@ -115,7 +116,7 @@ function Section() {
         };
     
         fetchAllTours();
-    }, []); // Chỉ chạy một lần khi component được mount
+    }, [toursDiscount, tourImages, toursLuxury, tourLuxuryImages, toursSave, tourSaveImages, toursStandard, tourStandardImages]); // Chỉ chạy một lần khi component được mount
 
     return (
         <main>

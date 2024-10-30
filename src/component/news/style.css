@@ -1,0 +1,152 @@
+/* Đặt các kiểu chung cho toàn bộ trang */
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+   */
+  
+/* Định dạng cho danh sách tin tức */
+.news-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Hiển thị 3 bài viết mỗi hàng */
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  /* Định dạng cho từng mục tin tức */
+  .news-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    transition: transform 0.2s;
+    height: 450px;
+  }
+  
+  .news-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .news-item img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .news-item h3 {
+    font-size: 1.1em;
+    margin: 10px;
+    color: #333;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  .news-item p {
+    font-size: 0.8em;
+    margin: 10px;
+    color: #666;
+    text-align: left
+  }
+  
+  
+  /* Định dạng cho container chính của trang */
+  /* .page-container {
+    display: flex;
+    flex-direction: column;
+    
+    min-height: 100vh;
+  } */
+  
+  /* Định dạng cho nội dung chính của trang */
+  /* .content-wrap {
+    flex: 1;
+    padding: 20px;
+    width: 80%;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    margin-top: 100px;
+  } */
+
+  /* Định dạng cho tiêu đề bài viết */
+.article-header h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  /* Định dạng cho hình ảnh bài viết */
+.article-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa hình ảnh */
+  }
+  
+  /* Định dạng cho hình ảnh bài viết */
+  .article-image {
+    width: 40%;
+    height: auto;
+    margin-bottom: 20px;
+
+  }
+
+  /* Định dạng cho phần summary */
+.article-summary {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 20px;
+  text-align:left; /* Căn giữa summary */
+}
+
+/* Định dạng cho phần ngày đăng */
+.article-published_at {
+  text-align: right; /* Căn chỉnh bên phải */
+  font-size: 1em;
+  color: #666;
+  margin-top: 20px;
+}
+
+  /* Định dạng cho đường kẻ ngang */
+.divider {
+  width: 100%;
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin: 20px 0;
+}
+  
+  /* Định dạng cho nội dung bài viết */
+  .article-content  {
+    font-size: 0.95em;
+    line-height: 1.6;
+    color: #0f0f0f;
+    text-align: left;
+  }
+
+  /* Định dạng cho văn bản được tô sáng */
+.article-content .highlight {
+    color: #ff0000; /* Màu đỏ */
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+  /* Định dạng cho hình ảnh trong nội dung */
+.article-content .centered-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Căn giữa hình ảnh */
+  margin: 20px 0;
+}
+
+.article-content .centered-image img {
+  width: 40%;
+  height: auto;
+}
+
+.article-content .centered-image figcaption {
+  font-size: 1em;
+  color: #666;
+  text-align: center;
+  margin-top: 10px;
+}

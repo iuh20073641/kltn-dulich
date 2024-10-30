@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import { fetchTours } from "../../api/tours";
-import { fetchTourImages } from "../../api/tours";
+// import { fetchTourImages } from "../../api/tours";
+import { fetchTourThumb } from "../../api/tours";
 import { fetchTourSeachFull } from "../../api/tours";
 import { toast } from 'react-toastify';
 import Select from '@mui/material/Select';
@@ -22,7 +23,7 @@ function TourList() {
     // const [departureDate, setDepartureDate] = useState(""); // Ngày đi
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedPrice, setSelectedPrice] = useState("");
-
+    // const [isLoading, setIsLoading] = useState(true); // State loading
 
     const priceRanges = [
         { label: 'Dưới 5 triệu', value: { min: 0, max: 5000000 } },
@@ -46,6 +47,7 @@ function TourList() {
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
         const fetchData = async () => {
+           
             try {
                 // Gọi API để lấy danh sách phòng
                 const toursResponse = await fetchTours();
@@ -54,7 +56,7 @@ function TourList() {
 
                 // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
                 const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
+                    const imageResponse = await fetchTourThumb(tour.id);
                     // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
                     return { tourId: tour.id, image: imageResponse.data };
                 });
@@ -72,11 +74,11 @@ function TourList() {
             } catch (err) {
                 console.error('Error fetching data:', err);
                 setError(err);
-            }
+            } 
         };
 
         fetchData();
-    }, []); // Chạy một lần khi component được mount
+    }, [tourImages, tours]); // Chạy một lần khi component được mount
 
     // const handleFilterChange = (event) => {
     //     const value = event.target.value;
@@ -154,7 +156,7 @@ function TourList() {
 
                 // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
                 const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourImages(tour.id);
+                    const imageResponse = await fetchTourThumb(tour.id);
                     // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
                     return { tourId: tour.id, image: imageResponse.data };
                 });

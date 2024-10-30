@@ -47,6 +47,11 @@ export const fetchTourImages = (tourId) => {
   return api.get(`/admin/get_tour_images.php?tourid=${tourId}`);
 };
 
+// api lấy hình ảnh tour thumb của một tour theo id
+export const fetchTourThumb = (tourId) => {
+  return api.get(`/get_tour_thumb.php?tourid=${tourId}`);
+};
+
 // api lấy tất cả thông tin new booking tour
 export const fetchNewBookingTour = () => {
   return api.get(`/admin/get_new_booking_tour.php`);
@@ -60,6 +65,11 @@ export const fetchRefundBookingTour = () => {
 // api lấy tất cả thông tin lịch sử đặt tour
 export const fetchBookingRecordTour = () => {
   return api.get(`/admin/get_booking_records_tour.php`);
+};
+
+// api lấy tất cả đơn đặt tour
+export const fetchAllBookingTour = () => {
+  return api.get(`/admin/get_all_booking.php`);
 };
 
 // api lấy tất cả thông tin lịch sử đặt tour
@@ -115,4 +125,14 @@ export const fetchBookingByQrcode = (bookingId) => {
   return api.post(`/admin/qr_code.php`, {
     booking_id: bookingId, // Truyền booking_id trong body
   });
+};
+
+// api lấy tất cả thông tin user queries
+export const fetchUserQueries = () => {
+  return api.get(`/admin/get-user-query.php`);
+};
+
+// api lấy tất cả thông tin rating tour
+export const fetchAllTourRating = () => {
+  return api.get(`/admin/get_rating_tour.php`);
 };

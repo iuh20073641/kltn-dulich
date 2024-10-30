@@ -9,6 +9,8 @@ import Register from './component/register/register';
 import Room from './component/rooms/room';
 import About from './component/about/about';
 import Contact from './component/contact/contact';
+import News from './component/news/news';
+import NewsDetail from './component/news/NewsDetail';
 import AdminLogin from './admin/admin-service/admin-service';
 import LoginManager from './admin/service-manager/login-manager/login-manager';
 import DashboardHotel from './admin/service-manager/dashboard/dashboard-hotel';
@@ -38,6 +40,8 @@ import LoginNV from './admin/NhanVienLogin';
 //quản trị viên
 import CreateNV from "./admin/admin-staff/Create-NV/create-nv";
 import QuanLyNV from "./admin/admin-staff/QuanLy-NV/quanly-nv";
+import DashboardTours from './admin/admin-staff/dashboard-tours/dashboard-tours';
+import BookingDetails from './admin/admin-staff/dashboard-tours/booking-details';
 
 // hướng dẫn viên
 import DashboardHDV from "./admin/huongdanvien/dashboard/dashboard-hotel";
@@ -52,6 +56,9 @@ import BookingRecord from './admin/kiemduyetvien/booking-records/booking-records
 import ApprovedApplication from './admin/kiemduyetvien/approved-application/approved-application';
 import QRScannerComponent from './admin/kiemduyetvien/booking-records/qr-code';
 
+
+//nhan vien quản lí 
+import QuanLyTinTuc from "./admin/service-manager/QuanLy-TinTuc/quanly-tintuc";
 // app.render(
 //   <BrowserRouter>
 //     <Routes>
@@ -75,7 +82,9 @@ function App() {
                 <Route path="/register" element={<Register />} /> 
                 <Route path="/room"  element={<Room  />} /> 
                 <Route path="/about"  element={<About  />} /> 
-                <Route path="/contact"  element={<Contact  />} /> 
+                <Route path="/contact"  element={<Contact  />} />
+                <Route path="/news" element={<News />} />
+                <Route path="/news/:id" element={<NewsDetail />} /> 
                 <Route path="/admin-service"  element={<AdminLogin  />} /> 
                 <Route path="/login-manager"  element={<LoginManager  />} /> 
                 <Route path="/dashboard-hotel"  element={<DashboardHotel  />} /> 
@@ -105,6 +114,8 @@ function App() {
                 {/* Quản trị viên */}
                 <Route path="/create-nv" element={<CreateNV />} />
                 <Route path="/quanly-nv" element={<QuanLyNV />} />
+                <Route path="/dashboard-tours" element={<DashboardTours />} />
+                <Route path="/dashboard-tours/booking-detail" element={<BookingDetails />} />
 
                 {/* Hướng dẫn viên */}
             <Route
@@ -124,6 +135,9 @@ function App() {
             <Route path="/booking-records" element={<BookingRecord />} />
             <Route path="/approved-application" element={<ApprovedApplication />} />
             <Route path="/qr-code" element={<QRScannerComponent />} /> 
+
+             {/* nhan vien quản lí */}
+              <Route path="/quanly-tintuc" element={<QuanLyTinTuc />} />
 
             {/* khach hang */}
                 {/* <Section /> */}
