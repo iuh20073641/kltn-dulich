@@ -2,6 +2,7 @@ import './header.css';
 
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+// import { getUsersData } from '../api/user';
 
 function toggleDropdown() {
   var dropdown = document.getElementById("dropdownMenu");
@@ -17,6 +18,7 @@ function Header(){
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  // const [infoUser, setInfoUser] = useState([]);
 
   useEffect(() => {
     // Kiểm tra trạng thái đăng nhập
@@ -26,6 +28,35 @@ function Header(){
       setUser(JSON.parse(userData));
     }
   }, []);
+
+  // useEffect(() => {
+  //   // Hàm để gọi API và cập nhật state
+  //   const fetchData = async () => {
+  //       const userData = localStorage.getItem('user');
+
+  //       const user1 = JSON.parse(userData);
+  //       try {
+
+  //           const userResponse = await getUsersData(user1.id);
+  //           const userData = userResponse.data;
+
+  //           // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
+  //           if (userData.length > 0) {
+  //               console.log(userData);
+  //               setInfoUser(userData[0]);
+  //               console.log(userData[0]);
+  //           } else {
+  //               console.log(userData);
+  //           }
+
+  //       } catch (err) {
+  //           // console.error('Error fetching data:', err);
+  //           // setError(err);
+  //       }
+  //   };
+
+  //   fetchData();
+  // }, []); // Chạy một lần khi component được mount
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -82,10 +113,10 @@ function Header(){
                   <div id="dropdownMenu" className="z-20 w-[200px] -ml-24 mr-9 hidden absolute bg-[rgba(28,41,48,1)] px-7 py-3 mt-3 rounded-2xl" >
                     <ul className="travel-header-dashboard-item text-[rgba(255,255,255,1.00)]">
                       <li>
-                        <div className="flex items-center my-2">
+                        <Link to={"/Profile"} className="flex items-center my-2">
                           <i className="fa-regular fa-user mx-2"></i> 
-                          <a href="https://www.facebook.com/"><p className='text-sm'>Người dùng</p></a>
-                        </div>
+                          <p className='text-sm'>Người dùng</p>
+                        </Link>
                       </li>
                       <li>
                         <div className="flex items-center my-2">

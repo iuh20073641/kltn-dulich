@@ -92,6 +92,11 @@ function HeaderCensor() {
                   </div>
 
                 </li>
+                <li className="">
+                  <div className="inline-block py-2 px-4 no-underline text-white">
+                    <Link to="/rating-tour">Đánh giá</Link>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>

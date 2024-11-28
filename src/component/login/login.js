@@ -39,7 +39,11 @@ function Login() {
                 // Lưu thông tin người dùng vào localStorage
                 localStorage.setItem('user', JSON.stringify(userData));
                 toast.success('Đăng nhập thành công!');
-                navigate('/'); 
+                // navigate('/'); 
+                // Lấy đường dẫn từ localStorage
+                const redirectPath = localStorage.getItem('redirectPath') || '/';
+                localStorage.removeItem('redirectPath'); // Xóa để tránh chuyển hướng không mong muốn
+                navigate(redirectPath); // Chuyển hướng
             } else {
                 toast.error('Tài khoản hoặc mật khẩu không đúng!');
             }

@@ -28,6 +28,11 @@ import TourSetting from './admin/service-manager/tours/tour-setting';
 import BookingTour from './component/booking-tour/booking-tour';
 import BookingSuccess from './component/booking-tour/booking-success';
 import InfoBookingTour from './component/info-booking-tour/info-booking-tour';
+import Profile from './component/user/profile';
+
+// room
+import ConfirmBooking from './component/booking_room/confirm_booking';
+import BookingSuccessRoom from './component/booking_room/booking-success';
 
 // tour
 import LuxuryTour from './component/tours/luxury-tour';
@@ -42,6 +47,15 @@ import CreateNV from "./admin/admin-staff/Create-NV/create-nv";
 import QuanLyNV from "./admin/admin-staff/QuanLy-NV/quanly-nv";
 import DashboardTours from './admin/admin-staff/dashboard-tours/dashboard-tours';
 import BookingDetails from './admin/admin-staff/dashboard-tours/booking-details';
+import Banner from './admin/admin-staff/banner/banner';
+import AllTour from './admin/admin-staff/dashboard-tours/all-tour';
+import ActivitiesTour from './admin/admin-staff/dashboard-tours/activities-tour';
+import SuspendTour from './admin/admin-staff/dashboard-tours/suspend-tour';
+import AllRattingtour from './admin/admin-staff/dashboard-tours/ratting-tour';
+import AllBookingTour from './admin/admin-staff/dashboard-tours/all-booking';
+import NewBookingTour2 from './admin/admin-staff/dashboard-tours/new-booking';
+import ApprovedApplication2 from './admin/admin-staff/dashboard-tours/application-booking';
+import RefundBookingTour2 from './admin/admin-staff/dashboard-tours/refund-booking';
 
 // hướng dẫn viên
 import DashboardHDV from "./admin/huongdanvien/dashboard/dashboard-hotel";
@@ -55,7 +69,7 @@ import RefundBookingTour from './admin/kiemduyetvien/refund-booking-tour/refund-
 import BookingRecord from './admin/kiemduyetvien/booking-records/booking-records';
 import ApprovedApplication from './admin/kiemduyetvien/approved-application/approved-application';
 import QRScannerComponent from './admin/kiemduyetvien/booking-records/qr-code';
-
+import RatingTour from './admin/kiemduyetvien/rating-tour/rating-tour';
 
 //nhan vien quản lí 
 import QuanLyTinTuc from "./admin/service-manager/QuanLy-TinTuc/quanly-tintuc";
@@ -80,6 +94,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} /> 
                 <Route path="/register" element={<Register />} /> 
+                <Route path="/Profile" element={<Profile />} /> 
                 <Route path="/room"  element={<Room  />} /> 
                 <Route path="/about"  element={<About  />} /> 
                 <Route path="/contact"  element={<Contact  />} />
@@ -102,6 +117,10 @@ function App() {
                 <Route path="/success/:id"  element={<BookingSuccess  />} />
                 <Route path="/info-booking-tour"  element={<InfoBookingTour  />} /> 
 
+                {/* room */}
+                <Route path="/confirm-booking/:id"  element={<ConfirmBooking  />} /> 
+                <Route path="/success-room/:id"  element={<BookingSuccessRoom  />} />
+
                 {/* tour */}
                 <Route path="/luxury-tour"  element={<LuxuryTour  />} />
                 <Route path="/standard-tour"  element={<StandardTour  />} />
@@ -116,6 +135,15 @@ function App() {
                 <Route path="/quanly-nv" element={<QuanLyNV />} />
                 <Route path="/dashboard-tours" element={<DashboardTours />} />
                 <Route path="/dashboard-tours/booking-detail" element={<BookingDetails />} />
+                <Route path="/dashboard-tours/all-tours" element={<AllTour />} />
+                <Route path="/dashboard-tours/activities-tours" element={<ActivitiesTour />} />
+                <Route path="/dashboard-tours/suspend-tours" element={<SuspendTour />} />
+                <Route path="/dashboard-tours/all-rating-tours" element={<AllRattingtour />} />
+                <Route path="/dashboard-tours/all-booking-tours" element={<AllBookingTour />} />
+                <Route path="/dashboard-tours/all-new-tours" element={<NewBookingTour2 />} />
+                <Route path="/dashboard-tours/all-approved-tours" element={<ApprovedApplication2 />} />
+                <Route path="/dashboard-tours/all-refund-tours" element={<RefundBookingTour2 />} />
+                <Route path="/banner" element={<Banner />} />
 
                 {/* Hướng dẫn viên */}
             <Route
@@ -130,6 +158,7 @@ function App() {
               element={<DashboardKDV />}
             />
             <Route path="/cap-nhat-kd" element={<CapNhatNVKD />} />
+            <Route path="/rating-tour" element={<RatingTour />} />
             <Route path="/new-booking-tour" element={<NewBookingTour />} />
             <Route path="/refund-booking-tour" element={<RefundBookingTour />} />
             <Route path="/booking-records" element={<BookingRecord />} />

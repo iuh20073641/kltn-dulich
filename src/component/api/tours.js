@@ -136,3 +136,13 @@ export const fetchUserQueries = () => {
 export const fetchAllTourRating = () => {
   return api.get(`/admin/get_rating_tour.php`);
 };
+
+// api lấy thông tin phương tiện theo id_depart
+export const fetchVehicleByIddepart = (tourId) => {
+  return api.get(`/get_vehicle_tour.php?id_depart=${tourId}`);
+};
+
+// api lấy thông tin nơi ở đặt cọc theo id_depart
+export const fetchHotelByIddepart = (tourId) => {
+  return api.get(`/admin/get_deposit_hotel.php?id_depart=${tourId}`);
+};

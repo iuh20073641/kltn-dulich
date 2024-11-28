@@ -14,3 +14,8 @@ const api = axios.create({
 export const fetchSettings = () => {
     return api.get(`/admin/get-settings.php`);
 };
+
+// api lấy hình ảnh carousel
+export const fetchCarouselImage = () => {
+  return api.get(`/admin/get_carousel.php`);
+};

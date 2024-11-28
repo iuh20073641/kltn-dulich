@@ -57,6 +57,16 @@ export const fetchRoomRating = (roomId) => {
   return api.post(`/rating_room.php?roomid=${roomId}`);
 };
 
+// api lấy kiểm tra phòng đã đặt chưa
+export const fetchCheckookingRoom = (roomId, check_in, check_out) => {
+  return api.get(`/check_booking_room_byId.php?room_id=${roomId}&check_in=${check_in}&check_out=${check_out}`);
+};
+
+// api lấy kiểm tra danh sách phòng chưa đặt
+export const fetchCheckRoomList = (check_in, check_out) => {
+  return api.get(`/check_booking_room.php?check_in=${check_in}&check_out=${check_out}`);
+};
+
 // api xóa phòng khách sạn
 // export const deleteRoom = (room_id) => {
 //   return api.delete(`/admin/delete_room.php`);

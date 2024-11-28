@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import { Link } from 'react-router-dom';
 import DiscountDisplay from '../service/discount';
 import { fetchTours } from '../api/tours';
-// import { fetchTourImages } from '../api/tours';
+import { fetchCarouselImage } from '../api/settings';
 import { fetchTourThumb } from '../api/tours';
 import React, { useEffect, useState } from 'react';
 
@@ -58,7 +58,7 @@ function Section() {
     };
 
 
-
+    const [carouselImages, setCarouselImages] = useState([]);
     const [toursDiscount, setToursDiscount] = useState([]);
     // const [error, setError] = useState(null);
     const [tourImages, setTourImages] = useState([]);
@@ -77,74 +77,82 @@ function Section() {
             try {
                 const toursResponse = await fetchTours();
                 const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-    
+
                 // Lọc các loại tour khác nhau
                 const discountTours = toursData.filter(tour => tour.discount > 0);
                 const premiumTours = toursData.filter(tour => tour.style === 'Cao cấp');
                 const saveTours = toursData.filter(tour => tour.style === 'Tiết kiệm');
                 const standardTours = toursData.filter(tour => tour.style === 'Tiêu chuẩn');
-    
+
                 // Cập nhật state cho các loại tour
                 setToursDiscount(discountTours);
                 setToursLuxury(premiumTours);
                 setToursSave(saveTours);
                 setToursStandard(standardTours);
-    
+
                 // Tạo promises để lấy ảnh cho từng tour trong tất cả các loại
                 const imagePromises = toursData.map(async (tour) => {
                     const imageResponse = await fetchTourThumb(tour.id);
                     return { tourId: tour.id, image: imageResponse.data };
                 });
-    
+
                 const allImages = await Promise.all(imagePromises);
-    
+
                 // Tạo imageMap để dễ dàng truy xuất hình ảnh
                 const imageMap = {};
                 allImages.forEach(item => {
                     imageMap[item.tourId] = item.image;
                 });
-    
+
                 // Cập nhật state cho hình ảnh của từng loại tour
                 setTourLuxuryImages(imageMap);
                 setTourSaveImages(imageMap);
                 setTourStandardImages(imageMap);
                 setTourImages(imageMap);
-    
+
             } catch (err) {
                 console.error('Error fetching data:', err);
             }
         };
-    
+
         fetchAllTours();
-    }, [toursDiscount, tourImages, toursLuxury, tourLuxuryImages, toursSave, tourSaveImages, toursStandard, tourStandardImages]); // Chỉ chạy một lần khi component được mount
+    }, []); // Chỉ chạy một lần khi component được mount
+
+    useEffect(() => {
+        // Hàm để gọi API và cập nhật state
+        const fetchCarouselData = async () => {
+
+            try {
+                // Gọi API để lấy danh sách phòng
+                const carouselResponse = await fetchCarouselImage();
+                const imageData = carouselResponse.data; // Giả sử API trả về mảng các tour
+
+                setCarouselImages(imageData);
+
+            } catch (err) {
+                console.error('Error fetching data:', err);
+            }
+        };
+
+        fetchCarouselData();
+    }, [carouselImages]); // Chạy một lần khi component được mount
 
     return (
         <main>
             {/* slider */}
             <div className="slider-container mt-[115px] h-auto w-[99%] mx-auto overflow-hidden">
                 <Slider {...settings}>
-                    <div className="bg-cover bg-no-repeat bg-bottom h-[530px] w-full">
-                        <img src="https://marketingai.mediacdn.vn/wp-content/uploads/2018/06/banner-du-lich-dao-binh-ba_113654832-compressed.jpg" className='w-full h-full object-cover' alt="" />
-                        {/* <div className="w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-40">
-                            <div className="mx-16 text-white text-center">
-                                <div className="uppercase  text-slate-300 text-sm mb-5">
-                                    Explore The World
-                                </div>
-                                <div className="font-medium text-5xl mb-3">Let's The World Together!</div>
-                                <div className="text-lg text-slate-300">
-                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                                </div>
-                                <div className="flex justify-center mt-4">
-                                    <div className="uppercase bg-white text-black text-sm w-max tracking-wider py-4 px-5 cursor-pointer hover:bg-opacity-95">
-                                        Discover now
-                                    </div>
-                                </div>
+                    {Array.isArray(carouselImages) && carouselImages.length > 0 ? (
+                        carouselImages.map((image) => (
+                            <div className="bg-cover bg-no-repeat bg-bottom h-[530px] w-full" key={image.id}>
+                                <img src={`http://localhost:88/api_travel/api/Images/carousel/${image.image}`} className='w-full h-full object-cover' alt="" />
                             </div>
-                        </div> */}
-                    </div>
-                    <div className='h-[530px] w-full'>
-                        <img src="https://sgweb.vn/wp-content/uploads/2022/12/75b1d5aa3eb003170055303a362d1a7e.jpg" className='w-full h-full object-cover' alt="" />
-                    </div>
+                        ))
+                    ) : (
+                        <div className="w-full mx-auto h-[530px] bg-gray-100">
+                            <p className="text-center font-semibold text-xl">Chưa có hình ảnh quảng cáo</p>
+                        </div>
+                    )}
                 </Slider>
             </div>
             {/* end-slider */}
@@ -156,14 +164,14 @@ function Section() {
                     </div>
                     <div className='w-[50%]'>
                         <Link to={"/discount-tour"}>
-                        <div className='flex items-center justify-end text-sm'>
-                            <div className='mx-2'>
-                                <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                            <div className='flex items-center justify-end text-sm'>
+                                <div className='mx-2'>
+                                    <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                                </div>
+                                <div className='text-right'>
+                                    Xem tất cả
+                                </div>
                             </div>
-                            <div className='text-right'>
-                                Xem tất cả
-                            </div>
-                        </div>
                         </Link>
                     </div>
                 </div>
@@ -242,14 +250,14 @@ function Section() {
                     </div>
                     <div className='w-[50%]'>
                         <Link to={"/luxury-tour"}>
-                        <div className='flex items-center justify-end text-sm'>
-                            <div className='mx-2'>
-                                <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                            <div className='flex items-center justify-end text-sm'>
+                                <div className='mx-2'>
+                                    <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                                </div>
+                                <div className='text-right'>
+                                    Xem tất cả
+                                </div>
                             </div>
-                            <div className='text-right'>
-                                Xem tất cả
-                            </div>
-                        </div>
                         </Link>
                     </div>
                 </div>
@@ -328,14 +336,14 @@ function Section() {
                     </div>
                     <div className='w-[50%]'>
                         <Link to={"/save-tour"}>
-                        <div className='flex items-center justify-end text-sm'>
-                            <div className='mx-2'>
-                                <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                            <div className='flex items-center justify-end text-sm'>
+                                <div className='mx-2'>
+                                    <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                                </div>
+                                <div className='text-right'>
+                                    Xem tất cả
+                                </div>
                             </div>
-                            <div className='text-right'>
-                                Xem tất cả
-                            </div>
-                        </div>
                         </Link>
                     </div>
                 </div>
@@ -414,14 +422,14 @@ function Section() {
                     </div>
                     <div className='w-[50%]'>
                         <Link to={"/standard-tour"}>
-                        <div className='flex items-center justify-end text-sm'>
-                            <div className='mx-2'>
-                                <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                            <div className='flex items-center justify-end text-sm'>
+                                <div className='mx-2'>
+                                    <i className="fa-solid fa-pen-to-square text-[#2658a4]"></i>
+                                </div>
+                                <div className='text-right'>
+                                    Xem tất cả
+                                </div>
                             </div>
-                            <div className='text-right'>
-                                Xem tất cả
-                            </div>
-                        </div>
                         </Link>
                     </div>
                 </div>

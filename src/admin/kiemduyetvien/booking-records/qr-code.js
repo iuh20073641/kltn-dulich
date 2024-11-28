@@ -186,32 +186,32 @@ function QRScannerComponent() {
     };
 
     // hủy đơn đặt tour
-    const cancelBookingTour = (bookingId) => {
-        console.log(bookingId);
-        // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
-        fetch('http://localhost:88/api_travel/api/admin/cancel_booking_tour.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                cancel_booking: true, // Thêm biến này để kích hoạt điều kiện trong PHP
-                booking_id: bookingId
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
-                    toast.success(data.message);
-                } else {
-                    toast.error(data.message);
-                }
-            })
-            .catch(error => {
-                toast.error('Lỗi.');
-                console.log('Có lỗi xảy ra:', error);
-            });
-    };
+    // const cancelBookingTour = (bookingId) => {
+    //     console.log(bookingId);
+    //     // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+    //     fetch('http://localhost:88/api_travel/api/admin/cancel_booking_tour.php', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             cancel_booking: true, // Thêm biến này để kích hoạt điều kiện trong PHP
+    //             booking_id: bookingId
+    //         }),
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
+    //                 toast.success(data.message);
+    //             } else {
+    //                 toast.error(data.message);
+    //             }
+    //         })
+    //         .catch(error => {
+    //             toast.error('Lỗi.');
+    //             console.log('Có lỗi xảy ra:', error);
+    //         });
+    // };
 
     return (
         <div>
@@ -350,11 +350,11 @@ function QRScannerComponent() {
                                                     <i className="fa-regular fa-square-check"></i> Xác nhận
                                                 </button>
                                             </div>
-                                            <div>
+                                            {/* <div>
                                                 <button type='button' onClick={() => cancelBookingTour(data.booking_id)} className=' px-2 py-1 rounded-md btn border-[1px] border-[#dc3545] text-[#dc3545] hover:bg-[#dc3545] hover:text-white text-sm shadow-none'>
                                                     <i className='bi bi-trash'></i> Hủy đơn
                                                 </button>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     ) : data.refund === 0 && (
                                         <div className="w-[70%] mx-auto mt-10 text-sm bg-[#198754] text-white rounded-md">

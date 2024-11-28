@@ -8,6 +8,8 @@ import { fetchRoomDetails } from "../api/room";
 import { fetchRoomFeature } from "../api/room";
 import { fetchRoomFacilities } from "../api/room";
 import { fetchRoomImages } from "../api/room";
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 function RoomDetail(){
 
@@ -30,6 +32,7 @@ function RoomDetail(){
     const [roomImages, setRoomImages] = useState([]);
     const [roomFacilities, setRoomFacilities] = useState({});
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Hàm để gọi API và cập nhật state
@@ -169,6 +172,22 @@ function RoomDetail(){
     };
     renderStarsReview();
 
+    const handleBookingClick = () => {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const userData = localStorage.getItem('user');
+        const user = JSON.parse(userData);
+
+        if (user) {
+            // Nếu đã đăng nhập, chuyển hướng đến trang đặt tour
+            navigate(`/confirm-booking/${roomDetails.id}`);
+        } else {
+            // Lưu đường dẫn hiện tại vào localStorage
+            localStorage.setItem('redirectPath', `/confirm-booking/${roomDetails.id}`);
+            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            navigate('/login');
+            toast.warning('Bạn cần đăng nhập để đặt phòng')
+        }
+    };
 
     if (error) return <p>{error}</p>;
 
@@ -322,7 +341,7 @@ function RoomDetail(){
                                 <p className='px-3 py-1 text-xs'>{roomDetails.area}</p>
                             </div>
                         </div>
-                        <div className="uppercase mx-auto mb-1 mt-10 font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-[#0194F3]">
+                        <div onClick={handleBookingClick} className="uppercase mx-auto mb-1 mt-10 font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-[#0194F3]">
                             Đặt ngay
                         </div> 
                     </div>

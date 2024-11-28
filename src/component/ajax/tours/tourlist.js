@@ -45,51 +45,40 @@ function TourList() {
     };
 
     useEffect(() => {
-        // Hàm để gọi API và cập nhật state
-        const fetchData = async () => {
-           
-            try {
-                // Gọi API để lấy danh sách phòng
-                const toursResponse = await fetchTours();
-                const toursData = toursResponse.data; // Giả sử API trả về mảng các tour
-                setTours(toursData);
+    let isMounted = true; // Để kiểm tra xem component còn được mount hay không
 
-                // Tự động gọi API khác để lấy thông tin chi tiết (image) của từng phòng
-                const imagePromises = toursData.map(async (tour) => {
-                    const imageResponse = await fetchTourThumb(tour.id);
-                    // console.log(`Feature Response for Room ID ${room.id}: `, featureResponse);  
-                    return { tourId: tour.id, image: imageResponse.data };
-                });
+    const fetchData = async () => {
+        try {
+            // Gọi API lấy danh sách tour
+            const toursResponse = await fetchTours();
+            const toursData = toursResponse.data;
 
-                // Đợi tất cả các lời gọi API hoàn tất
-                const allImages = await Promise.all(imagePromises);
+            // Cập nhật state tours nếu component vẫn còn được mount
+            if (isMounted) setTours(toursData);
 
-                // Chuyển đổi kết quả thành một đối tượng để dễ dàng truy xuất thông tin chi tiết(Image)
-                const imageMap = {};
-                allImages.forEach(item => {
-                    imageMap[item.tourId] = item.image;
-                });
-                setTourImages(imageMap);
+            // Lấy dữ liệu hình ảnh đồng thời và tạo trực tiếp đối tượng imageMap
+            const imageMap = await toursData.reduce(async (acc, tour) => {
+                const imageResponse = await fetchTourThumb(tour.id);
+                const currentAcc = await acc;
+                currentAcc[tour.id] = imageResponse.data;
+                return currentAcc;
+            }, Promise.resolve({}));
 
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError(err);
-            } 
-        };
+            // Cập nhật state tourImages nếu component vẫn còn được mount
+            if (isMounted) setTourImages(imageMap);
+        } catch (err) {
+            console.error('Lỗi khi lấy dữ liệu:', err);
+            if (isMounted) setError(err);
+        }
+    };
 
-        fetchData();
-    }, [tourImages, tours]); // Chạy một lần khi component được mount
+    fetchData();
 
-    // const handleFilterChange = (event) => {
-    //     const value = event.target.value;
-    //     const checked = event.target.checked;
-
-    //     if (checked) {
-    //         setFilterLocation([...filterLocation, value]);
-    //     } else {
-    //         setFilterLocation(filterLocation.filter((location) => location !== value));
-    //     }
-    // };
+    // Hàm cleanup để set isMounted thành false khi component bị unmount
+    return () => {
+        isMounted = false;
+    };
+}, []); // Chạy một lần khi component được mount
 
     const handleTourTypeChange = (event) => {
         const value = event.target.value;

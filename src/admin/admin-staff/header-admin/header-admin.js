@@ -130,6 +130,11 @@ function HeaderAdmin() {
                 </li>
                 <li className="">
                   <div className="inline-block py-2 px-3 no-underline text-white">
+                    <Link to={"/banner"}>Quảng cáo</Link>
+                  </div>
+                </li>
+                <li className="">
+                  <div className="inline-block py-2 px-3 no-underline text-white">
                     <Link to={"/settings"}>Cài đặt</Link>
                   </div>
                 </li>
