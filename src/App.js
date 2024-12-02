@@ -70,6 +70,7 @@ import BookingRecord from './admin/kiemduyetvien/booking-records/booking-records
 import ApprovedApplication from './admin/kiemduyetvien/approved-application/approved-application';
 import QRScannerComponent from './admin/kiemduyetvien/booking-records/qr-code';
 import RatingTour from './admin/kiemduyetvien/rating-tour/rating-tour';
+import CreateBookingTourByNV from './admin/kiemduyetvien/create-booking/create-booking';
 
 //nhan vien quản lí 
 import QuanLyTinTuc from "./admin/service-manager/QuanLy-TinTuc/quanly-tintuc";
@@ -164,6 +165,7 @@ function App() {
             <Route path="/booking-records" element={<BookingRecord />} />
             <Route path="/approved-application" element={<ApprovedApplication />} />
             <Route path="/qr-code" element={<QRScannerComponent />} /> 
+            <Route path="/create-booking-tour" element={<CreateBookingTourByNV />} /> 
 
              {/* nhan vien quản lí */}
               <Route path="/quanly-tintuc" element={<QuanLyTinTuc />} />

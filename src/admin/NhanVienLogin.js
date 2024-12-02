@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import config from "../component/config.json";
+
+const { SERVER_API } = config;
 
 const LoginNV = () => {
   const [username, setUsername] = useState("");
@@ -11,7 +14,7 @@ const LoginNV = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost:88/api_travel/api/admin/loginnv.php",
+        `${SERVER_API}/admin/loginnv.php`,
         {
           method: "POST",
           headers: {

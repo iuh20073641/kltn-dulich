@@ -41,3 +41,8 @@ export const selectAllUsers = () => {
 export const getUsersData = (iduser) => {
   return api.get(`/get_user_by_id.php?userid=${iduser}`);
 };
+
+// api tìm kiếm người dùng qua từ khóa
+export const getUsersDataByKey = (key) => {
+  return api.get(`/admin/find_user.php?info_user=${key}`);
+};

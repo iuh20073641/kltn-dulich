@@ -63,7 +63,12 @@ function HeaderCensor() {
                   </div>
                 </li>
                 <li className="">
-                  <button onClick={toggleMenuTour} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
+                  <div className="inline-block py-2 px-4 no-underline text-white">
+                    <Link to="/create-booking-tour">Đặt tour</Link>
+                  </div>
+                </li>
+                <li className="">
+                  <button onClick={toggleMenuTour} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-4 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
                     <span>QL đặt tour</span>
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

@@ -14,6 +14,8 @@ import DiscountDisplay from "../service/discount";
 import { toast } from 'react-toastify';
 import { fetchVehicleByIddepart } from "../api/tours";
 import FormatTime from "../service/fomat-time";
+import { fetchCheckBookingOrder } from "../api/tours";
+import { fetchDayDepart } from "../api/tours";
 
 function TourDetails() {
 
@@ -45,6 +47,8 @@ function TourDetails() {
     const [tourRating, setTourRating] = useState([]);
     const [tourImages, setTourImages] = useState([]);
     const [vehicle, setVehicle] = useState([]);
+    const [order, setOrder] = useState([]);
+    const [order2, setOrder2] = useState([]);
     const [averageRating, setAverageRating] = useState(0);
     const [totalReviews, setTotalReviews] = useState(0);
     const [error, setError] = useState(null);
@@ -134,7 +138,7 @@ function TourDetails() {
     const getVehucleByIddepart = async (selectedTour) => {
         try {
             console.log(selectedTour);
-            // Gọi API để lấy thông tin chi tiết của một phòng
+
             const vehicleResponse = await fetchVehicleByIddepart(selectedTour);
             const vehicleData = vehicleResponse.data;
             setVehicle(vehicleData);
@@ -144,8 +148,40 @@ function TourDetails() {
             console.error('Error fetching data:', err);
         }
     };
+
+    const getCheckOrder = async (selectedTour) => {
+        try {
+            console.log(selectedTour);
+
+            const orderResponse = await fetchCheckBookingOrder(selectedTour);
+            const orderData = orderResponse.data;
+            setOrder(orderData);
+
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        }
+    };
+
+    const getCheckOrderByDepart = async (selectedTour) => {
+        try {
+            console.log(selectedTour);
+
+            const orderDepartResponse = await fetchDayDepart(selectedTour);
+            const orderDepartData = orderDepartResponse.data;
+            setOrder2(orderDepartData[0]);
+
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        }
+    };
+
     useEffect(() => {
         getVehucleByIddepart(selectedTour); // Gọi hàm khi component render lần đầu
+        getCheckOrder(selectedTour);
+        getCheckOrderByDepart(selectedTour);
+
     }, [selectedTour]);
 
     const renderStars = () => {
@@ -191,6 +227,17 @@ function TourDetails() {
     renderStarsReview();
 
     const handleBookingClick = () => {
+
+        if(selectedTour === ""){
+            toast.warning("Bạn chưa chọn ngày khởi hành");
+            return;
+        } 
+            
+        if (order.length >= order2.order){
+            toast.warning("Tour trong ngày này đã đủ số lượng đặt");
+            return;
+        }
+
         // Kiểm tra xem người dùng đã đăng nhập chưa
         const userData = localStorage.getItem('user');
         const user = JSON.parse(userData);
@@ -226,9 +273,9 @@ function TourDetails() {
                         <p className='font-medium'>/5</p>
                         <p className="mx-1">trong {totalReviews} đánh giá</p>
                     </div>
-                    <div className="ml-auto bg-[#13357B] text-white rounded-md hover:bg-black duration-100">
+                    {/* <div className="ml-auto bg-[#13357B] text-white rounded-md hover:bg-black duration-100">
                         <button type="button" className="mx-2 my-1 font-medium">Tải về PDF</button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* phần thông tin chi tiết */}
@@ -254,6 +301,16 @@ function TourDetails() {
                                     <p className="mx-3 mt-3">Không có hình ảnh</p>
                                 </div>
                             )}
+                            <div className="mt-7 mx-auto">
+                            {order && Array.isArray(order) ? (
+                                    <div className="flex justify-center items-center">
+                                        <div className="font-semibold text-base">Tour này đã có:</div>
+                                        <div className="mx-2">{order.length}/{order2.order} lượt đặt</div>
+                                    </div>
+                            ) : (
+                                <div></div>
+                            )}
+                            </div>
                             {/* phương tiện */}
                             <div className="mt-7">
                                 <div className="font-semibold text-2xl mb-5">Lịch khởi hành</div>
@@ -264,97 +321,97 @@ function TourDetails() {
                                                 <div className="font-semibold text-xl text-[#FF5E1F] mt-4 mb-3"><FormatTime date={vehicle.day_depar} /></div>
                                                 <div className="text-xl font-semibold text-[#3467cd] mb-4">Phương tiện di chuyển</div>
                                                 {vehicle.type === 'xe khach' ? (
-                                                <div className="flex mx-auto">
-                                                    <div className="w-[45%]">
-                                                        <div className="flex mb-3">
-                                                            <div className="font-medium">Ngày đi:</div>
-                                                            <div className="mx-2"><FormatTime date={vehicle.departure_date} /></div>
-                                                        </div>
-                                                        <div className="flex mb-2">
-                                                            <div className="w-1/3 text-left font-medium">{vehicle.departure_time1}</div>
-                                                            <div className="w-1/3"><i className="fa-solid fa-bus"></i></div>
-                                                            <div className="w-1/3 text-right font-medium">{vehicle.arrival_time1}</div>
-                                                        </div>
-                                                        <div className="w-full h-[1px] bg-gray-300"></div>
-                                                        <div className="flex mt-2">
-                                                            <div className="w-1/3 text-left font-semibold">{vehicle.departure1}</div>
-                                                            <div className="w-1/3"></div>
-                                                            <div className="w-1/3 text-right font-semibold">{vehicle.destination1}</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="w-[10%]">
-                                                        <div className="mx-auto w-[1px] h-[130px] bg-gray-200"></div>
-                                                    </div>
-                                                    <div className="w-[45%]">
-                                                        <div className="flex mb-3">
-                                                            <div className="font-medium">Ngày về:</div>
-                                                            <div className="mx-2"><FormatTime date={vehicle.return_date} /></div>
-                                                        </div>
-                                                        <div className="flex mb-2">
-                                                            <div className="w-1/3 text-left font-medium">{vehicle.departure_time2}</div>
-                                                            <div className="w-1/3"><i className="fa-solid fa-bus"></i></div>
-                                                            <div className="w-1/3 text-right font-medium">{vehicle.arrival_time2}</div>
-                                                        </div>
-                                                        <div className="w-full h-[1px] bg-gray-300"></div>
-                                                        <div className="flex mt-2">
-                                                            <div className="w-1/3 text-left font-semibold">{vehicle.departure2}</div>
-                                                            <div className="w-1/3"></div>
-                                                            <div className="w-1/3 text-right font-semibold">{vehicle.destination2}</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                ) : vehicle.type === 'may bay' ? (
-                                                <div className="flex mx-auto">
-                                                    <div className="w-[45%]">
-                                                        <div className="flex mb-3 justify-between items-center">
-                                                            <div className="flex">
+                                                    <div className="flex mx-auto">
+                                                        <div className="w-[45%]">
+                                                            <div className="flex mb-3">
                                                                 <div className="font-medium">Ngày đi:</div>
                                                                 <div className="mx-2"><FormatTime date={vehicle.departure_date} /></div>
                                                             </div>
-                                                            <div className="flex ">
-                                                                <div><i className="fa-solid fa-plane-departure text-[#007aff]"></i></div>
-                                                                <div className="ml-2 text-[#007aff]">{vehicle.vehicle_number1}</div>
+                                                            <div className="flex mb-2">
+                                                                <div className="w-1/3 text-left font-medium">{vehicle.departure_time1}</div>
+                                                                <div className="w-1/3"><i className="fa-solid fa-bus"></i></div>
+                                                                <div className="w-1/3 text-right font-medium">{vehicle.arrival_time1}</div>
+                                                            </div>
+                                                            <div className="w-full h-[1px] bg-gray-300"></div>
+                                                            <div className="flex mt-2">
+                                                                <div className="w-1/3 text-left font-semibold">{vehicle.departure1}</div>
+                                                                <div className="w-1/3"></div>
+                                                                <div className="w-1/3 text-right font-semibold">{vehicle.destination1}</div>
                                                             </div>
                                                         </div>
-                                                        <div className="flex mb-2">
-                                                            <div className="w-1/3 text-left font-medium">{vehicle.departure_time1}</div>
-                                                            <div className="w-1/3 text-[#007aff] tracking-wide">{vehicle.company1}</div>
-                                                            <div className="w-1/3 text-right font-medium">{vehicle.arrival_time1}</div>
+                                                        <div className="w-[10%]">
+                                                            <div className="mx-auto w-[1px] h-[130px] bg-gray-200"></div>
                                                         </div>
-                                                        <div className="w-full h-[1px] bg-gray-300"></div>
-                                                        <div className="flex mt-2">
-                                                            <div className="w-1/3 text-left font-semibold">{vehicle.departure1}</div>
-                                                            <div className="w-1/3"></div>
-                                                            <div className="w-1/3 text-right font-semibold">{vehicle.destination1}</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="w-[10%]">
-                                                        <div className="mx-auto w-[1px] h-[130px] bg-gray-200"></div>
-                                                    </div>
-                                                    <div className="w-[45%]">
-                                                        <div className="flex mb-3 justify-between items-center">
-                                                            <div className="flex">
+                                                        <div className="w-[45%]">
+                                                            <div className="flex mb-3">
                                                                 <div className="font-medium">Ngày về:</div>
                                                                 <div className="mx-2"><FormatTime date={vehicle.return_date} /></div>
                                                             </div>
-                                                            <div className="flex ">
-                                                                <div><i className="fa-solid fa-plane-departure text-[#007aff]"></i></div>
-                                                                <div className="ml-2 text-[#007aff]">{vehicle.vehicle_number2}</div>
+                                                            <div className="flex mb-2">
+                                                                <div className="w-1/3 text-left font-medium">{vehicle.departure_time2}</div>
+                                                                <div className="w-1/3"><i className="fa-solid fa-bus"></i></div>
+                                                                <div className="w-1/3 text-right font-medium">{vehicle.arrival_time2}</div>
+                                                            </div>
+                                                            <div className="w-full h-[1px] bg-gray-300"></div>
+                                                            <div className="flex mt-2">
+                                                                <div className="w-1/3 text-left font-semibold">{vehicle.departure2}</div>
+                                                                <div className="w-1/3"></div>
+                                                                <div className="w-1/3 text-right font-semibold">{vehicle.destination2}</div>
                                                             </div>
                                                         </div>
-                                                        <div className="flex mb-2">
-                                                            <div className="w-1/3 text-left font-medium">{vehicle.departure_time2}</div>
-                                                            <div className="w-1/3 text-[#007aff] tracking-wide">{vehicle.company1}</div>
-                                                            <div className="w-1/3 text-right font-medium">{vehicle.arrival_time2}</div>
+                                                    </div>
+                                                ) : vehicle.type === 'may bay' ? (
+                                                    <div className="flex mx-auto">
+                                                        <div className="w-[45%]">
+                                                            <div className="flex mb-3 justify-between items-center">
+                                                                <div className="flex">
+                                                                    <div className="font-medium">Ngày đi:</div>
+                                                                    <div className="mx-2"><FormatTime date={vehicle.departure_date} /></div>
+                                                                </div>
+                                                                <div className="flex ">
+                                                                    <div><i className="fa-solid fa-plane-departure text-[#007aff]"></i></div>
+                                                                    <div className="ml-2 text-[#007aff]">{vehicle.vehicle_number1}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex mb-2">
+                                                                <div className="w-1/3 text-left font-medium">{vehicle.departure_time1}</div>
+                                                                <div className="w-1/3 text-[#007aff] tracking-wide">{vehicle.company1}</div>
+                                                                <div className="w-1/3 text-right font-medium">{vehicle.arrival_time1}</div>
+                                                            </div>
+                                                            <div className="w-full h-[1px] bg-gray-300"></div>
+                                                            <div className="flex mt-2">
+                                                                <div className="w-1/3 text-left font-semibold">{vehicle.departure1}</div>
+                                                                <div className="w-1/3"></div>
+                                                                <div className="w-1/3 text-right font-semibold">{vehicle.destination1}</div>
+                                                            </div>
                                                         </div>
-                                                        <div className="w-full h-[1px] bg-gray-300"></div>
-                                                        <div className="flex mt-2">
-                                                            <div className="w-1/3 text-left font-semibold">{vehicle.departure2}</div>
-                                                            <div className="w-1/3"></div>
-                                                            <div className="w-1/3 text-right font-semibold">{vehicle.destination2}</div>
+                                                        <div className="w-[10%]">
+                                                            <div className="mx-auto w-[1px] h-[130px] bg-gray-200"></div>
+                                                        </div>
+                                                        <div className="w-[45%]">
+                                                            <div className="flex mb-3 justify-between items-center">
+                                                                <div className="flex">
+                                                                    <div className="font-medium">Ngày về:</div>
+                                                                    <div className="mx-2"><FormatTime date={vehicle.return_date} /></div>
+                                                                </div>
+                                                                <div className="flex ">
+                                                                    <div><i className="fa-solid fa-plane-departure text-[#007aff]"></i></div>
+                                                                    <div className="ml-2 text-[#007aff]">{vehicle.vehicle_number2}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex mb-2">
+                                                                <div className="w-1/3 text-left font-medium">{vehicle.departure_time2}</div>
+                                                                <div className="w-1/3 text-[#007aff] tracking-wide">{vehicle.company1}</div>
+                                                                <div className="w-1/3 text-right font-medium">{vehicle.arrival_time2}</div>
+                                                            </div>
+                                                            <div className="w-full h-[1px] bg-gray-300"></div>
+                                                            <div className="flex mt-2">
+                                                                <div className="w-1/3 text-left font-semibold">{vehicle.departure2}</div>
+                                                                <div className="w-1/3"></div>
+                                                                <div className="w-1/3 text-right font-semibold">{vehicle.destination2}</div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                                 ) : (
                                                     <div>Phương tiện không xác định</div>
                                                 )}
@@ -537,8 +594,13 @@ function TourDetails() {
                                     <div className="w-[70%]">
                                         {tourDepart && Array.isArray(tourDepart) && tourDepart.length > 0 ? (
                                             tourDepart.map((tourDepart) => (
-                                                <div key={tourDepart.id}>
-                                                    {new Date(tourDepart.day_depart).toLocaleDateString('vi-VN')}
+                                                <div className="flex" key={tourDepart.id}>
+                                                    <div>
+                                                        {new Date(tourDepart.day_depart).toLocaleDateString('vi-VN')}
+                                                    </div>
+                                                    <div className="mx-2">
+                                                        ({tourDepart.order} lượt đặt)
+                                                    </div>
                                                 </div>
                                             ))
                                         ) : (
@@ -549,7 +611,7 @@ function TourDetails() {
                                 <div className="h-[1px] mx-3 bg-gray-200"></div>
                                 <div className="flex text-left my-3">
                                     <div className="w-[30%] ml-3 font-medium">
-                                        Vận Chuyển:
+                                        Phương tiện:
                                     </div>
                                     <div className="w-[70%]">
                                         {tourDetails.vehicle}

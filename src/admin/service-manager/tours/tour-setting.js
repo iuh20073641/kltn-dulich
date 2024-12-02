@@ -10,20 +10,31 @@ import { fetchTourDepart } from "../../../component/api/tours";
 import { fetchVehicleByIddepart } from "../../../component/api/tours";
 import { fetchHotelByIddepart } from "../../../component/api/tours";
 import FormatTime from "../../../component/service/fomat-time";
+import { fetchDataScheduleTourByIdtour } from "../../../component/api/tours";
 
 import config from "../../../component/config.json";
 
 const { SERVER_API } = config;
 
-const initFormSchedule = [
+const initFormSchedule = 
     {
         // id_tour: "",
         day: "",
         image: null,
         schedule: "",
         locations: ""
-    },
-];
+    };
+
+
+const initFormSchedule2 = 
+    {
+        id_schedule: "",
+        day: "",
+        image: null,
+        schedule: "",
+        locations: ""
+    };
+
 
 const initFormDepart = {
     day: "",
@@ -69,6 +80,7 @@ function TourSetting() {
     const [tourSchedule, setTourSchedule] = useState([]);
     const [error, setError] = useState(null);
     const [formSchedule, setFormSchedule] = useState(initFormSchedule);
+    const [formUpdateSchedule, setFormUdateSchedule] = useState(initFormSchedule2);
     const [formDepart, setFormDepart] = useState(initFormDepart);
     const [vahicle, setVahicle] = useState('may bay');
     const [tourDepart, setTourDepart] = useState([]);
@@ -76,6 +88,7 @@ function TourSetting() {
     const [formVehicle, setFormVehicle] = useState(initVehicle);
     const [vehicle, setVehicle] = useState([]);
     const [depositHotel, setDepositHotel] = useState([]);
+    const [isOpenModalUpdateSchule, setIsOpenModalUpdateSchule] = useState(false);
 
 
     // Hàm xử lý khi chọn loại phương tiện
@@ -91,9 +104,9 @@ function TourSetting() {
         }));
     };
 
-    useEffect(() => {
+    
         // Hàm để gọi API và cập nhật state
-        const tourDetail = async () => {
+        const tourDetail = async (id) => {
             try {
                 // Gọi API để lấy thông tin chi tiết của một phòng
                 const toursResponse = await fetchTourDetails(id);
@@ -124,8 +137,9 @@ function TourSetting() {
             }
         };
 
-        tourDetail();
-
+        
+    useEffect(() => {
+        tourDetail(id);
     }, [id]);
 
     useEffect(() => {
@@ -212,10 +226,10 @@ function TourSetting() {
 
     const handleScheduleChange = (event) => {
         const { value, name } = event.target;
-        setFormSchedule({
-            ...formSchedule,
+        setFormSchedule((prev) => ({
+            ...prev,
             [name]: value,
-        });
+        }));
     };
 
     // thêm lịch trình tour
@@ -233,7 +247,7 @@ function TourSetting() {
         formDataSchedule.append("locations", formSchedule.locations);
         // });
         console.log("formDataSchedule", id);
-        fetch('http://localhost:88/api_travel/api/admin/create-schedule.php', {
+        fetch(`${SERVER_API}/admin/create-schedule.php`, {
             method: 'POST',
             // headers: {
             //   'Content-Type': 'application/json',
@@ -243,29 +257,33 @@ function TourSetting() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    toast.success('Lịch trình tour đã được thêm thành công');
+                    toast.success(data.message);
                     setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    tourDetail(id);
                 } else if (data.status === 'error1') {
-                    toast.error('Không có file hình ảnh hoặc có lỗi xảy ra.');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 } else if (data.status === 'error2') {
-                    toast.error('Thiếu hoặc không hợp lệ các tham số');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 } else if (data.status === 'error3') {
-                    toast.error('id_tour không tồn tại');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 } else if (data.status === 'error4') {
-                    toast.error('File không phải là hình ảnh hợp lệ');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 } else if (data.status === 'error5') {
-                    toast.error('Kích thước file quá lớn');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 } else if (data.status === 'error6') {
-                    toast.error('Thư mục tải lên không tồn tại');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                } else if (data.status === 'error7') {
+                    toast.error(data.message);
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 } else {
-                    toast.error('Tải lên hình ảnh thất bại');
-                    setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
+                    toast.error('Thêm lịch trình tour không thành công.');
+                    // setFormSchedule(initFormSchedule); // Đặt lại form về rỗng nếu có lỗi
                 }
             })
             .catch(error => {
@@ -298,7 +316,7 @@ function TourSetting() {
     const hendleDepartSubmit = async (event) => {
         event.preventDefault(); //để không tự động reset
         console.log("formValue", id);
-        fetch('http://localhost:88/api_travel/api/admin/create_departure_tour.php', {
+        fetch(`${SERVER_API}/admin/create_departure_tour.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -413,6 +431,117 @@ function TourSetting() {
             });
     };
 
+    const deleteTourSchedule = (scheduleId) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa lịch trình trong ngày này?')) {
+            fetch(`${SERVER_API}/admin/delete_schedule_tour.php`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ schedule_id: scheduleId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        setTourSchedule(tourSchedule.filter(schedule => schedule.id !== scheduleId));
+                        toast.success(data.message);
+                    } else if (data.status === 'error') {
+                        toast.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    // console.error('Có lỗi xảy ra:', error);
+                    toast.error('lỗi.');
+                    console.log('Có lỗi xảy ra:');
+                });
+        }
+    };
+
+    const handleModalUpdateSchedule = async () => {
+        setIsOpenModalUpdateSchule(!isOpenModalUpdateSchule);
+    };
+
+    // Bật của sổ cập nhật lịch trình
+    const ModalUpdateSchedule = async (schedule_id) => {
+        setIsOpenModalUpdateSchule(!isOpenModalUpdateSchule);
+
+        const scheduleResponse = await fetchDataScheduleTourByIdtour(schedule_id);
+        const scheduleData = scheduleResponse.data;
+        console.log(scheduleData);
+        
+        if (scheduleData.length > 0) {
+            setFormUdateSchedule({
+                id_schedule: scheduleData[0].id,
+                day: scheduleData[0].date,
+                image: null,
+                schedule: scheduleData[0].schedule,
+                locations: scheduleData[0].locations
+            });
+        }
+    };
+
+    // Hàm xử lý thay đổi cho ô tải lên hình ảnh
+    const handleUpdateImageChange = (e) => {
+        setFormUdateSchedule({ ...formUpdateSchedule, image: e.target.files[0] });
+    };
+
+    const handleUpdateScheduleChange = (event) => {
+        const { value, name } = event.target;
+        setFormUdateSchedule((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    // update schedule setting
+    const updateScheduleSetting = (event) => {
+        event.preventDefault(); //để không tự động reset
+        // Tạo FormData
+        const formDataSchedule = new FormData();
+
+        // Append từng trường vào formData
+        // initFormSchedule.forEach((tour, index) => {
+        formDataSchedule.append("id_schedule", formUpdateSchedule.id_schedule);
+        formDataSchedule.append("day", formUpdateSchedule.day);
+        formDataSchedule.append("image", formUpdateSchedule.image); // File sẽ được gửi dưới dạng multipart
+        formDataSchedule.append("schedule", formUpdateSchedule.schedule);
+        formDataSchedule.append("locations", formUpdateSchedule.locations);
+        // });
+        console.log("formDataSchedule", formUpdateSchedule);
+        fetch(`${SERVER_API}/admin/update_schedule_tour.php`, {
+            method: 'POST',
+            body: formDataSchedule,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    toast.success(data.message);
+                    setFormUdateSchedule(initFormSchedule2); // Đặt lại form về rỗng nếu có lỗi
+                    tourDetail(id);
+                } else if (data.status === 'error1') {
+                    toast.error('Không có file hình ảnh hoặc có lỗi xảy ra.');
+                } else if (data.status === 'error2') {
+                    toast.error('Thiếu hoặc không hợp lệ các tham số');
+                } else if (data.status === 'error3') {
+                    toast.error('id_tour không tồn tại');
+                } else if (data.status === 'error4') {
+                    toast.error('File không phải là hình ảnh hợp lệ');
+                } else if (data.status === 'error5') {
+                    toast.error('Kích thước file quá lớn');
+                } else if (data.status === 'error6') {
+                    toast.error('Thư mục tải lên không tồn tại');
+                } else if (data.status === 'error7') {
+                    toast.error('Tải lên hình ảnh thất bại.');
+                } else {
+                    toast.error('Cập nhật lịch trình tour không thành công');
+                }
+            })
+            .catch(error => {
+
+                toast.error('lỗi.');
+                console.log('Có lỗi xảy ra:', error);
+            });
+    };
 
     if (error) return <p>{error}</p>;
 
@@ -440,11 +569,11 @@ function TourSetting() {
                                                     {values.friends.length > 0 &&
                                                         values.friends.map((friend, index) => (
                                                             <div className="row w-[98%] mt-3 mx-auto border-[1px] bg-gray-100 border-gray-200 rounded-sm" key={index}>
-                                                                <div className="col text-right mr-4 my-3">
+                                                                {/* <div className="col text-right mr-4 my-3">
                                                                     <button type="button" className="secondary" onClick={() => remove(index)}>
                                                                         <i className="fa-solid fa-square-xmark"></i>
                                                                     </button>
-                                                                </div>
+                                                                </div> */}
                                                                 <div className="col w-[95%] text-left mb-3 ">
                                                                     {/* <div className="w-full" htmlFor={`friends.${index}.name`}>Day: </div> */}
                                                                     <Field name='id_tour' value={formSchedule.id_tour} onChange={handleScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="hidden" />
@@ -485,11 +614,11 @@ function TourSetting() {
                                                     </div> */}
                                                             </div>
                                                         ))}
-                                                    <div className="mt-5 mb-3 bg-[#0d6efd] text-white mx-2 inline-block align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline border-[2px] border-[#0d6efd]  hover:text-[#0d6efd] hover:bg-white duration-100 shadow-none">
+                                                    {/* <div className="mt-5 mb-3 bg-[#0d6efd] text-white mx-2 inline-block align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline border-[2px] border-[#0d6efd]  hover:text-[#0d6efd] hover:bg-white duration-100 shadow-none">
                                                         <button type="button" className="secondary" onClick={() => push({ name: '', email: '' })}>
                                                             One More Day
                                                         </button>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             )}
                                         </FieldArray>
@@ -500,7 +629,7 @@ function TourSetting() {
                                             </button>
                                         </div> */}
                                             <div>
-                                                <button type="submit" onClick={(event) => hendleScheduleSubmit(event)} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
+                                                <button type="submit" onClick={(event) => hendleScheduleSubmit(event)} className="bg-black mt-3 mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
                                                     Thêm
                                                 </button>
                                             </div>
@@ -1063,10 +1192,24 @@ function TourSetting() {
                         {Array.isArray(tourSchedule) && tourSchedule.length > 0 ? (
                             tourSchedule.map((tourSchedule) => (
                                 <div className="mb-2" key={tourSchedule.id}>
-                                    <div className="flex">
-                                        <div className="font-medium">Ngày {tourSchedule.date}</div>
-                                        <div className="mx-2">
-                                            | {tourSchedule.locations}
+                                    <div className="flex justify-between items-center mb-3">
+                                        <div className="flex">
+                                            <div className="font-medium">Ngày {tourSchedule.date}</div>
+                                            <div className="mx-2">
+                                                | {tourSchedule.locations}
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-x-2 items-center">
+                                            <div className="">
+                                                <button type="button" onClick={() => ModalUpdateSchedule(tourSchedule.id)} className="bg-[#0dcaf0] border-[1px] border-[#0dcaf0] hover:bg-white hover:text-black text-white px-2 py-[2px] rounded-[3px] text-sm">
+                                                    Sửa
+                                                </button>
+                                            </div>
+                                            <div className="">
+                                                <button type="button" onClick={() => deleteTourSchedule(tourSchedule.id)} className="bg-[#dc3545] border-[1px] border-[#dc3545] hover:bg-white hover:text-black text-white px-2 py-[2px] rounded-[3px] text-sm">
+                                                    Xóa
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div>
@@ -1275,6 +1418,93 @@ function TourSetting() {
 
                 </div>
             </div>
+
+            {/* cập nhật lịch trình tour  */}
+            {isOpenModalUpdateSchule && (
+                <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed">
+                    <div className=" mt-4 pr-4 pl-4 mx-auto bg-gray-100 rounded-md overflow-y-auto">
+                        <div className="modal h-[90%] overflow-y-auto" id="add-room" tabIndex={-1}>
+                            <Formik initialValues={initialValues} onSubmit={async (values) => {
+                                await new Promise((r) => setTimeout(r, 500));
+                                alert(JSON.stringify(values, null, 2));
+                            }}
+                            >
+                                {({ values }) => (
+                                    <Form>
+                                        <FieldArray name="friends">
+                                            {({ insert, remove, push }) => (
+                                                <div className="bg-white">
+                                                    {values.friends.length > 0 &&
+                                                        values.friends.map((friend, index) => (
+                                                            <div className="row" key={index}>
+                                                                <div className="col text-right mr-4 my-3">
+                                                                    <button type="button" className="secondary" onClick={handleModalUpdateSchedule}>
+                                                                        <i className="fa-solid fa-square-xmark"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <div className="col w-[95%] text-left mb-3 ">
+                                                                    {/* <div className="w-full" htmlFor={`friends.${index}.name`}>Day: </div> */}
+                                                                    <Field name='id_tour' value={formUpdateSchedule.id_tour} onChange={handleUpdateScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2 outline-none' type="hidden" />
+                                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
+                                                                </div>
+                                                                <div className="col w-[95%] text-left mx-auto mb-3">
+                                                                    <div className="w-full" htmlFor={`friends.${index}.name`}>Ngày: </div>
+                                                                    {/* <Field name={`friends.${index}.name`} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="number" />
+                                                        <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" /> */}
+                                                                    <Field name='day' value={formUpdateSchedule.day} onChange={handleUpdateScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2 outline-none' type="number" />
+                                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
+                                                                </div>
+                                                                <div className="col w-[95%] text-left mx-auto mb-3">
+                                                                    <div className="w-full" htmlFor={`friends.${index}.name`}>Địa điểm: </div>
+                                                                    <Field name='locations' value={formUpdateSchedule.locations} onChange={handleUpdateScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2 outline-none' type="text" />
+                                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
+                                                                </div>
+                                                                <div className="col w-[95%] text-left mx-auto mb-3">
+                                                                    <div className="w-full" htmlFor={`friends.${index}.name`}>Hình ảnh: </div>
+                                                                    {/* <Field name='image' value={formSchedule.image} onChange={handleScheduleChange} className='border-[1px] border-gray-200 rounded-md w-full py-2 px-2' type="file" /> */}
+                                                                    <input type="file" name="image" onChange={handleUpdateImageChange}
+                                                                        className="border-[1px] border-gray-200 rounded-md w-full py-2 px-2" required=""
+                                                                    />
+                                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
+                                                                </div>
+                                                                <div className="col w-[95%] text-left mx-auto mb-4">
+                                                                    <div htmlFor={`friends.${index}.email`}>Lịch trình trong ngày: </div>
+                                                                    {/* <Field name={`friends.${index}.email`} className='h-[150px] border-[1px] border-gray-200 rounded-md w-[95%]' type="email" /> */}
+                                                                    <textarea name='schedule' value={formUpdateSchedule.schedule} onChange={handleUpdateScheduleChange} className='outline-none h-[150px] px-2 py-2 border-[1px] border-gray-200 rounded-md w-full' type="email">
+
+                                                                    </textarea>
+                                                                    <ErrorMessage name={`friends.${index}.name`} component="div" className="field-error" />
+                                                                </div>
+                                                                {/* <div className="col">
+                                                        <button type="button" className="secondary" onClick={() => remove(index)}>
+                                                        X
+                                                        </button>
+                                                    </div> */}
+                                                            </div>
+                                                        ))}
+                                                    {/* <div className="mt-5 mb-3 bg-[#0d6efd] text-white mx-2 inline-block align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline border-[2px] border-[#0d6efd]  hover:text-[#0d6efd] hover:bg-white duration-100 shadow-none">
+                                                        <button type="button" className="secondary" onClick={() => push({ name: '', email: '' })}>
+                                                            One More Day
+                                                        </button>
+                                                    </div> */}
+                                                </div>
+                                            )}
+                                        </FieldArray>
+                                        <div className="flex bg-white justify-center mb-4">
+                                            <div>
+                                                <button type="submit" onClick={(event) => updateScheduleSetting(event)} className="bg-black hover:bg-white hover:text-black mt-3 mx-2 inline-block align-middle text-center select-none border-[1px] border-black font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
+                                                    Cập nhật
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     )
 }

@@ -1,23 +1,19 @@
-import Header from "../header";
-import Footer from "../footer/footer";
-import { useParams } from 'react-router-dom';
-import { useSearchParams } from 'react-router-dom';
-import { fetchTourDetails } from "../api/tours";
-import { fetchDayDepart } from "../api/tours";
-import { getUsersData } from "../api/user";
+
+import HeaderCensor from "../header-admin/header-admin";
+import { fetchCheckBookingOrder } from "../../../component/api/tours";
+import { fetchTourDetails } from "../../../component/api/tours";
+import { fetchDayDepart } from "../../../component/api/tours";
+import { fetchTourDepart } from "../../../component/api/tours";
 import { toast } from 'react-toastify';
-// import TotalDisplay from "../service/total-price";
-import { loadStripe } from "@stripe/stripe-js";
-// import { fetchTourSchedule } from "../api/tours";
-// import { fetchTourRating } from "../api/tours";
-// import { fetchTourImages } from "../api/tours";
 import { useNavigate } from "react-router-dom";
+// import { loadStripe } from "@stripe/stripe-js";
 import React, { useEffect, useState } from 'react';
-import PriceDisplay from "../service/money";
-import config from "../../component/config.json";
+import PriceDisplay from "../../../component/service/money";
+import { getUsersDataByKey } from "../../../component/api/user";
+import config from "../../../component/config.json";
 
 const { SERVER_API } = config;
-const { SERVER_HOST } = config;
+// const { SERVER_HOST } = config;
 
 const formTour = {
     id: "",
@@ -39,6 +35,7 @@ const formTour = {
 };
 
 const formUser = {
+    id: '',
     nametk: '',
     email: '',
     dob: '',
@@ -58,25 +55,26 @@ const formInput = {
 };
 
 
-const dayDepart = {
-    day: ""
-};
+// const dayDepart = {
+//     day: ""
+// };
 
-function BookingTour() {
+function CreateBookingTourByNV() {
 
 
-    const { id } = useParams();  // Lấy ID từ URL
+    // const { id } = useParams();  // Lấy ID từ URL
     const navigate = useNavigate();
     const [tourData, setTourData] = useState({ formTour });
-    const [departData, setDepartData] = useState({ dayDepart });
+    const [departData, setDepartData] = useState([]);
     const [userDatas, setUserData] = useState({ formUser });
     const [formValue, setFormValue] = useState(formInput);
     const [error, setError] = useState(null);
 
-    const [searchParams] = useSearchParams();
+    // const [searchParams] = useSearchParams();
     // Lấy giá trị của selectedTour từ URL
-    const selectedTour = searchParams.get('selectedTour');
-   
+    const [order, setOrder] = useState([]);
+    const [order2, setOrder2] = useState([]);
+    const [selectKey, setSelectKey] = useState({ key: "", tour_id: "" });
     const [customers, setCustomers] = useState([]);
     const [toddlers, setToddlers] = useState([]);
     const [children, setChildren] = useState([]);
@@ -129,109 +127,82 @@ function BookingTour() {
         setBaby(updatedBaby);
     };
 
-    useEffect(() => {
-        // Hàm để gọi API và cập nhật state
-        const tourDetail = async () => {
-            try {
-                // Gọi API để lấy thông tin chi tiết của một phòng
-                const toursResponse = await fetchTourDetails(id);
-                const toursData = toursResponse.data;
-                setTourData(toursData);
-                console.log('Dữ liệu từ API:', toursData);
 
-                // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
-                if (Array.isArray(toursData) && toursData.length > 0) {
-                    setTourData(toursData[0]);
-                    const priceAdult = toursData[0].price/100*(100 - toursData[0].discount)
-                    setPriceAdult(priceAdult);
-                } else {
-                    setTourData(null); // Xử lý nếu không có dữ liệu hợp lệ
-                }
+    // Hàm để gọi API và cập nhật state
+    const tourDetail = async () => {
+        try {
+            // Gọi API để lấy thông tin chi tiết của một phòng
+            const toursResponse = await fetchTourDetails(selectKey.tour_id);
+            const toursData = toursResponse.data;
+            setTourData(toursData);
+            console.log('Dữ liệu từ API:', toursData);
 
-                // // Gọi API để lấy thông tin chi tiết của một phòng
-                // const toursScheduleResponse = await fetchTourSchedule(id);
-                // const toursScheduleData = toursScheduleResponse.data; 
-                // setTourSchedule(toursScheduleData);
-                // // console.log('Dữ liệu từ API:', tourDetails);
+            // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
+            if (Array.isArray(toursData) && toursData.length > 0) {
+                setTourData(toursData[0]);
+                const priceAdult = toursData[0].price / 100 * (100 - toursData[0].discount)
+                setPriceAdult(priceAdult);
 
-                // // Gọi API để lấy thông tin chi tiết của một phòng
-                // const tourDepartResponse = await fetchTourDepart(id);
-                // const toursDepartData = tourDepartResponse.data; 
-                // setTourDepart(toursDepartData);
-                // console.log('Dữ liệu từ API:', toursDepartData);
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
-            }
-        };
-
-        tourDetail();
-
-    }, [id]);
-
-    useEffect(() => {
-        const tourDepart = async () => {
-            try {
-                // Gọi API để lấy thông tin chi tiết của một phòng
-                const departResponse = await fetchDayDepart(selectedTour);
+                const departResponse = await fetchTourDepart(selectKey.tour_id);
                 const departData = departResponse.data;
-                setDepartData(departData);
-                // console.log('Dữ liệu từ API:', tourDetails);
+                // setDepartData(departData);
+                console.log('Dữ liệu từ API:', departData);
 
                 // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
                 if (Array.isArray(departData) && departData.length > 0) {
-                    setDepartData(departData[0]);
+                    setDepartData(departData);
                 } else {
                     setDepartData(null); // Xử lý nếu không có dữ liệu hợp lệ
                 }
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+            } else {
+                setTourData(null); // Xử lý nếu không có dữ liệu hợp lệ
+                toast.warning('Không tìm thấy tour')
             }
-        };
 
-        tourDepart();
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+        }
+    };
 
-    }, [selectedTour]);
+    const user = async () => {
 
-    useEffect(() => {
-        const user = async () => {
-            const userData = localStorage.getItem('user');
+        try {
+            // Gọi API để lấy thông tin chi tiết của một phòng
+            const userResponse = await getUsersDataByKey(selectKey.key);
+            const userData = userResponse.data;
+            // setUserData(userData);
+            // console.log('Dữ liệu từ API:', tourDetails);
 
-            const user = JSON.parse(userData);
-            console.log("User ID:", user.id); // Lấy ID người dùng 
-
-            try {
-                // Gọi API để lấy thông tin chi tiết của một phòng
-                const userResponse = await getUsersData(user.id);
-                const userData = userResponse.data;
-                setUserData(userData);
-                // console.log('Dữ liệu từ API:', tourDetails);
-
-                // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
-                if (Array.isArray(userData) && userData.length > 0) {
-                    setUserData(userData[0]);
-                } else {
-                    setUserData(null); // Xử lý nếu không có dữ liệu hợp lệ
-                }
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+            // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
+            if (Array.isArray(userData) && userData.length > 0) {
+                setUserData(userData[0]);
+            } else {
+                setUserData(null); // Xử lý nếu không có dữ liệu hợp lệ
+                toast.warning('Không tìm thấy người dùng')
             }
-        };
 
-        user();
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+        }
+    };
 
-    }, []);
+
+
+
 
     // Hàm xử lý khi thay đổi dữ liệu input
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setTourData({ ...tourData, [name]: value });
         // setInputValue(value);
+    };
+
+    // Hàm xử lý khi thay đổi dữ liệu input
+    const handleKeyChange = (event) => {
+        const { value, name } = event.target;
+        setSelectKey({ ...selectKey, [name]: value });
     };
 
     // Hàm xử lý khi thay đổi dữ liệu input
@@ -247,19 +218,19 @@ function BookingTour() {
         const fieldsToInclude = ['participant', 'toddlers', 'children', 'baby'];
 
         // Tính tổng số người hiện tại từ form
-        const currentTotal = 
-        (isNaN(parseInt(formValue.participant, 10)) ? 0 : parseInt(formValue.participant, 10)) +
-        (isNaN(parseInt(formValue.toddlers, 10)) ? 0 : parseInt(formValue.toddlers, 10)) +
-        (isNaN(parseInt(formValue.children, 10)) ? 0 : parseInt(formValue.children, 10)) +
-        (isNaN(parseInt(formValue.baby, 10)) ? 0 : parseInt(formValue.baby, 10));
+        const currentTotal =
+            (isNaN(parseInt(formValue.participant, 10)) ? 0 : parseInt(formValue.participant, 10)) +
+            (isNaN(parseInt(formValue.toddlers, 10)) ? 0 : parseInt(formValue.toddlers, 10)) +
+            (isNaN(parseInt(formValue.children, 10)) ? 0 : parseInt(formValue.children, 10)) +
+            (isNaN(parseInt(formValue.baby, 10)) ? 0 : parseInt(formValue.baby, 10));
 
         // Giá trị mới của trường đang chỉnh sửa
         const newValue = fieldsToInclude.includes(name)
-        ? (isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10))
-        : 0;
+            ? (isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10))
+            : 0;
 
         // Tính tổng số người tham gia mới sau khi thay đổi
-        const newTotal = currentTotal - (isNaN(parseInt(formValue[name], 10)) ? 0 : parseInt(formValue[name], 10)) + newValue +1;
+        const newTotal = currentTotal - (isNaN(parseInt(formValue[name], 10)) ? 0 : parseInt(formValue[name], 10)) + newValue + 1;
         setParticipant(newTotal);
 
         // Kiểm tra nếu tổng số người vượt quá giới hạn
@@ -279,7 +250,7 @@ function BookingTour() {
             const participantCount = parseInt(value, 10);
 
             const totalAdult = (participantCount + 1) *
-            (tourData.price - (tourData.price / 100 * tourData.discount));
+                (tourData.price - (tourData.price / 100 * tourData.discount));
             setPriceAdult(totalAdult);
 
             // Nếu participantCount không hợp lệ, thoát sớm
@@ -308,7 +279,7 @@ function BookingTour() {
             const toddlersCount = parseInt(value, 10);
 
             const totalToddlers = (toddlersCount) *
-            (((tourData.price/100*tourData.toddlers_price_percen)/100*(100 - tourData.discount)));
+                (((tourData.price / 100 * tourData.toddlers_price_percen) / 100 * (100 - tourData.discount)));
             setPriceToddlers(totalToddlers);
 
             // Nếu participantCount không hợp lệ, thoát sớm
@@ -340,7 +311,7 @@ function BookingTour() {
             const childrenCount = parseInt(value, 10);
 
             const totalChildren = (childrenCount) *
-            (((tourData.price/100*tourData.child_price_percen)/100*(100 - tourData.discount)));
+                (((tourData.price / 100 * tourData.child_price_percen) / 100 * (100 - tourData.discount)));
             setPriceChildren(totalChildren);
 
             // Nếu participantCount không hợp lệ, thoát sớm
@@ -399,29 +370,29 @@ function BookingTour() {
         }
     };
 
-    const stripePromise = loadStripe(
-        "pk_test_51Q8m79Rqz8axCXq0oW0OaP1KhZHGkV5Wl1sYMRgVPYgsZwOy78KJnDCwpHh28VRJYSvVoHDP4Jr9UGbBICFD3xxm00NkH3YI5w"
-    );
+    // const stripePromise = loadStripe(
+    //     "pk_test_51Q8m79Rqz8axCXq0oW0OaP1KhZHGkV5Wl1sYMRgVPYgsZwOy78KJnDCwpHh28VRJYSvVoHDP4Jr9UGbBICFD3xxm00NkH3YI5w"
+    // );
 
     const validateForm = () => {
         let newErrors = { customers: [], toddlersData: [], childrenData: [], babyData: [] };
         let isValid = true;
 
-        if (formValue.namend === ""){
+        if (formValue.namend === "") {
             setErrorsUser((prevErrors) => ({
                 ...prevErrors,
                 user: "Họ tên không được để trống", // Cập nhật lỗi vào thuộc tính `user`
             }));
             return;
         }
-        if (formValue.cccd === ""){
+        if (formValue.cccd === "") {
             setErrorsUser((prevErrors) => ({
                 ...prevErrors,
                 cccd: "Cccd không được để trống", // Cập nhật lỗi vào thuộc tính `user`
             }));
             return;
         }
-    
+
         customers.forEach((customer, index) => {
             let customerErrors = {};
             if (!customer.name) {
@@ -434,8 +405,8 @@ function BookingTour() {
             }
             newErrors.customers[index] = customerErrors;
         });
-    
-        
+
+
         toddlers.forEach((toddler, index) => {
             let toddlerErrors = {};
             if (!toddler.name) {
@@ -474,90 +445,52 @@ function BookingTour() {
             }
             newErrors.babyData[index] = babyErrors;
         });
-    
+
         setErrors(newErrors);
         return isValid;
     };
-    
 
-    const handlePayment = async () => {
-
-        // Kiểm tra nếu tổng số người đã đủ số lượng tối thiểu chưa
-        if ((participant) < tourData.min_participant) {
-            toast.warning(`Tổng số người tham gia chưa đặt giá trị tối thiểu là ${tourData.min_participant}!`);
-            return;
-        }
-
-        if (validateForm()) {
-            // Xử lý logic submit nếu không có lỗi
-            console.log("Form hợp lệ, gửi dữ liệu.");
-        } else {
-            console.log("Form không hợp lệ.");
-            return;
-        }
-        const userData = localStorage.getItem('user');
-        const user = JSON.parse(userData);
-        // const participants = formValue.participant + 1;
-        const finalPrice = priceAdult + priceToddlers + priceChildren + 0;
-
-        const customersString = JSON.stringify(customers); // Chuyển đổi thành chuỗi JSON
-        const toddlersString = JSON.stringify(toddlers); // Chuyển đổi thành chuỗi JSON
-        const childrenString = JSON.stringify(children); // Chuyển đổi thành chuỗi JSON
-        const babyString = JSON.stringify(baby); // Chuyển đổi thành chuỗi JSON
-
-        console.log(tourData.name);
+    const getCheckOrder = async (selectedTour) => {
         try {
-            const response = await fetch(
-                `${SERVER_API}/create-checkout-session.php`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        amount: priceAdult + priceToddlers + priceChildren + 0, // Stripe expects the amount in cents
-                        // user_id: user.id,
-                        // id_tour: tourData.id,
-                        // depar_id: selectedTour,
-                        // participant: formValue.participant,
-                        // price_tour: tourData.price,
-                        // name_user: formValue.namend,
-                        // phone: userDatas.phone,
-                        // address: userDatas.address,
-                        cancel_url: `${SERVER_HOST}/booking-tour/${tourData.id}?selectedTour=${selectedTour}`,
-                        success_url: `${SERVER_HOST}/success/${tourData.id}?user_id=${user.id}&depar_id=${selectedTour}&participant=${participant}&price_tour=${tourData.price}&total_pay=${finalPrice}&name_user=${encodeURIComponent(formValue.namend)}&phone=${userDatas.phone}&address=${encodeURIComponent(userDatas.address)}&tour_name=${encodeURIComponent(tourData.name)}&cccd=${formValue.cccd}&customers=${encodeURIComponent(customersString)}&toddlers=${encodeURIComponent(toddlersString)}&children=${encodeURIComponent(childrenString)}&baby=${encodeURIComponent(babyString)}`,
-                        // cancel_url: "http://localhost:3000/cancel",
-                    }),
-                }
-            );
+            console.log(selectedTour);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            const orderResponse = await fetchCheckBookingOrder(selectedTour);
+            const orderData = orderResponse.data;
+            setOrder(orderData);
 
-            const { id } = await response.json();
-            const stripe = await stripePromise;
-            const { error } = await stripe.redirectToCheckout({ sessionId: id });
 
-            if (error) {
-                console.error("Error redirecting to checkout:", error);
-                alert("Failed to redirect to checkout. Please try again later.");
-            }
-        } catch (error) {
-            console.log(tourData.id_tour);
-            //   console.error("Error creating payment session:", `http://localhost:3000/success/${tourData.id}?user_id=${user.id}&depar_id=${selectedTour}&participant=${formValue.participant}&price_tour=${tourData.price}&total_pay=${finalPrice}&name_user='${encodeURIComponent(formValue.namend)}'&phone=${userDatas.phone}&address='${encodeURIComponent(userDatas.address)}'&tour_name='${encodeURIComponent(tourData.name)}'`);
-            alert("Failed to create payment session. Please try again later.");
+        } catch (err) {
+            console.error('Error fetching data:', err);
         }
     };
 
+    const getCheckOrderByDepart = async (selectedTour) => {
+        try {
+            console.log(selectedTour);
+
+            const orderDepartResponse = await fetchDayDepart(selectedTour);
+            const orderDepartData = orderDepartResponse.data;
+            setOrder2(orderDepartData[0]);
+
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        }
+    };
+
+    useEffect(() => {
+        getCheckOrder(tourData.depart);
+        getCheckOrderByDepart(tourData.depart);
+
+    }, [tourData.depart]);
+
     const hendleDepartSubmit = async (event) => {
 
-        // Kiểm tra nếu tổng số người đã đủ số lượng tối thiểu chưa
-        if ((participant) < tourData.min_participant) {
-            toast.warning(`Tổng số người tham gia chưa đặt giá trị tối thiểu là ${tourData.min_participant}!`);
+        if (order.length >= order2.order) {
+            toast.warning("Tour trong ngày này đã đủ số lượng đặt");
             return;
         }
-        
+
         if (validateForm()) {
             // Xử lý logic submit nếu không có lỗi
             console.log("Form hợp lệ, gửi dữ liệu.");
@@ -565,20 +498,23 @@ function BookingTour() {
             console.log("Form không hợp lệ.");
             return;
         }
-        
-        const userData = localStorage.getItem('user');
-        const user = JSON.parse(userData);
+
+        // Kiểm tra nếu tổng số người đã đủ số lượng tối thiểu chưa
+        if ((participant) < tourData.min_participant) {
+            toast.warning(`Tổng số người tham gia chưa đặt giá trị tối thiểu là ${tourData.min_participant}!`);
+            return;
+        }
         event.preventDefault(); //để không tự động reset
-        console.log(toddlers);
-        fetch(`${SERVER_API}/create_booking_tour.php`, {
+        console.log(tourData.depart, userDatas.id, tourData.id);
+        fetch(`${SERVER_API}/create_booking_tour_online.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                user_id: user.id,
-                id_tour: id,
-                depar_id: selectedTour,
+                user_id: userDatas.id,
+                id_tour: tourData.id,
+                depar_id: tourData.depart,
                 participant: participant,
                 totalPrice: priceAdult + priceToddlers + priceChildren + 0,
                 price_tour: tourData.price,
@@ -597,7 +533,8 @@ function BookingTour() {
             .then(data => {
                 if (data.status === 'success') {
                     toast.success(data.message);
-                    navigate('/info-booking-tour');
+                    navigate('/new-booking-tour');
+
                 } else if (data.status === 'error') {
                     toast.error(data.message);
 
@@ -615,15 +552,35 @@ function BookingTour() {
 
     return (
         <div>
-            <Header />
-            <div className="w-full bg-gray-100">
-                <div className="w-[80%] mx-auto">
-                    <div className="font-semibold uppercase text-2xl text-center mb-5 pt-[150px]">Thông tin đặt tour</div>
-                    <div className="w-[60%] mx-auto bg-white px-2 py-3 rounded-md mb-4">
+            <HeaderCensor />
+
+            <div className="w-full bg-gray-100 -mt-[660px] lg:w-4/5 pr-4 pl-4 ms-auto min-h-screen">
+                <div className="mx-auto">
+                    <div className="font-semibold uppercase text-2xl text-center mb-5 pt-5">Thông tin đặt tour</div>
+                    <div className="w-[80%] mx-auto bg-white px-2 py-3 rounded-md mb-4 max-h-[500px] overflow-y-auto">
+                        <div className="flex px-2 py-3 items-center">
+                            <div className="mr-2 font-semibold text-base text-left">Nhập sdt/mail:</div>
+                            <div className=" text-left">
+                                <input type='text'
+                                    name='key'
+                                    value={selectKey.key}
+                                    onChange={handleKeyChange}
+                                    className='w-[300px] border-[1px] border-gray-200 bg-white outline-none px-2 py-1 rounded-md'>
+                                </input>
+                            </div>
+                            <div>
+                                <button type="submit" onClick={(event) => user(event)} className="bg-[#0d6efd] text-white mx-2 inline-block align-middle text-center select-none border-[1px] border-[#0d6efd] font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg shadow-none hover:bg-white hover:text-[#0d6efd]">
+                                    Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
                         {userDatas && userDatas.id ? (
                             <div className="mt-5 pl-3">
                                 <div className="text-left text-lg font-medium mb-5">Thông tin người dùng</div>
                                 <div className="flex gap-x-3">
+
+                                    <input type='number' value={userDatas.id} name='id' onChange={handleInputChangeUser} className='w-[300px] border-[1px] border-gray-200 bg-white outline-none px-2 py-1 rounded-md' hidden></input>
+
                                     <div className="text-left mb-2 w-1/2">
                                         <div>Tên tài khoản</div>
                                         <div>
@@ -685,8 +642,26 @@ function BookingTour() {
                                 </div>
                             </div>
                         ) : (
-                            <p>Đang tải...</p> // Hiển thị thông báo đang tải khi chưa có dữ liệu
+                            <div></div>
                         )}
+
+                        <div className="flex px-2 py-3 items-center">
+                            <div className="mr-2 font-semibold text-base">Nhập mã tour:</div>
+                            <div>
+                                <input type='number'
+                                    name='tour_id'
+                                    value={selectKey.tour_id}
+                                    onChange={handleKeyChange}
+                                    className='w-[300px] border-[1px] border-gray-200 bg-white outline-none px-2 py-1 rounded-md'>
+                                </input>
+                            </div>
+                            <div>
+                                <button type="submit" onClick={(event) => tourDetail(event)} className="bg-[#0d6efd] text-white mx-2 inline-block align-middle text-center select-none border-[1px] border-[#0d6efd] font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg shadow-none hover:bg-white hover:text-[#0d6efd]">
+                                    Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+
                         {tourData && tourData.id ? (
                             <div className="mt-5 pl-3">
                                 <div className="text-left text-lg font-medium mb-5">Thông tin tour</div>
@@ -761,21 +736,37 @@ function BookingTour() {
                                     </div>
                                     </div> */}
 
-                                    {departData && departData.id ? (
-                                        <div className="text-left mb-2 w-1/2">
-                                            <div>Thời gian khởi hành</div>
-                                            <div>
-                                                <input type='date'
+                                    {/* {departData && departData.id ? ( */}
+                                    <div className="text-left mb-2 w-1/2">
+                                        <div>Thời gian khởi hành</div>
+                                        <div>
+                                            <select className="w-[300px] rounded-md outline-none border-[1px] border-gray-200 px-2 py-1"
+                                                name='depart'
+                                                value={tourData.depart}
+                                                onChange={handleInputChange}
+                                            >
+                                                <option value="">Chọn ngày</option> {/* Tùy chọn mặc định */}
+                                                {departData && Array.isArray(departData) && departData.length > 0 ? (
+                                                    departData
+                                                        .filter((tour) => new Date(tour.day_depart) > new Date()) // Lọc chỉ ngày > ngày hiện tại
+                                                        .map((tour) => (
+                                                            <option key={tour.id} value={tour.id}>{new Date(tour.day_depart).toLocaleDateString('vi-VN')}</option>
+                                                        ))
+                                                ) : (
+                                                    <option value="">Chưa được lên lịch</option> /* Tùy chọn mặc định */
+                                                )}
+                                            </select>
+                                            {/* <input type='date'
                                                     name='day_tour'
                                                     value={departData.day_depart}
                                                     onChange={handleInputChange}
                                                     className='w-[300px] border-[1px] border-gray-200 bg-white outline-none px-2 py-1 rounded-md' disabled>
-                                                </input>
-                                            </div>
+                                                </input> */}
                                         </div>
-                                    ) : (
+                                    </div>
+                                    {/* ) : (
                                         <p>Đang tải...</p> // Hiển thị thông báo đang tải khi chưa có dữ liệu
-                                    )}
+                                    )} */}
                                     <div className="text-left mb-2 w-1/2">
                                         <div>Thời gian diễn ra tour &#40;ngày&#41;</div>
                                         <div>
@@ -789,9 +780,19 @@ function BookingTour() {
                                     </div>
 
                                 </div>
+                                <div className="mt-7 mx-auto">
+                                    {order && Array.isArray(order) ? (
+                                        <div className="flex justify-center items-center">
+                                            <div className="font-semibold text-base">Tour này đã có:</div>
+                                            <div className="mx-2">{order.length}/{order2.order} lượt đặt</div>
+                                        </div>
+                                    ) : (
+                                        <div></div>
+                                    )}
+                                </div>
                             </div>
                         ) : (
-                            <p>Đang tải...</p> // Hiển thị thông báo đang tải khi chưa có dữ liệu
+                            <div></div>
                         )}
 
                         <div className="mx-3 mt-5">
@@ -1088,13 +1089,13 @@ function BookingTour() {
                         {tourData && tourData.id ? (
                             <div className="mt-5">
                                 <div className="w-[50%] ml-auto text-left">
-                                    
+
                                     {priceAdult > 0 ? (
                                         <div className="flex w-full justify-between">
                                             <div className="font-semibold text-left">Người lớn:</div>
                                             <div className="flex">
-                                                <div className="ml-2">{parseInt(formValue.participant,10) + 1} x</div>
-                                                <div className="mx-2"><PriceDisplay price={tourData.price/100*(100 - tourData.discount)} /></div>
+                                                <div className="ml-2">{parseInt(formValue.participant, 10) + 1} x</div>
+                                                <div className="mx-2"><PriceDisplay price={tourData.price / 100 * (100 - tourData.discount)} /></div>
                                             </div>
                                         </div>
                                     ) : (
@@ -1108,8 +1109,8 @@ function BookingTour() {
                                         <div className="flex justify-between">
                                             <div className="font-semibold">Trẻ nhỏ:</div>
                                             <div className="flex">
-                                                <div className="ml-2">{parseInt(formValue.toddlers,10)} x</div>
-                                                <div className="mx-2"><PriceDisplay price={((tourData.price/100*tourData.toddlers_price_percen)/100*(100 - tourData.discount))} /></div>
+                                                <div className="ml-2">{parseInt(formValue.toddlers, 10)} x</div>
+                                                <div className="mx-2"><PriceDisplay price={((tourData.price / 100 * tourData.toddlers_price_percen) / 100 * (100 - tourData.discount))} /></div>
                                             </div>
                                         </div>
                                     ) : (
@@ -1119,8 +1120,8 @@ function BookingTour() {
                                         <div className="flex justify-between">
                                             <div className="font-semibold">Trẻ em:</div>
                                             <div className="flex">
-                                                <div className="ml-2">{parseInt(formValue.children,10)} x</div>
-                                                <div className="mx-2"><PriceDisplay price={((tourData.price/100*tourData.child_price_percen)/100*(100 - tourData.discount))} /></div>
+                                                <div className="ml-2">{parseInt(formValue.children, 10)} x</div>
+                                                <div className="mx-2"><PriceDisplay price={((tourData.price / 100 * tourData.child_price_percen) / 100 * (100 - tourData.discount))} /></div>
                                             </div>
                                         </div>
                                     ) : (
@@ -1130,7 +1131,7 @@ function BookingTour() {
                                         <div className="flex justify-between">
                                             <div className="font-semibold">Em bé:</div>
                                             <div className="flex">
-                                                <div className="ml-2">{parseInt(formValue.baby,10)} x</div>
+                                                <div className="ml-2">{parseInt(formValue.baby, 10)} x</div>
                                                 <div className="mx-2"><PriceDisplay price={0} /></div>
                                             </div>
                                         </div>
@@ -1145,27 +1146,27 @@ function BookingTour() {
                                 </div>
                             </div>
                         ) : (
-                            <p>Đang tải...</p> // Hiển thị thông báo đang tải khi chưa có dữ liệu
+                            <div></div>
                         )}
                     </div>
                     <div className="w-[60%] mx-auto mb-6">
                         <div className="flex justify-center">
-                            <div>
+                            {/* <div>
                                 <button type="submit" onClick={handlePayment} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
                                     Thanh toán online
                                 </button>
-                            </div>
+                            </div> */}
                             <div>
                                 <button type="submit" onClick={(event) => hendleDepartSubmit(event)} className="bg-black mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                    Đặt giữ chỗ
+                                    Đặt tour
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <Footer />
+
         </div>
     )
 }
-export default BookingTour;
+export default CreateBookingTourByNV;

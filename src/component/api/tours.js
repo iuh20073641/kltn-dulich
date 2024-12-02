@@ -146,3 +146,13 @@ export const fetchVehicleByIddepart = (tourId) => {
 export const fetchHotelByIddepart = (tourId) => {
   return api.get(`/admin/get_deposit_hotel.php?id_depart=${tourId}`);
 };
+
+// api lấy thông tin số lượng đơn đã đặt
+export const fetchCheckBookingOrder = (departure_Id) => {
+  return api.get(`/check_booking_tour_bydepartId.php?depart_id=${departure_Id}`);
+};
+
+// api lấy thông tin lịch trình tour theo id lịch trình
+export const fetchDataScheduleTourByIdtour = (schedule_id) => {
+  return api.get(`/admin/get_tour_schedule_byId.php?id_schedule=${schedule_id}`);
+};

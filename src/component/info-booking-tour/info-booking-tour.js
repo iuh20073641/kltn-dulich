@@ -11,6 +11,9 @@ import { fetchVehicleByIddepart } from "../api/tours";
 import { fetchHotelByIddepart } from "../api/tours";
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
+import config from "../../component/config.json";
+
+const { SERVER_API } = config;
 
 function InfoBookingTour() {
 
@@ -26,7 +29,7 @@ function InfoBookingTour() {
         setIsOpenModalInfo(!isOpenModalInfo);
     };
 
-    useEffect(() => {
+    
         // Hàm gọi API
         const fetchBookingData = async () => {
             const userData = localStorage.getItem('user');
@@ -49,13 +52,18 @@ function InfoBookingTour() {
         };
 
         fetchBookingData();
-    }, []); // Gọi lại khi userId thay đổi
+    
+
+    useEffect(() => {
+        fetchBookingData();
+    }, []); // Chỉ chạy một lần khi component được mount
+    
 
     // hủy đơn đặt tour
     const cancelBookingTour = (bookingId) => {
         console.log(bookingId);
         // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
-        fetch('http://localhost:88/api_travel/api/admin/cancel_booking_tour.php', {
+        fetch(`${SERVER_API}/admin/cancel_booking_tour.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,7 +76,10 @@ function InfoBookingTour() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
+                    // setNewBookings(newBookings.filter(newBooking => newBooking.booking_id !== bookingId));
                     toast.success(data.message);
+                    // Gọi lại API để lấy danh sách booking mới
+                    fetchBookingData();
                 } else {
                     toast.error(data.message);
                 }
@@ -486,11 +497,11 @@ function InfoBookingTour() {
                                                 <div>
                                                     <div className="font-semibold text-lg text-left mb-4 mt-9">Thông tin tour</div>
                                                     <div className="flex">
-                                                        <div className="flex w-1/3">
+                                                        <div className="flex w-1/2">
                                                             <div className="font-semibold">Mã tour:</div>
                                                             <div className="mx-2">{bookingDetails.booking_id}</div>
                                                         </div>
-                                                        <div className="flex w-2/3 text-left">
+                                                        <div className="flex w-1/2 text-left">
                                                             <div className="font-semibold w-[20%]">Tên tour:</div>
                                                             <div className="w-[80%]">{bookingDetails.tour_name}</div>
                                                         </div>

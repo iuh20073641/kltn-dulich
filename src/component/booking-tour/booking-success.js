@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import config from "../../component/config.json";
+
+const { SERVER_API } = config;
 
 function BookingSuccess(){
 
@@ -22,9 +25,9 @@ function BookingSuccess(){
     const cccd = queryParams.get('cccd');
     // Do dữ liệu customers bị mã hóa thành chuỗi, cần xử lý lại
     const customers = JSON.parse(decodeURIComponent(queryParams.get('customers'))); 
-    // const rawCustomers = decodeURIComponent(queryParams.get('customers'));
-    // const cleanedCustomers = rawCustomers.replace(/^'|'$/g, '');
-    // const customers = JSON.parse(cleanedCustomers);
+    const toddlers = JSON.parse(decodeURIComponent(queryParams.get('toddlers'))); 
+    const children = JSON.parse(decodeURIComponent(queryParams.get('children'))); 
+    const baby = JSON.parse(decodeURIComponent(queryParams.get('baby'))); 
     // Log các giá trị đã lấy
     console.log({
         userId,
@@ -37,14 +40,18 @@ function BookingSuccess(){
         address,
         tourName,
         cccd,
-        customers
+        customers,
+        toddlers,
+        children,
+        baby,
+        id
     });
 
     useEffect(() => {
         // Hàm gọi API
-        const insertBookingTour = () => {
+        const insertBookingTour = async () => {
         
-            fetch('http://localhost:88/api_travel/api/create_booking_tour_online.php', {
+            fetch(`${SERVER_API}/create_booking_tour_online.php`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,14 +61,17 @@ function BookingSuccess(){
                     id_tour: id,
                     depar_id: deparId,
                     participant: participant,
+                    totalPrice: totalPay,
                     price_tour: priceTour,
                     name_user: nameUser,
+                    cccd: cccd,
                     phone: phone,
                     address: address,
                     tour_name: tourName,
-                    totalPay: totalPay,
-                    cccd: cccd,
-                    customers: customers
+                    customers: customers,
+                    toddlers: toddlers,
+                    children: children,
+                    baby: baby
                 }),
             })
                 .then(response => response.json())
@@ -94,7 +104,7 @@ function BookingSuccess(){
                 <h2 className="text-2xl font-bold mb-2 text-gray-800">Thanh toán thành công!</h2>
                 <p className="text-gray-600 mb-4">Cảm ơn bạn đã thanh toán. Chúng tôi đã nhận được đơn hàng của bạn.</p>
                 <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                    <Link to={"/"}>Quay lại trang chủ</Link> 
+                    <Link to={"/info-booking-tour"}>Xem trạng thái đặt tour</Link> 
                 </button>
             </div>
         </div>

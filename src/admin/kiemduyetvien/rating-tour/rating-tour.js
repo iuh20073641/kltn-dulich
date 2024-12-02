@@ -1,7 +1,7 @@
 import HeaderCensor from "../header-admin/header-admin";
 import { fetchAllTourRating } from "../../../component/api/tours";
 import React, { useEffect, useState } from 'react';
-import CustomPieChart from "../../../component/service/chart";
+// import CustomPieChart from "../../../component/service/chart";
 
 function RatingTour(){
 

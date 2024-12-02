@@ -14,7 +14,7 @@ const TotalDisplay = ({ originalPrice, discountPercent, numberOfPeople }) => {
     const discountedPrice = calculateDiscountedPrice(originalPrice, discountPercent);
     
     // Tính giá cuối cùng dựa trên số lượng người
-    const finalPrice = discountedPrice * numberOfPeople;
+    const finalPrice = discountedPrice * (numberOfPeople );
   
     // Định dạng giá cuối cùng
     const formattedFinalPrice = finalPrice.toLocaleString('vi-VN', {

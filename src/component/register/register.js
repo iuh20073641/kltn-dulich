@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { checkUser} from '../api/user';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import config from "../../component/config.json";
+
+const { SERVER_API } = config;
 
 const initFormValue = {
     name: "",
@@ -17,10 +20,11 @@ const initFormValue = {
 };
 
 function Register() {
-    const [isButtonBasic, setIsButtonBasic] = useState(true);
-    const [isButtonBusines, setIsButtonBusines] = useState(false);
+    // const [isButtonBasic, setIsButtonBasic] = useState(true);
+    // const [isButtonBusines, setIsButtonBusines] = useState(false);
     const [formValue, setFormValue] = useState(initFormValue);
     const [message, setMessage] = useState('');
+    const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại dưới định dạng YYYY-MM-DD
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -59,7 +63,7 @@ function Register() {
                 formData.append('pass', formValue.pass);
                 formData.append('image', formValue.image);
     
-                const response = await fetch('http://localhost:88/api_travel/api/register.php', {
+                const response = await fetch(`${SERVER_API}/register.php`, {
                     method: 'POST',
                     body: formData
                 });
@@ -89,15 +93,15 @@ function Register() {
         }
     };
 
-    const handleBasicClick = () => {
-        setIsButtonBasic(true);
-        setIsButtonBusines(false);
-    };
+    // const handleBasicClick = () => {
+    //     setIsButtonBasic(true);
+    //     setIsButtonBusines(false);
+    // };
 
-    const handleBusinessClick = () => {
-        setIsButtonBasic(false);
-        setIsButtonBusines(true);
-    };
+    // const handleBusinessClick = () => {
+    //     setIsButtonBasic(false);
+    //     setIsButtonBusines(true);
+    // };
 
     return (
         <div className="travel-login min-h-screen bg-center bg-no-repeat bg-cover">
@@ -110,7 +114,7 @@ function Register() {
                 </div>
                 <div className='flex ml-16'>
                     <div className='basis-2/5'>
-                        <div className='flex mb-7'>
+                        {/* <div className='flex mb-7'>
                             <div className='mx-3'>
                                 <button id='login-basis' onClick={handleBasicClick} className={isButtonBasic ? 'active' : ''}>
                                     <p>Basic</p>
@@ -121,9 +125,9 @@ function Register() {
                                     <p>Business</p>
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
 
-                        <form id='basis-form' onSubmit={handleSubmit} className={isButtonBasic ? '' : 'hidden'}>
+                        <form id='basis-form' onSubmit={handleSubmit}>
                             <div className='flex gap-5'>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
                                     <input type='text' placeholder='Name' name='name' value={formValue.name} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
@@ -134,17 +138,17 @@ function Register() {
                             </div>
                             <div className='flex gap-5'>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
-                                    <input type='text' placeholder='Phone' name='phone' value={formValue.phone} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
+                                    <input type='tel' placeholder='Phone' name='phone' value={formValue.phone} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
                                 </div>
                                 <div className='mb-6 w-[240px] h-10 '>
-                                    <input type='file' name='image' onChange={handleImageChange} className='bg-slate-50 w-[200px] mt-2 outline-none' required></input>
+                                    <input type='file' name='image' onChange={handleImageChange} className='bg-slate-50 w-[200px] mt-2 outline-none'></input>
                                 </div>
                             </div>
                             <div className='border-[1px] border-gray-300 mb-6 w-[500px] h-10 rounded-md'>
                                 <input type='text' name='address' placeholder='Address' value={formValue.address} onChange={handleChange} className='bg-slate-50 w-[450px] mt-2 outline-none' required></input>
                             </div>
                             <div className='border-[1px] border-gray-300 mb-6 w-[500px] h-10 rounded-md'>
-                                <input type='date' name='birthDate' value={formValue.birthDate} onChange={handleChange} className='bg-slate-50 w-[450px] mt-2 outline-none' required></input>
+                                <input type='date' max={today} name='birthDate' value={formValue.birthDate} onChange={handleChange} className='bg-slate-50 w-[450px] mt-2 outline-none' required></input>
                             </div>
                             <div className='flex gap-5'>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
