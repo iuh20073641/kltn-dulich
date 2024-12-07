@@ -1,14 +1,14 @@
-import HeaderCensor from "../header-admin/header-admin";
+import HeaderManager from "../header-manager/header-manager";
 import PriceDisplay from "../../../component/service/money";
 import React, { useEffect, useState } from 'react';
 import { fetchRefundBookingTour } from "../../../component/api/tours";
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import FormatTime from "../../../component/service/fomat-time";
-import config from "../../../component/config.json";
+// import config from "../../../component/config.json";
 
-const { SERVER_API } = config;
+// const { SERVER_API } = config;
 
-function RefundBookingTour() {
+function RefundBookingTour3() {
 
     const [refundBookings, setRefundBookings] = useState([]);
     const [filterOption, setFilterOption] = useState('7days'); // Mặc định là 7 ngày
@@ -107,42 +107,42 @@ function RefundBookingTour() {
     });
 
     // duyệt đơn hủy tour
-    const updateConfirmBooking = (bookingId) => {
-        console.log(bookingId);
-        // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
-        fetch(`${SERVER_API}/admin/asign_refund_booking_tour.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                refund_booking: true, // Thêm biến này để kích hoạt điều kiện trong PHP
-                booking_id: bookingId
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                // console.log('Đang gửi dữ liệu:', { room_id: roomId, image_id: imageId });
-                if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
-                    setRefundBookings(refundBookings.filter(refundBooking => refundBooking.booking_id !== bookingId));
-                    toast.success(data.message);
-                } else {
-                    toast.error(data.message);
-                }
-            })
-            .catch(error => {
-                // console.error('Có lỗi xảy ra:', error);
-                toast.error('Lỗi.');
-                console.log('Có lỗi xảy ra:', error);
-            });
-    };
+    // const updateConfirmBooking = (bookingId) => {
+    //     console.log(bookingId);
+    //     // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+    //     fetch(`${SERVER_API}/admin/asign_refund_booking_tour.php`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             refund_booking: true, // Thêm biến này để kích hoạt điều kiện trong PHP
+    //             booking_id: bookingId
+    //         }),
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             // console.log('Đang gửi dữ liệu:', { room_id: roomId, image_id: imageId });
+    //             if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
+    //                 setRefundBookings(refundBookings.filter(refundBooking => refundBooking.booking_id !== bookingId));
+    //                 toast.success(data.message);
+    //             } else {
+    //                 toast.error(data.message);
+    //             }
+    //         })
+    //         .catch(error => {
+    //             // console.error('Có lỗi xảy ra:', error);
+    //             toast.error('Lỗi.');
+    //             console.log('Có lỗi xảy ra:', error);
+    //         });
+    // };
 
     if (error) return <div>Error: {error.message}</div>;
 
 
     return (
         <div>
-            <HeaderCensor />
+            <HeaderManager />
 
             <div className="container -mt-[630px] mx-auto sm:px-4 max-w-full" id="main-content">
                 <div className="flex flex-wrap ">
@@ -179,14 +179,14 @@ function RefundBookingTour() {
                                     </div>
                                 </div>
                                 <div className="block w-full h-[400px] overflow-auto scrolling-touch">
-                                    <table className="w-full overflow-auto text-left max-w-full mb-4 bg-transparent table-hover border" style={{ minWidth: 1200 }}>
+                                    <table className="w-full overflow-auto text-left max-w-full mb-4 bg-transparent table-hover border" style={{ minWidth: 700 }}>
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-[40px] sticky top-0 z-10">
                                                 <th scope="col" className="px-3 w-[70px]">Mã đơn</th>
                                                 <th scope="col" className="px-3 w-[250px]">Người đặt</th>
                                                 <th scope="col" className="px-3 w-[270px]">Đơn đặt</th>
                                                 <th scope="col" className="w-[100px]" >Tiền hoàn</th>
-                                                <th scope="col" className="w-[100px]">Trạng thái</th>
+                                                {/* <th scope="col" className="w-[100px]">Trạng thái</th> */}
                                             </tr>
                                         </thead>
                                         <tbody id="table-data" className="overflow-y-auto">
@@ -230,11 +230,11 @@ function RefundBookingTour() {
                                                         </div>
                                                         {/* ))} */}
                                                     </td>
-                                                    <td>
+                                                    {/* <td>
                                                         <button type='button' onClick={() => updateConfirmBooking(refundBooking.booking_id)} class='text-sm bg-[#198754] hover:bg-[#21784f] text-white px-2 py-1 rounded-md shadow-none'>
                                                             <i className="fa-solid fa-money-bill"></i> Hoàn tiền
                                                         </button>
-                                                    </td>
+                                                    </td> */}
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -249,4 +249,4 @@ function RefundBookingTour() {
         </div>
     )
 }
-export default RefundBookingTour;
+export default RefundBookingTour3;

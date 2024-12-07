@@ -7,12 +7,12 @@ function Footer() {
             <div className="w-[95%] mx-auto pt-11">
                 <div className="flex gap-8">
                     <div className="basis-2/6">
-                        <div className="font-semibold text-2xl mb-8 text-[rgba(255,255,255,1.00)]">TravelVN</div>
+                        <div className="font-semibold text-2xl mb-8 text-[rgba(255,255,255,1.00)]">Venture</div>
                         <div className="text-gray-400 text-sm">
-                            Delivering the best coffee life since 1996. From coffee geeks to the
-                            real ones.
+                            Venture là Lựa chọn hàng đầu khi tour du lịch trực tuyến tất cả những gì bạn cần làm là ba bước: tìm kiếm, đặt tour
+                             và thanh toán. Venture đã lo liệu mọi việc còn lại.
                         </div>
-                        <div className="text-gray-300 mb-4">Hung Inc. © 1996</div>
+                        <div className="text-gray-300 mb-4"></div>
                     </div>
                     <div className="basis-2/6" />
                     <div className="basis-1/6">

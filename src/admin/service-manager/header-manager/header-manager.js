@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
 function HeaderManager() {
   const navigate = useNavigate();
+  const [isOpenTour, setIsOpenTour] = useState(false);
+  const [isOpenKS, setIsOpenKS] = useState(false);
+
+  const toggleMenuTour = () => {
+    setIsOpenTour(!isOpenTour);
+  };
+
+  const toggleMenuKS = () => {
+    setIsOpenKS(!isOpenKS);
+  };
 
   const handleLogout = () => {
     // Xóa token và thông tin người dùng khỏi localStorage
@@ -45,27 +55,72 @@ function HeaderManager() {
             >
               <ul className="list-none pl-0 mb-0">
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
-                        <Link to={"/user"}>User</Link>
+                  <div className="inline-block py-2 no-underline text-white">
+                        <Link to={"/user"}>Người dùng</Link>
                   </div>
                 </li>
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
-                  < Link to={"/room-manager"}>Rooms</Link>
+                  {/* <div className="inline-block py-2 no-underline text-white">
+                    < Link to={"/room-manager"}>Phòng KS</Link>
+                  </div> */}
+                  <button onClick={toggleMenuKS} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
+                    <span>Khách sạn</span>
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+
+                    </span>
+                  </button>
+                  <div className={`mt-1 px-3 text-xs mb-1 transition-all duration-500 ease-in-out transform ${isOpenKS ? 'opacity-100 max-h-96 scale-100' : 'opacity-0 max-h-0 scale-95'
+                    } overflow-hidden`} id="bookingLinksTour">
+                    <ul className="flex flex-wrap list-none pl-0 mb-0  flex-col rounded border border-gray-600">
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/room-manager">Phòng KS</Link>
+                      </li>
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to={"/features-facilities"}>Nôi thất &amp; Tiện ích</Link>
+                      </li>
+                    </ul>
                   </div>
                 </li>
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
-                  <Link to={"/tours-manager"}>Tours</Link>
-                  </div>
+                  <div className="inline-block py-2 no-underline text-white">
+                    <Link to={"/tours-manager"}>Tours</Link>
+                  </div> 
                 </li>
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
-                  <Link to={"/features-facilities"}>Features &amp; Facilities</Link>
+                  <button onClick={toggleMenuTour} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
+                    <span>QL đặt tour</span>
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+
+                    </span>
+                  </button>
+
+                  <div className={`mt-1 px-3 text-xs mb-1 transition-all duration-500 ease-in-out transform ${isOpenTour ? 'opacity-100 max-h-96 scale-100' : 'opacity-0 max-h-0 scale-95'
+                    } overflow-hidden`} id="bookingLinksTour">
+                    <ul className="flex flex-wrap list-none pl-0 mb-0  flex-col rounded border border-gray-600">
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/manager/new-booking-tour">Phân công HDV</Link>
+                      </li>
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/manager/approved-application">Đơn đã duyệt</Link>
+                      </li>
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/manager/refund-booking-tour">Đơn đã hủy</Link>
+                      </li>
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/manager/booking-records">Lịch sử</Link>
+                      </li>
+                    </ul>
                   </div>
+
                 </li>
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
+                  <div className="inline-block py-2 no-underline text-white">
                     <Link to={"/quanly-tintuc"}>Quản Lý Tin Tức</Link>
                   </div>
                 </li>

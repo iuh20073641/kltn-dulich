@@ -167,7 +167,7 @@ function BookingRecord() {
 
         const vehicleResponse = await fetchVehicleByIddepart(bookingTour.departure_id);
         const vehicleData = vehicleResponse.data;
-        
+
         const hotelResponse = await fetchHotelByIddepart(bookingTour.departure_id);
         const hotelData = hotelResponse.data;
 
@@ -307,7 +307,7 @@ function BookingRecord() {
         doc.text(`Địa chỉ: ${hotelData[0].address}`, 20, 280);
         doc.text(`Kiểu phòng: ${hotelData[0].type}`, 20, 285);
         doc.text(`Mô tả: ${hotelData[0].description}`, 20, 290);
-        
+
         // Lưu file PDF với tên 'tour-history.pdf'
         doc.save(`tour-booking-${bookingTour.booking_id}.pdf`);
     };
@@ -378,7 +378,7 @@ function BookingRecord() {
                                         </thead>
                                         <tbody id="table-data">
                                             {filteredBookings.map((bookingRecord, index) => (
-                                                <tr key={bookingRecord.booking_id}>
+                                                <tr key={bookingRecord.booking_id} className="border-[1px] border-b-gray-300">
                                                     <td className="pl-3">{bookingRecord.booking_id}</td>
                                                     <td>
                                                         <span className='badge bg-[#0d6efd] text-white text-xs py-[2px] px-2 rounded-md'>
@@ -390,11 +390,18 @@ function BookingRecord() {
                                                         <b>SĐT :</b> {bookingRecord.phonenum}
                                                     </td>
                                                     <td>
-                                                        <b>Tên :</b> {bookingRecord.tour_name}
-                                                        <br />
                                                         <div className="flex">
-                                                            <b className="mr-2">Giá tiền :</b>  <PriceDisplay price={bookingRecord.price} />
-                                                        </div>
+                                                            <div className="mr-2 font-semibold">Tên:</div>
+                                                            <div>{bookingRecord.tour_name}</div>
+                                                        </div> 
+                                                        <div className="flex">
+                                                            <div className="mr-2 font-semibold">Giá tiền:</div>
+                                                            <div><PriceDisplay price={bookingRecord.price} /></div>
+                                                        </div>  
+                                                        <div className="flex">
+                                                            <div className="mr-2 font-semibold">Ngày khỏi hành:</div>
+                                                            <div><FormatTime date={bookingRecord.day_depar} /></div>
+                                                        </div>                                                                                            
                                                     </td>
                                                     <td>
                                                         <div className="flex">
@@ -411,7 +418,7 @@ function BookingRecord() {
                                                                     <p className="px-2 py-1 text-center">Đã hủy và hoàn tiền</p>
                                                                 </div>
                                                             ) : bookingRecord.refund === 0 && bookingRecord.arrival === 1 ? (
-                                                                <div className="w-[80%] bg-[#198754] text-white rounded-md">
+                                                                <div className="w-[100%] bg-[#dc3545] text-white rounded-md">
                                                                     <p className="px-2 py-1 text-center">Đã hủy, chưa hoàn tiền</p>
                                                                 </div>
                                                             ) : bookingRecord.refund === null && bookingRecord.arrival === 1 ? (
@@ -498,16 +505,20 @@ function BookingRecord() {
                                                                 <thead>
                                                                     <tr className="border-[1px] border-black">
                                                                         <th className="border-[1px] border-black px-2">STT</th>
-                                                                        <th className="border-[1px] border-black">Tên</th>
-                                                                        <th className="border-[1px] border-black">CCCD</th>
+                                                                        <th className="border-[1px] border-black px-2">Độ tuổi</th>
+                                                                        <th className="border-[1px] border-black px-2">Tên</th>
+                                                                        <th className="border-[1px] border-black px-2">Ngày sinh</th>
+                                                                        <th className="border-[1px] border-black px-2">Giới tính</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     {participants.map((participant, index) => (
                                                                         <tr className="border-[1px] border-black" key={participant.id}>
                                                                             <td className="border-[1px] border-black px-2">{index + 1}</td>
-                                                                            <td className="border-[1px] border-black px-2">{participant.name}</td>
-                                                                            <td className="border-[1px] border-black px-2">{participant.cccd}</td>
+                                                                            <td className="border-[1px] border-black px-2">{participant.type}</td>
+                                                                            <td className="border-[1px] border-black px-2 text-left">{participant.name}</td>
+                                                                            <td className="border-[1px] border-black px-2"><FormatTime date={participant.dob} /></td>
+                                                                            <td className="border-[1px] border-black px-2">{participant.gender}</td>
                                                                         </tr>
 
                                                                     ))}
@@ -529,31 +540,31 @@ function BookingRecord() {
                                                         </div>
                                                     </div>
                                                     <div className="flex">
-                                                        <div className="flex w-1/2">
+                                                        <div className="flex w-1/3">
                                                             <div className="font-semibold">Số người tham gia:</div>
                                                             <div className="mx-2">{bookingDetails.participant}</div>
                                                         </div>
-                                                        <div className="flex w-1/2">
+                                                        <div className="flex w-2/3">
                                                             <div className="font-semibold">Ngày khởi hành:</div>
                                                             <div className="mx-2"><FormatTime date={bookingDetails.day_depar} /></div>
                                                         </div>
                                                     </div>
                                                     <div className="flex">
-                                                        <div className="flex w-1/2">
+                                                        <div className="flex w-1/3">
                                                             <div className="font-semibold">Giá tour:</div>
                                                             <div className="mx-2"><PriceDisplay price={bookingDetails.price} /></div>
                                                         </div>
-                                                        <div className="flex w-1/2">
+                                                        <div className="flex w-2/3">
                                                             <div className="font-semibold">Tổng tiền:</div>
                                                             <div className="mx-2"><PriceDisplay price={bookingDetails.total_pay} /></div>
                                                         </div>
                                                     </div>
                                                     <div className="flex">
-                                                        <div className="flex w-1/2">
+                                                        <div className="flex w-1/3">
                                                             <div className="font-semibold">TT thanh toán:</div>
                                                             <div className="mx-2">{bookingDetails.order_id}</div>
                                                         </div>
-                                                        <div className="flex w-1/2">
+                                                        <div className="flex w-2/3">
                                                             <div className="font-semibold">Thời gian thanh toán:</div>
                                                             <div className="mx-2">{bookingDetails.datetime}</div>
                                                         </div>

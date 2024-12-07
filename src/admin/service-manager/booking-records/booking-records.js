@@ -1,114 +1,129 @@
-import Header from "../header";
-import Footer from "../footer/footer";
-import PriceDisplay from "../service/money";
-import { fetchBookingRecordTourByUser } from "../api/tours";
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import FormatTime from "../service/fomat-time";
-import { fetchBookingRecordTourById } from "../api/tours";
-import { fetchParticipantsTourByBookingid } from "../api/tours";
-import { fetchVehicleByIddepart } from "../api/tours";
-import { fetchHotelByIddepart } from "../api/tours";
+import HeaderManager from "../header-manager/header-manager";
+import PriceDisplay from "../../../component/service/money";
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
-import config from "../../component/config.json";
+import React, { useEffect, useState } from 'react';
+import { fetchBookingRecordTour } from "../../../component/api/tours";
+import { fetchBookingRecordTourById } from "../../../component/api/tours";
+import { fetchParticipantsTourByBookingid } from "../../../component/api/tours";
+import { Link } from "react-router-dom";
+import FormatTime from "../../../component/service/fomat-time";
+import { fetchVehicleByIddepart } from "../../../component/api/tours";
+import { fetchHotelByIddepart } from "../../../component/api/tours";
 
-const { SERVER_API } = config;
+import '../../../component/font-times-new-roman-normal';
 
-const initFormRating = {
-    booking_id: "",
-    tour_id: "",
-    rating: "",
-    review: ""
-};
+function BookingRecord3() {
 
-function InfoBookingTour() {
-
-    const [newBookings, setNewBookings] = useState([]);
+    const [bookingRecords, setBookingRecord] = useState([]);
+    const [filterOption, setFilterOption] = useState('7days'); // Mặc định là 7 ngày
+    const [searchQuery, setSearchQuery] = useState(''); // Thêm trạng thái để lưu giá trị tìm kiếm
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [error, setError] = useState(null);
     const [isOpenModalInfo, setIsOpenModalInfo] = useState(false);
-    const [isOpenModalRating, setIsOpenModalRating] = useState(false);
     const [bookingDetails, setBookingDetails] = useState(null);
     const [participants, setParticipants] = useState([]);
     const [vehicle, setVehicle] = useState([]);
     const [depositHotel, setDepositHotel] = useState([]);
-    const [formRating, setFormRating] = useState(initFormRating);
-
-    const currentDate = new Date();
-
+    // const doc = new jsPDF();
 
     // Bật/ẩn của sổ thông tin đơn đặt tour
     const handleModalClick = () => {
         setIsOpenModalInfo(!isOpenModalInfo);
     };
 
-    // Bật/ẩn của sổ đánh giá tour
-    const handleModalRatingClick = (newBooking) => {
-        setIsOpenModalRating(!isOpenModalRating);
-        setFormRating({
-            booking_id: newBooking.booking_id,
-            tour_id: newBooking.tour_id,
-            rating: 5,
-        });
-    };
+    useEffect(() => {
+        // Hàm để gọi API và cập nhật state
+        const newBookingData = async () => {
+            try {
+                // Gọi API để lấy danh sách phòng
+                const bookingRecordResponse = await fetchBookingRecordTour();
+                const bookingRecordData = bookingRecordResponse.data; // Giả sử API trả về mảng các tour
+
+                // Tính toán giá trị hoàn lại và thêm vào mảng dữ liệu
+                const updatedRefundBookings = bookingRecordData.map((booking) => {
+                    const bookingDate = new Date(booking.datetime); // Giả sử 'bookingDate' là ngày đặt tour
+                    const currentDate = new Date();
+
+                    // Tính thời gian chênh lệch (số ngày)
+                    const timeDifference = (currentDate - bookingDate) / (1000 * 3600 * 24);
+
+                    let refundAmount = 0;
+                    if (timeDifference > 1) {
+                        // Nếu đã trôi qua hơn 1 ngày, tính 50% tổng tiền
+                        refundAmount = booking.total_pay * 0.5;
+                    }
+
+                    // Thêm giá trị hoàn lại vào đối tượng booking
+                    return { ...booking, refundAmount };
+                });
+
+                setBookingRecord(updatedRefundBookings);
+
+
+
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError(err);
+            }
+        };
+
+        newBookingData();
+    }, []); // Chạy một lần khi component được mount
+
+    // Cập nhật startDate và endDate khi filterOption thay đổi
+    useEffect(() => {
+        const currentDate = new Date();
+        const formattedEndDate = currentDate.toISOString().split('T')[0]; // Định dạng YYYY-MM-DD
+        let calculatedStartDate;
+
+        if (filterOption === '1day') {
+            calculatedStartDate = new Date();
+            calculatedStartDate.setDate(currentDate.getDate() - 1);
+        } else if (filterOption === '7days') {
+            calculatedStartDate = new Date();
+            calculatedStartDate.setDate(currentDate.getDate() - 7);
+        } else if (filterOption === '1month') {
+            calculatedStartDate = new Date();
+            calculatedStartDate.setMonth(currentDate.getMonth() - 1);
+        }
+
+        const formattedStartDate = calculatedStartDate.toISOString().split('T')[0];
+
+        setStartDate(formattedStartDate);
+        setEndDate(formattedEndDate);
+    }, [filterOption]);
+
+    // Hàm lọc dữ liệu dựa trên khoảng thời gian
+    const filteredBookings = bookingRecords.filter((booking) => {
+        const bookingDate = new Date(booking.datetime);
+
+        const bookingDateOnly = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate()); // Chỉ lấy ngày, tháng, năm
+
+        const start = startDate ? new Date(new Date(startDate).setHours(0, 0, 0, 0)) : null;
+        const end = endDate ? new Date(new Date(endDate).setHours(0, 0, 0, 0)) : null;
+
+        // Lọc theo thời gian
+        const isWithinDateRange = (!start || bookingDateOnly >= start) && (!end || bookingDateOnly <= end);
+        // return (
+        // (!start || bookingDateOnly >= start) && (!end || bookingDateOnly <= end)
+        // );
+        // Lọc theo mã đơn hoặc tên người đặt (case-insensitive)
+        // const searchLowerCase = searchQuery.toLowerCase();
+        // Kiểm tra search query
+        // console.log('Search Query:', searchQuery);
+        const matchesSearchQuery = searchQuery
+            ? booking.booking_id && booking.booking_id.toString().toLowerCase().includes(searchQuery.toLowerCase())
+            : true; // Không lọc nếu không có searchQuery
+
+        // console.log('Matches Search Query:', matchesSearchQuery); // Kiểm tra kết quả so sánh
+
+        return isWithinDateRange && matchesSearchQuery;
+    });
+
 
     // Hàm gọi API
-    const fetchBookingData = async () => {
-        const userData = localStorage.getItem('user');
-
-        const user = JSON.parse(userData);
-        console.log("User ID:", user.id); // Lấy ID người dùng
-
-        try {
-            const response = await fetchBookingRecordTourByUser(user.id);
-
-            if (response.data.status === 'success') {
-                setNewBookings(response.data.data); // Lưu kết quả booking data
-                console.log('Booking Data:', response.data.data);
-            } else {
-                console.log(response.data.message);
-            }
-        } catch (err) {
-            console.error("Error fetching booking data:", err);
-        }
-    };
-
-
-    useEffect(() => {
-        fetchBookingData();
-    }, []); // Chỉ chạy một lần khi component được mount
-
-
-    // hủy đơn đặt tour
-    const cancelBookingTour = (bookingId) => {
-        console.log(bookingId);
-        // if (window.confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
-        fetch(`${SERVER_API}/admin/cancel_booking_tour.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                cancel_booking: true, // Thêm biến này để kích hoạt điều kiện trong PHP
-                booking_id: bookingId
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
-                    // setNewBookings(newBookings.filter(newBooking => newBooking.booking_id !== bookingId));
-                    toast.success(data.message);
-                    // Gọi lại API để lấy danh sách booking mới
-                    fetchBookingData();
-                } else {
-                    toast.error(data.message);
-                }
-            })
-            .catch(error => {
-                toast.error('Lỗi.');
-                console.log('Có lỗi xảy ra:', error);
-            });
-    };
-
     const fetchApproveDetailData = async (bookingTour) => {
         // console.log(bookingid);
         setIsOpenModalInfo(!isOpenModalInfo);
@@ -142,53 +157,6 @@ function InfoBookingTour() {
         } catch (err) {
             console.error("Error fetching booking data:", err);
         }
-    };
-
-    const handleRatingChange = (event) => {
-        const { value, name } = event.target;
-        setFormRating((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    // Đánh giá tour
-    const createTourRating = async (event) => {
-        const userData = localStorage.getItem('user');
-        const user = JSON.parse(userData);
-        console.log(formRating); // Lấy ID người dùng 
-
-        event.preventDefault(); //để không tự động reset
-
-        fetch(`${SERVER_API}/create_rating_tour.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                user_id: user.id,
-                booking_id: formRating.booking_id,
-                tour_id: formRating.tour_id,
-                rating: formRating.rating,
-                review: formRating.review
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // setFormVehicle(initVehicle);
-                    toast.success(data.message);
-
-                } else if (data.status === 'error') {
-                    toast.error(data.message);
-                } else if (data.status === 'warning') {
-                    toast.warning(data.message);
-                }
-            })
-            .catch(error => {
-                toast.error('lỗi.');
-                console.log('Có lỗi xảy ra:', error);
-            });
     };
 
     const checkPageOverflow = (doc, yPosition) => {
@@ -285,7 +253,7 @@ function InfoBookingTour() {
         // Vẽ bảng
         const startY = 147; // Vị trí Y bắt đầu cho bảng
         const rowHeight = 10; // Chiều cao của mỗi hàng
-        const columns = ["STT", "Phân loại", "Tên", "Giới tính", "Ngày sinh"]; // Tiêu đề các cột
+        const columns = ["STT","Phân loại", "Tên", "Giới tính", "Ngày sinh"]; // Tiêu đề các cột
 
         // Vẽ tiêu đề bảng
         doc.setFontSize(12);
@@ -323,18 +291,18 @@ function InfoBookingTour() {
 
         yPosition += 10;
         yPosition = checkPageOverflow(doc, yPosition);
-        doc.text('Chiều đi', 20, yPosition);
+        doc.text('Chiều đi', 20,  yPosition);
         yPosition += 5;
         yPosition = checkPageOverflow(doc, yPosition);
-        doc.text(`Loại phương tiện: ${vehicleData[0].type}`, 20, yPosition);
+        doc.text(`Loại phương tiện: ${vehicleData[0].type}`, 20,  yPosition);
         yPosition += 5;
         yPosition = checkPageOverflow(doc, yPosition);
         doc.text(`Ngày khởi hành: ${vehicleData[0].departure_date}`, 20, yPosition);
         yPosition += 5;
         yPosition = checkPageOverflow(doc, yPosition);
         doc.text(`Thời gian khởi hành: ${vehicleData[0].departure_time1}`, 20, yPosition);
-
-        doc.text(`Từ: ${vehicleData[0].departure1}`, 100, yPosition);
+        
+        doc.text(`Từ: ${vehicleData[0].departure1}`, 100, yPosition );
         yPosition += 5;
         yPosition = checkPageOverflow(doc, yPosition);
         doc.text(`Thời gian hạ cánh: ${vehicleData[0].arrival_time1}`, 20, yPosition);
@@ -396,208 +364,142 @@ function InfoBookingTour() {
         doc.save(`tour-booking-${bookingTour.booking_id}.pdf`);
     };
 
+
+    if (error) return <div>Error: {error.message}</div>;
+
     return (
         <div>
-            <Header />
+            <HeaderManager />
 
-            <div className="min-h-screen pt-[130px] bg-gray-100">
-                <div className="uppercase text-2xl font-semibold text-left ml-5 pt-11">Trạng thái đơn</div>
-                <div className="w-[90%] grid grid-cols-4 gap-2 mt-11 mx-auto">
-                    {Array.isArray(newBookings) && newBookings.length > 0 ? (
-                        newBookings.map((newBooking) => (
-                            <div className="booking h-[330px] bg-white rounded-sm text-left" key={newBooking.booking_id}>
-                                <div className="font-semibold text-xl mx-3 mt-2 mb-3">{newBooking.user_name}</div>
-                                <div className="flex mx-3">
-                                    <div className="font-semibold">Giá tour:</div>
-                                    <div className="ml-2"><PriceDisplay price={newBooking.price} /></div>
-                                </div>
-                                <div className="flex mx-3">
-                                    <div className="font-semibold">Tổng tiền:</div>
-                                    <div className="ml-2"><PriceDisplay price={newBooking.total_pay} /></div>
-                                </div>
-                                <div className="flex mx-3">
-                                    <div className="font-semibold">Mã đơn:</div>
-                                    <div className="ml-2">{newBooking.booking_id}</div>
-                                </div>
-                                <div className="flex mx-3">
-                                    <div className="font-semibold">TT thanh toán:</div>
-                                    <div className="ml-2">{newBooking.order_id}</div>
-                                </div>
-                                <div className=" mx-3">
-                                    <div className="font-semibold">Thời gian thanh toán:</div>
-                                    <div className="ml-2">{newBooking.datetime}</div>
-                                </div>
-                                {newBooking.refund === 1 && newBooking.arrival === 0 ? (
-                                    <div>
-                                        <div className="flex">
-                                            <div className="ml-3 mb-3 mt-4 w-[70px] py-[2px] bg-[#dc3545] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Đã hủy</p>
-                                            </div>
-                                            <div className="ml-3 mb-3 mt-4 w-[120px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Đã hoàn tiền</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-center">
-                                            <button type="button" onClick={() => fetchApproveDetailData(newBooking)} className="w-[90%] bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-75 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                <p className="text-sm">Xem chi tiết</p>
-                                            </button>
-                                        </div>
+            <div className="container -mt-[590px] mx-auto sm:px-4 max-w-full" id="main-content">
+                <div className="flex flex-wrap ">
+                    <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
+                        <div className="flex items-center">
+                            <h3 className="mb-4 text-left font-semibold text-2xl uppercase w-[50%]">Lịch sử đặt tour</h3>
+                            <div className="w-[50%] text-right">
+                                <Link to="/qr-code">
+                                    <div className="cursor-pointer">
+                                        <i className="fa-solid fa-qrcode text-2xl"></i>
                                     </div>
-                                ) : newBooking.refund === null && newBooking.arrival === 0 && newBooking.order_id === null ? (
-                                    <div>
-                                        <div className="flex gap-2">
-                                            <div className="ml-3 mb-3 mt-4 w-[110px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Chờ xác nhận</p>
-                                            </div>
-                                            <div className=" mb-3 mt-4 w-[130px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Chưa thanh toán</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-gray-400 text-xs text-center mb-2">Bạn cần thanh toán trong vòng 24h kể từ lúc đặt tour</div>
-                                        <div className="ml-[3px]">
-                                            <button type="button" onClick={() => cancelBookingTour(newBooking.booking_id)} className="w-[90px] bg-[#dc3545] hover:bg-[#cf3a49] mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                <p className="text-sm font-semibold">Hủy tour</p>
-                                            </button>
-                                            <button type="button" className="w-[110px] bg-[#0d6efd] hover:bg-[#285394] mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                <p className="text-sm font-semibold">Thanh toán</p>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : newBooking.refund === null && newBooking.arrival === 0 && newBooking.order_id !== null ? (
-                                    newBooking.day_depar - currentDate > 7 ? (
-                                        <div>
-                                            <div className="flex gap-2">
-                                                <div className="ml-3 mb-3 mt-4 w-[110px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                    <p className="px-2 py-1 text-center">Chờ xác nhận</p>
-                                                </div>
-                                                <div className=" mb-3 mt-4 w-[130px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                    <p className="px-2 py-1 text-center">Đã thanh toán</p>
-                                                </div>
-                                            </div>
-                                            {/* <div className="text-gray-400 text-xs text-center mb-2">Bạn cần thanh toán trong vòng 24h kể từ lúc đặt tour</div> */}
-                                            <div className="ml-[3px]">
-                                                <button type="button" onClick={() => cancelBookingTour(newBooking.booking_id)} className="w-[90px] bg-[#dc3545] hover:bg-[#cf3a49] mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                    <p className="text-sm font-semibold">Hủy tour</p>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <div className="flex gap-2">
-                                                <div className="ml-3 mb-3 mt-4 w-[110px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                    <p className="px-2 py-1 text-center">Chờ xác nhận</p>
-                                                </div>
-                                                <div className=" mb-3 mt-4 w-[130px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                    <p className="px-2 py-1 text-center">Đã thanh toán</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                ) : newBooking.refund === null && newBooking.arrival === 1 ? (
-                                    new Date(newBooking.day_depar).getTime() - new Date(currentDate).getTime() > 7 ? (
-                                        <div>
-                                            <div className="mx-3 mb-3 mt-4 w-[100px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Đã xác nhận</p>
-                                            </div>
-                                            <div className="flex mb-3 gap-2">
-                                                <div className="w-[45%]">
-                                                    <button type="button" onClick={() => generatePDF(newBooking)} className="w-full bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-100 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                        <p className="text-sm">PDF</p>
-                                                    </button>
-                                                </div>
-                                                <div className="w-[45%]">
-                                                    <button type="button" onClick={() => handleModalRatingClick(newBooking)} className="w-full bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-100 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                        <p className="text-sm">Đánh giá</p>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <div className="w-[45%]">
-                                                    <button type="button" onClick={() => fetchApproveDetailData(newBooking)} className=" w-full bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-75 font-normal whitespace-no-wrap rounded py-1 leading-normal no-underline custom-bg text-white shadow-none">
-                                                        <p className="text-sm">Xem chi tiết</p>
-                                                    </button>
-                                                </div>
-                                                <div className="w-[45%]">
-                                                    <button type="button" onClick={() => cancelBookingTour(newBooking.booking_id)} className="w-full bg-[#dc3545] hover:bg-[#cf3a49] mx-2 inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 leading-normal no-underline custom-bg text-white shadow-none">
-                                                        <p className="text-sm font-semibold">Hủy tour</p>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <div className="mx-3 mb-3 mt-4 w-[100px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Đã xác nhận</p>
-                                            </div>
-                                            <div className="flex mb-3 gap-2">
-                                                <div className="w-[45%]">
-                                                    <button type="button" onClick={() => generatePDF(newBooking)} className="w-full bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-100 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                        <p className="text-sm">PDF</p>
-                                                    </button>
-                                                </div>
-                                                <div className="w-[45%]">
-                                                    <button type="button" onClick={() => handleModalRatingClick(newBooking)} className="w-full bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-100 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                        <p className="text-sm">Đánh giá</p>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="flex justify-center">
-                                                <button type="button" onClick={() => fetchApproveDetailData(newBooking)} className="w-[90%] bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-75 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                    <p className="text-sm">Xem chi tiết</p>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )
-                                ) : newBooking.refund === 1 && newBooking.arrival === 1 ? (
-                                    <div>
-                                        <div className="mx-3 mb-3 mt-4 w-[70px] py-[2px] bg-[#dc3545] text-center rounded-md text-white text-xs font-semibold">
-                                            <p className="px-2 py-1 text-center">Đã hủy</p>
-                                        </div>
-                                        <div className="flex justify-center">
-                                            <button type="button" onClick={() => fetchApproveDetailData(newBooking)} className="w-[90%] bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-75 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                <p className="text-sm">Xem chi tiết</p>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : newBooking.refund === 0 && newBooking.arrival === 0 ? (
-                                    <div>
-                                        <div className="flex">
-                                            <div className="ml-3 mb-3 mt-4 w-[70px] py-[2px] bg-[#dc3545] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Đã hủy</p>
-                                            </div>
-                                            <div className="ml-3 mb-3 mt-4 w-[120px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Chưa hoàn tiền</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-center">
-                                            <button type="button" onClick={() => fetchApproveDetailData(newBooking)} className="w-[90%] bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-75 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                <p className="text-sm">Xem chi tiết</p>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : newBooking.refund === 0 && newBooking.arrival === 1 ? (
-                                    <div>
-                                        <div className="flex">
-                                            <div className="ml-3 mb-3 mt-4 w-[70px] py-[2px] bg-[#dc3545] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Đã hủy</p>
-                                            </div>
-                                            <div className="ml-3 mb-3 mt-4 w-[120px] py-[2px] bg-[#198754] text-center rounded-md text-white text-xs font-semibold">
-                                                <p className="px-2 py-1 text-center">Chưa hoàn tiền</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-center">
-                                            <button type="button" onClick={() => fetchApproveDetailData(newBooking)} className="w-[90%] bg-black mx-2 inline-block align-middle text-center select-none border-[1px] border-black hover:bg-white hover:text-black duration-75 font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline custom-bg text-white shadow-none">
-                                                <p className="text-sm">Xem chi tiết</p>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : null}
-
+                                </Link>
                             </div>
-                        ))
-                    ) : (
-                        <p className="text-center">Bạn chưa đặt tour</p>
-                    )}
+                        </div>
+
+                        <div className="relative flex flex-col min-w-0 rounded break-words border bg-white border-1 border-gray-300 shadow -mb-[9px]">
+                            <div className="flex-auto p-6">
+                                <div className="flex">
+                                    <div className="w-[60%] text-end mb-4 float-left flex gap-3">
+                                        <div className="flex items-center">
+                                            <div className="font-medium">Ngày BĐ: </div>
+                                            <input type="date" className="border-[1px] border-gray-200 px-2 py-[2px] rounded-md" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                                        </div>
+                                        <div className="flex items-center">
+                                            <div className="font-medium">Ngày KT: </div>
+                                            <input type="date" className="border-[1px] border-gray-200 px-2 py-[2px] rounded-md" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                                        </div>
+                                    </div>
+
+                                    <div className="w-[10%] mt-[4px] mr-8">
+                                        <select className="border-[1px] rounded-sm float-left border-gray-200 px-2 py-[1px]" value={filterOption} onChange={(e) => setFilterOption(e.target.value)}>
+                                            <option value="1day">1 ngày</option>
+                                            <option value="7days">7 ngày</option>
+                                            <option value="1month">1 tháng</option>
+                                        </select>
+                                    </div>
+                                    <div className="w-[30%] text-end mb-4 float-right">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none ms-auto"
+                                            placeholder="Nhập mã đơn"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="block w-full overflow-auto scrolling-touch h-[400px]">
+                                    <table className="w-full max-h-[300px] text-left max-w-full mb-4 bg-transparent table-hover border" style={{ minWidth: 1200 }}>
+                                        <thead>
+                                            <tr className="bg-gray-900 text-gray-100 h-[40px] sticky top-0 z-10">
+                                                <th scope="col" className="pl-3 sticky top-0 z-10 w-[80px]">Mã đơn</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[300px]">Người đặt</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[350px]">Tour</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[300px]">Thông tin đặt tour</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[150px]">Trạng thái</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[100px]">Tùy chọn</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-data">
+                                            {filteredBookings.map((bookingRecord, index) => (
+                                                <tr key={bookingRecord.booking_id} className="border-[1px] border-b-gray-300">
+                                                    <td className="pl-3">{bookingRecord.booking_id}</td>
+                                                    <td>
+                                                        <span className='badge bg-[#0d6efd] text-white text-xs py-[2px] px-2 rounded-md'>
+                                                            Mã thanh toán : {bookingRecord.order_id}
+                                                        </span>
+                                                        <br />
+                                                        <b>Tên :</b> {bookingRecord.user_name}
+                                                        <br />
+                                                        <b>SĐT :</b> {bookingRecord.phonenum}
+                                                    </td>
+                                                    <td>
+                                                        <div className="flex">
+                                                            <div className="mr-2 font-semibold">Tên:</div>
+                                                            <div>{bookingRecord.tour_name}</div>
+                                                        </div> 
+                                                        <div className="flex">
+                                                            <div className="mr-2 font-semibold">Giá tiền:</div>
+                                                            <div><PriceDisplay price={bookingRecord.price} /></div>
+                                                        </div>  
+                                                        <div className="flex">
+                                                            <div className="mr-2 font-semibold">Ngày khỏi hành:</div>
+                                                            <div><FormatTime date={bookingRecord.day_depar} /></div>
+                                                        </div>                                                                                            
+                                                    </td>
+                                                    <td>
+                                                        <div className="flex">
+                                                            <b className="mr-2">Tổng tiền :</b>  <PriceDisplay price={bookingRecord.total_pay} />
+                                                        </div>
+                                                        <div className="flex">
+                                                            <b>Ngày đặt :</b> {bookingRecord.datetime}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className="">
+                                                            {bookingRecord.refund === 1 && bookingRecord.arrival === 0 ? (
+                                                                <div className="w-[80%] text-sm bg-[#dc3545] text-white rounded-md ">
+                                                                    <p className="px-2 py-1 text-center">Đã hủy và hoàn tiền</p>
+                                                                </div>
+                                                            ) : bookingRecord.refund === 0 && bookingRecord.arrival === 1 ? (
+                                                                <div className="w-[100%] bg-[#dc3545] text-white rounded-md">
+                                                                    <p className="px-2 py-1 text-center">Đã hủy, chưa hoàn tiền</p>
+                                                                </div>
+                                                            ) : bookingRecord.refund === null && bookingRecord.arrival === 1 ? (
+                                                                <div className="w-[80%] bg-[#198754] text-white rounded-md">
+                                                                    <p className="px-2 py-1 text-center">Đã duyệt</p>
+                                                                </div>
+                                                            ) : bookingRecord.refund === 1 && bookingRecord.arrival === 1 && (
+                                                                <div className="w-[70%] text-sm bg-[#dc3545] text-white rounded-md">
+                                                                    <p className="px-2 py-1 text-center">Đã hủy</p>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button type='button' onClick={() => generatePDF(bookingRecord)} className='border-[1px] border-[#198754] text-[#198754] hover:bg-[#198754] hover:text-white py-[2px] px-[5px] duration-100 shadow-none'>
+                                                            <i className="fa-regular fa-file-pdf "></i>
+                                                        </button>
+                                                        <button type='button' onClick={() => fetchApproveDetailData(bookingRecord)} className='mx-3 border-[1px] border-[#0d6efd] text-[#0d6efd] hover:bg-[#356ec4] hover:text-white py-[2px] px-[7px] duration-100 shadow-none'>
+                                                            <i className="fa-solid fa-file-invoice"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -656,9 +558,9 @@ function InfoBookingTour() {
                                                                     <tr className="border-[1px] border-black">
                                                                         <th className="border-[1px] border-black px-2">STT</th>
                                                                         <th className="border-[1px] border-black px-2">Độ tuổi</th>
-                                                                        <th className="border-[1px] border-black">Tên</th>
-                                                                        <th className="border-[1px] border-black">Ngày sinh</th>
-                                                                        <th className="border-[1px] border-black">Giới tính</th>
+                                                                        <th className="border-[1px] border-black px-2">Tên</th>
+                                                                        <th className="border-[1px] border-black px-2">Ngày sinh</th>
+                                                                        <th className="border-[1px] border-black px-2">Giới tính</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -714,7 +616,7 @@ function InfoBookingTour() {
                                                             <div className="font-semibold">TT thanh toán:</div>
                                                             <div className="mx-2">{bookingDetails.order_id}</div>
                                                         </div>
-                                                        <div className="flex w-12/3">
+                                                        <div className="flex w-2/3">
                                                             <div className="font-semibold">Thời gian thanh toán:</div>
                                                             <div className="mx-2">{bookingDetails.datetime}</div>
                                                         </div>
@@ -724,7 +626,7 @@ function InfoBookingTour() {
                                                         <div>
                                                             {vehicle && Array.isArray(vehicle) && vehicle.length > 0 ? (
                                                                 vehicle.map((vehicle) => (
-                                                                    <div className="w-full mt-3" key={vehicle.id}>
+                                                                    <div className="w-full mt-3">
                                                                         <div className="mx-auto border-[1px] border-gray-300 py-2 px-3 rounded-lg" style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', }}>
                                                                             <div className="font-semibold text-xl text-[#FF5E1F] mt-4 mb-3"><FormatTime date={vehicle.day_depar} /></div>
                                                                             <div className="text-xl font-semibold text-[#3467cd] mb-4">Phương tiện di chuyển</div>
@@ -836,7 +738,7 @@ function InfoBookingTour() {
                                                         <div className="my-3">
                                                             {depositHotel && Array.isArray(depositHotel) && depositHotel.length > 0 ? (
                                                                 depositHotel.map((Hotel) => (
-                                                                    <div key={Hotel.id} className="mx-auto border-[1px] border-gray-300 py-2 px-3 rounded-lg" style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', }}>
+                                                                    <div className="mx-auto border-[1px] border-gray-300 py-2 px-3 rounded-lg" style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', }}>
                                                                         <div className="flex text-left">
                                                                             <div className="font-semibold w-[15%]">Khách sạn: </div>
                                                                             <div className="mr-2 w-[85%]">{Hotel.name_hotel}</div>
@@ -887,59 +789,8 @@ function InfoBookingTour() {
                     </div>
                 </div>
             )}
-            {/* cập nhật lịch khởi hành  */}
-            {isOpenModalRating && (
-                <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed">
-                    <div className="row w-[35%] mt-[150px] mx-auto border-[1px] bg-white border-gray-300 rounded-sm py-3 px-3 shadow-sm">
-                        <div className="font-semibold text-xl my-4 text-left">
-                            Đánh giá
-                        </div>
-                        <div className="h-[1px] w-full bg-gray-300 rounded-sm mb-5"></div>
-                        <form>
-                            <div className="mb-3 text-left">
-                                <div className="font-semibold">Đánh giá</div>
-                                <select name="rating"
-                                    className="border-[1px] rounded-md border-gray-300 py-2 w-full px-2 outline-none focus:border-[#007aff]"
-                                    value={formRating.rating || ""}
-                                    onChange={handleRatingChange}
-                                >
-                                    <option value={5}>Xuất sắc</option>
-                                    <option value={4}>Tốt</option>
-                                    <option value={3}>Bình thường</option>
-                                    <option value={2}>Kém</option>
-                                    <option value={1}>Tệ</option>
-                                </select>
-                            </div>
-                            <div className="text-left">
-                                <div className="font-semibold">Ý kiến</div>
-                                <textarea type="text"
-                                    className="border-[1px] border-gray-300 w-full min-h-[120px] rounded-md py-2 px-2"
-                                    name="review"
-                                    value={formRating.review || ""}
-                                    onChange={handleRatingChange}
-                                >
 
-                                </textarea>
-                            </div>
-                        </form>
-                        <div className="flex gap-x-2 items-center justify-center mt-3">
-                            <div className="">
-                                <button type="button" onClick={handleModalRatingClick} className="bg-black w-[90px] border-[1px] border-black hover:bg-white hover:text-black text-white px-2 py-[2px] rounded-[3px] text-sm">
-                                    Hủy
-                                </button>
-                            </div>
-                            <div className="">
-                                <button type="submit" onClick={(event) => createTourRating(event)} className="bg-[#007aff] w-[90px] border-[1px] border-[#007aff] hover:bg-white hover:text-black text-white px-2 py-[2px] rounded-[3px] text-sm">
-                                    Đánh giá
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <Footer />
         </div>
     )
 }
-export default InfoBookingTour;
+export default BookingRecord3;

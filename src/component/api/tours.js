@@ -156,3 +156,5 @@ export const fetchCheckBookingOrder = (departure_Id) => {
 export const fetchDataScheduleTourByIdtour = (schedule_id) => {
   return api.get(`/admin/get_tour_schedule_byId.php?id_schedule=${schedule_id}`);
 };
+
+

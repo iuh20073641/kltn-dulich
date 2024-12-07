@@ -11,32 +11,39 @@ import { fetchVehicleByIddepart } from "../../../component/api/tours";
 import { fetchHotelByIddepart } from "../../../component/api/tours";
 import FormatTime from "../../../component/service/fomat-time";
 import { fetchDataScheduleTourByIdtour } from "../../../component/api/tours";
+import { fetchDayDepart } from "../../../component/api/tours";
 
 import config from "../../../component/config.json";
 
 const { SERVER_API } = config;
 
-const initFormSchedule = 
-    {
-        // id_tour: "",
-        day: "",
-        image: null,
-        schedule: "",
-        locations: ""
-    };
+const initFormSchedule =
+{
+    // id_tour: "",
+    day: "",
+    image: null,
+    schedule: "",
+    locations: ""
+};
 
 
-const initFormSchedule2 = 
-    {
-        id_schedule: "",
-        day: "",
-        image: null,
-        schedule: "",
-        locations: ""
-    };
+const initFormSchedule2 =
+{
+    id_schedule: "",
+    day: "",
+    image: null,
+    schedule: "",
+    locations: ""
+};
 
 
 const initFormDepart = {
+    day: "",
+    order: ""
+};
+
+const initFormDepart2 = {
+    depart_id: "",
     day: "",
     order: ""
 };
@@ -82,6 +89,7 @@ function TourSetting() {
     const [formSchedule, setFormSchedule] = useState(initFormSchedule);
     const [formUpdateSchedule, setFormUdateSchedule] = useState(initFormSchedule2);
     const [formDepart, setFormDepart] = useState(initFormDepart);
+    const [formDepartUpdate, setFormDepartUpdate] = useState(initFormDepart2);
     const [vahicle, setVahicle] = useState('may bay');
     const [tourDepart, setTourDepart] = useState([]);
     const [formHotel, setFormHotel] = useState(initFormHotel);
@@ -89,7 +97,8 @@ function TourSetting() {
     const [vehicle, setVehicle] = useState([]);
     const [depositHotel, setDepositHotel] = useState([]);
     const [isOpenModalUpdateSchule, setIsOpenModalUpdateSchule] = useState(false);
-
+    const [isOpenModalUpdateDepart, setIsOpenModalUpdateDepart] = useState(false);
+    const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại dưới định dạng YYYY-MM-DD
 
     // Hàm xử lý khi chọn loại phương tiện
     const handleTypeVehicleChange = (event) => {
@@ -104,62 +113,74 @@ function TourSetting() {
         }));
     };
 
-    
-        // Hàm để gọi API và cập nhật state
-        const tourDetail = async (id) => {
-            try {
-                // Gọi API để lấy thông tin chi tiết của một phòng
-                const toursResponse = await fetchTourDetails(id);
-                const toursData = toursResponse.data;
-                setTourDetails(toursData);
-                // console.log('Dữ liệu từ API:', tourDetails);
 
-                // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
-                if (Array.isArray(toursData) && toursData.length > 0) {
-                    setTourDetails(toursData[0]);
-                } else {
-                    setTourDetails(null); // Xử lý nếu không có dữ liệu hợp lệ
-                }
+    // Hàm để gọi API và cập nhật state
+    const tourDetail = async (id) => {
+        try {
+            // Gọi API để lấy thông tin chi tiết của một phòng
+            const toursResponse = await fetchTourDetails(id);
+            const toursData = toursResponse.data;
+            setTourDetails(toursData);
+            // console.log('Dữ liệu từ API:', tourDetails);
 
-                // Gọi API để lấy thông tin chi tiết của một phòng
-                const toursScheduleResponse = await fetchTourSchedule(id);
-                const toursScheduleData = toursScheduleResponse.data;
-                setTourSchedule(toursScheduleData);
-
-                // Gọi API để lấy thông tin chi tiết của một phòng
-                const tourDepartResponse = await fetchTourDepart(id);
-                const toursDepartData = tourDepartResponse.data;
-                setTourDepart(toursDepartData);
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+            // Nếu API trả về mảng, hãy lấy phần tử đầu tiên
+            if (Array.isArray(toursData) && toursData.length > 0) {
+                setTourDetails(toursData[0]);
+            } else {
+                setTourDetails(null); // Xử lý nếu không có dữ liệu hợp lệ
             }
-        };
 
-        
+            // Gọi API để lấy thông tin chi tiết của một phòng
+            const toursScheduleResponse = await fetchTourSchedule(id);
+            const toursScheduleData = toursScheduleResponse.data;
+            setTourSchedule(toursScheduleData);
+
+            // // Gọi API để lấy thông tin chi tiết của một phòng
+            // const tourDepartResponse = await fetchTourDepart(id);
+            // const toursDepartData = tourDepartResponse.data;
+            // setTourDepart(toursDepartData);
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+        }
+    };
+
+
     useEffect(() => {
         tourDetail(id);
     }, [id]);
 
+
+    // Hàm để gọi API và cập nhật state
+    const getTourDepart = async (id) => {
+        try {
+
+            const tourDepartResponse = await fetchTourDepart(id);
+            const toursDepartData = tourDepartResponse.data;
+
+            // Lấy ngày hiện tại
+            const currentDate = new Date();
+
+            // Lọc những ngày lớn hơn hoặc bằng ngày hiện tại
+            const filteredTours = toursDepartData.filter(tour => {
+                const tourDate = new Date(tour.day_depart); // Đảm bảo cột ngày trong API là departureDate
+                return tourDate >= currentDate;
+            });
+
+            setTourDepart(filteredTours);
+            // console.log(toursDepartData);
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
+        }
+    };
+
+
     useEffect(() => {
-        // Hàm để gọi API và cập nhật state
-        const tourDepart = async () => {
-            try {
-
-                const tourDepartResponse = await fetchTourDepart(id);
-                const toursDepartData = tourDepartResponse.data;
-                setTourDepart(toursDepartData);
-
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Có lỗi xảy ra khi lấy dữ liệu sản phẩm.');
-            }
-        };
-
-        tourDepart();
-
-    }, [id, tourDepart]);
+        getTourDepart(id);
+    }, [id]);
 
     const [selectedTour, setSelectedTour] = useState("");
 
@@ -332,9 +353,10 @@ function TourSetting() {
                 if (data.status === 'success') {
                     toast.success(data.message);
                     setFormDepart(initFormDepart); // Đặt lại form về rỗng nếu có lỗi
+                    getTourDepart(id);
                 } else if (data.status === 'error') {
                     toast.error(data.message);
-                    setFormDepart(initFormDepart); // Đặt lại form về rỗng nếu có lỗi
+                    // setFormDepart(initFormDepart); // Đặt lại form về rỗng nếu có lỗi
                 }
             })
             .catch(error => {
@@ -468,7 +490,7 @@ function TourSetting() {
         const scheduleResponse = await fetchDataScheduleTourByIdtour(schedule_id);
         const scheduleData = scheduleResponse.data;
         console.log(scheduleData);
-        
+
         if (scheduleData.length > 0) {
             setFormUdateSchedule({
                 id_schedule: scheduleData[0].id,
@@ -516,7 +538,7 @@ function TourSetting() {
             .then(data => {
                 if (data.status === 'success') {
                     toast.success(data.message);
-                    setFormUdateSchedule(initFormSchedule2); // Đặt lại form về rỗng nếu có lỗi
+                    // setFormUdateSchedule(initFormSchedule2); // Đặt lại form về rỗng nếu có lỗi
                     tourDetail(id);
                 } else if (data.status === 'error1') {
                     toast.error('Không có file hình ảnh hoặc có lỗi xảy ra.');
@@ -542,6 +564,94 @@ function TourSetting() {
                 console.log('Có lỗi xảy ra:', error);
             });
     };
+
+    const deleteTourDepart = (departId) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa ngày khởi hành này?')) {
+            fetch(`${SERVER_API}/admin/delete_depart_byid.php`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ depart_id: departId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        setTourDepart(tourDepart.filter(schedule => schedule.id !== departId));
+                        toast.success(data.message);
+                    } else if (data.status === 'error') {
+                        toast.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    // console.error('Có lỗi xảy ra:', error);
+                    toast.error('lỗi.');
+                    console.log('Có lỗi xảy ra:');
+                });
+        }
+    };
+
+    const handleModalUpdateDepart = () => {
+        setIsOpenModalUpdateDepart(!isOpenModalUpdateDepart);
+    };
+
+    // Bật của sổ cập nhật lịch trình
+    const ModalUpdateDepart = async (depart_id) => {
+        setIsOpenModalUpdateDepart(!isOpenModalUpdateDepart);
+
+        const departResponse = await fetchDayDepart(depart_id);
+        const departData = departResponse.data;
+        // console.log(departData);
+
+        if (departData.length > 0) {
+            setFormDepartUpdate({
+                depart_id: departData[0].id,
+                day: departData[0].day_depart,
+                order: departData[0].order
+            });
+        }
+    };
+
+    const handleDepartUpdateChange = (event) => {
+        const { value, name } = event.target;
+        setFormDepartUpdate((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const updateDepartSetting = async (event) => {
+        event.preventDefault(); //để không tự động reset
+        console.log(formDepartUpdate);
+        fetch(`${SERVER_API}/admin/update_depart_day.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                depart_id: parseInt(formDepartUpdate.depart_id),
+                id_tour: parseInt(id),
+                day: formDepartUpdate.day,
+                order: parseInt(formDepartUpdate.order)
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    toast.success(data.message);
+                    getTourDepart(id);
+                } else if (data.status === 'error') {
+                    toast.error(data.message);
+                }
+            })
+            .catch(error => {
+
+                toast.error('lỗi.');
+                console.log('Có lỗi xảy ra:', error);
+            });
+    };
+
+
 
     if (error) return <p>{error}</p>;
 
@@ -647,6 +757,7 @@ function TourSetting() {
                                             <input type="date"
                                                 className="border-[1px] rounded-md mx-2 py-2 w-[300px] px-2"
                                                 name="day"
+                                                min={today}
                                                 value={formDepart.day}
                                                 onChange={handleChange}
                                             />
@@ -1221,6 +1332,46 @@ function TourSetting() {
                             <p className="text-center">Chưa có dữ liệu lịch trình cho tour.</p>
                         )}
                     </div>
+                    <div>
+                        <div className="font-semibold text-lg mb-3 text-center">
+                            Lịch trình khởi hành
+                        </div>
+                        <div>
+                            <table className="mx-auto border-[1px] border-gray-200">
+                                <thead>
+                                    <tr className="border-[1px] border-b-gray-200 bg-gray-200">
+                                        <th className="border-r-gray-200 border-[1px] px-2">Ngày khởi hành</th>
+                                        <th className="border-r-gray-200 border-[1px] px-2">SL đơn đặt tour</th>
+                                        <th className="border-r-gray-200 border-[1px] px-2">Tùy chỉnh</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tourDepart && tourDepart.length > 0 ? (
+                                        tourDepart.map((tourDepart) => (
+                                            <tr key={tourDepart.id} className="border-b-[1px] border-gray-200">
+                                                <td className="border-r-gray-200 border-[1px]"><FormatTime date={tourDepart.day_depart} /></td>
+                                                <td className="border-r-gray-200 border-[1px]">{tourDepart.order}</td>
+                                                <td>
+                                                    <div className="flex gap-x-2 justify-center">
+                                                        <div className="">
+                                                            <button type='button' onClick={() => ModalUpdateDepart(tourDepart.id)} className='bg-[#0dcaf0] rounded-md font-semibold text-[10px]'><i className="fa-solid fa-pen-to-square px-[6px] py-[1px] text-white"></i></button>
+                                                        </div>
+                                                        <div className=" ">
+                                                            <button type="button" onClick={() => deleteTourDepart(tourDepart.id)} className='bg-[#dc3545] rounded-md font-semibold text-[10px]'><i className="fa-solid fa-trash text-white px-[6px] py-[1px]"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr className="border-[1px] border-gray-200">
+                                            <td className="text-center" colSpan="3">Chưa có lịch khởi hành</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div className="mt-5">
                         <div className="text-lg font-semibold mb-3">Phương tiện</div>
                         <div className="flex items-center">
@@ -1247,6 +1398,14 @@ function TourSetting() {
                             vehicle.map((vehicle) => (
                                 <div className="w-full mt-3">
                                     <div className="mx-auto border-[1px] border-gray-300 py-2 px-3 rounded-lg" style={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', }}>
+                                        <div className="flex gap-x-2 justify-end">
+                                            <div className="">
+                                                <button type='button' className='bg-[#0dcaf0] rounded-md font-semibold text-[10px]'><i className="fa-solid fa-pen-to-square px-[6px] py-[1px] text-white"></i></button>
+                                            </div>
+                                            <div className=" ">
+                                                <button type="button" className='bg-[#dc3545] rounded-md font-semibold text-[10px]'><i className="fa-solid fa-trash text-white px-[6px] py-[1px]"></i></button>
+                                            </div>
+                                        </div>
                                         <div className="font-semibold text-xl text-[#FF5E1F] mt-4 mb-3"><FormatTime date={vehicle.day_depar} /></div>
                                         <div className="text-xl font-semibold text-[#3467cd] mb-4">Phương tiện di chuyển</div>
                                         {vehicle.type === 'xe khach' ? (
@@ -1500,6 +1659,47 @@ function TourSetting() {
                                     </Form>
                                 )}
                             </Formik>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* cập nhật lịch khởi hành  */}
+            {isOpenModalUpdateDepart && (
+                <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed">
+                    <div className="row w-[40%] mt-3 mx-auto border-[1px] bg-gray-100 border-gray-300 rounded-sm py-3 px-3 shadow-sm">
+                        <form onSubmit={hendleDepartSubmit}>
+                            <div className="flex items-center mb-3">
+                                <div className="font-semibold">Ngày khởi hành:</div>
+                                <input type="date"
+                                    className="border-[1px] rounded-md mx-2 py-2 w-[300px] px-2"
+                                    name="day"
+                                    min={today}
+                                    value={formDepartUpdate.day || ""}
+                                    onChange={handleDepartUpdateChange}
+                                />
+                            </div>
+                            <div className="flex items-center">
+                                <div className="font-semibold">Số lượng đơn đặt tour:</div>
+                                <input type="number"
+                                    className="border-[1px] rounded-md mx-2 py-2 px-2"
+                                    name="order"
+                                    value={formDepartUpdate.order || ""}
+                                    onChange={handleDepartUpdateChange}
+                                />
+                            </div>
+                        </form>
+                        <div className="flex gap-x-2 items-center justify-center mt-3">
+                            <div className="">
+                                <button type="button" onClick={handleModalUpdateDepart} className="bg-black w-[90px] border-[1px] border-black hover:bg-white hover:text-black text-white px-2 py-[2px] rounded-[3px] text-sm">
+                                    Hủy
+                                </button>
+                            </div>
+                            <div className="">
+                                <button type="submit" onClick={(event) => updateDepartSetting(event)} className="bg-[#007aff] w-[90px] border-[1px] border-[#007aff] hover:bg-white hover:text-black text-white px-2 py-[2px] rounded-[3px] text-sm">
+                                    Cập nhật
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

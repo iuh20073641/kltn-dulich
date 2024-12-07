@@ -62,11 +62,11 @@ const LoginNV = () => {
           case "hướng dẫn viên":
             navigate("/dashboard-huong-dan-vien");
             break;
-          case "kiểm duyệt viên":
-            navigate("/dashboard-kiem-duyet-vien");
+          case "kiểm duyệt viên": // nhân viên chăm soc khach hàng
+            navigate("/customer-care/user");
             break;
           case "nhân viên quản lý dịch vụ":
-            navigate("/dashboard-hotel");
+            navigate("/user");
             break;
           default:
             navigate("/dashboard-default");

@@ -80,7 +80,17 @@ function TourDetails() {
                 // Gọi API để lấy thông tin chi tiết của một phòng
                 const tourDepartResponse = await fetchTourDepart(id);
                 const toursDepartData = tourDepartResponse.data;
-                setTourDepart(toursDepartData);
+
+                 // Lấy ngày hiện tại
+                 const currentDate = new Date();
+
+                 // Lọc những ngày lớn hơn hoặc bằng ngày hiện tại
+                 const filteredTours = toursDepartData.filter(tour => {
+                     const tourDate = new Date(tour.day_depart); // Đảm bảo cột ngày trong API là departureDate
+                     return tourDate >= currentDate;
+                 });
+
+                setTourDepart(filteredTours);
                 // console.log('Dữ liệu từ API:', toursDepartData);
 
             } catch (err) {
@@ -659,7 +669,7 @@ function TourDetails() {
                                     Đặt tour
                                 </div>
                                 </Link>
-                            </div> */}
+                                </div> */}
                                 <div className='flex justify-center pb-4'>
                                     {/* <Link className="w-full flex justify-center" to={`/booking-tour/${tourDetails.id}?selectedTour=${selectedTour}`}> */}
                                     <div onClick={handleBookingClick} className="uppercase font-semibold bg-[#0194F3] text-white text-sm w-[95%] rounded-[5px] tracking-wider py-3 px-5 cursor-pointer hover:bg-opacity-90 hover:after:duration-200 hover:bg-white hover:text-black duration-100 border-[1px] border-black">

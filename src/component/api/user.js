@@ -46,3 +46,8 @@ export const getUsersData = (iduser) => {
 export const getUsersDataByKey = (key) => {
   return api.get(`/admin/find_user.php?info_user=${key}`);
 };
+
+// api lấy danh sách nhân viên
+export const getListHdv = () => {
+  return api.get(`/admin/get_list_hdv.php`);
+};

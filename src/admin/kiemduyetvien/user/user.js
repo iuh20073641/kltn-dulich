@@ -1,13 +1,11 @@
-import HeaderManager from "../header-manager/header-manager";
+import HeaderCensor from "../header-admin/header-admin";
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { selectAllUsers } from "../../../component/api/user";
-import config from "../../../component/config.json";
+// import "./user.css";
 
-const { SERVER_API } = config;
-
-function User(){
+function User2(){
 
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
@@ -32,7 +30,7 @@ function User(){
 
     const deleteUser = (userId) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-          fetch(`${SERVER_API}/admin/delete_usernd.php`, {
+          fetch('http://localhost:88/api_travel/api/admin/delete_usernd.php', {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -67,7 +65,7 @@ function User(){
 
     return(
         <div className="bg-gray-100 w-full">
-            <HeaderManager />
+            <HeaderCensor />
 
             <div className="container mx-auto sm:px-4 max-w-full -mt-[650px]" id="main-content">
                 <div className="flex flex-wrap ">
@@ -78,7 +76,7 @@ function User(){
                                 <div className="text-end mb-4">
                                     <input type="text" 
                                         className="block w-[20%] appearance-none  py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none ms-auto" 
-                                        placeholder="Nhập sđt/ email"
+                                        placeholder="Type to search...."
                                     />
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch">
@@ -86,13 +84,13 @@ function User(){
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-9">
                                                 <th scope="col">#</th>
-                                                <th scope="col">Tên</th>
+                                                <th scope="col">Name</th>
                                                 <th scope="col">Email</th>
-                                                <th scope="col">SĐT</th>
-                                                <th scope="col">Địa chỉ</th>
-                                                <th scope="col">Ngày sinh</th>
-                                                <th scope="col">Ngày tạo TK</th>
-                                                <th scope="col">Tùy chỉnh</th>
+                                                <th scope="col">Phone no</th>
+                                                <th scope="col">Adress</th>
+                                                <th scope="col">Dob</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="users-data">
@@ -124,4 +122,4 @@ function User(){
         </div>
     );
 }
-export default User;
+export default User2;

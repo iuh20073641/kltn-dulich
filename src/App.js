@@ -71,9 +71,15 @@ import ApprovedApplication from './admin/kiemduyetvien/approved-application/appr
 import QRScannerComponent from './admin/kiemduyetvien/booking-records/qr-code';
 import RatingTour from './admin/kiemduyetvien/rating-tour/rating-tour';
 import CreateBookingTourByNV from './admin/kiemduyetvien/create-booking/create-booking';
+import User2 from './admin/kiemduyetvien/user/user';
 
 //nhan vien quản lí 
 import QuanLyTinTuc from "./admin/service-manager/QuanLy-TinTuc/quanly-tintuc";
+import NewBookingTour3 from './admin/service-manager/new-booking-tour/new-booking-tour';
+import ApprovedApplication3 from './admin/service-manager/approved-application/approved-application';
+import RefundBookingTour3 from './admin/service-manager/refund-booking-tour/refund-booking-tour';
+import BookingRecord3 from './admin/service-manager/booking-records/booking-records';
+
 // app.render(
 //   <BrowserRouter>
 //     <Routes>
@@ -165,10 +171,16 @@ function App() {
             <Route path="/booking-records" element={<BookingRecord />} />
             <Route path="/approved-application" element={<ApprovedApplication />} />
             <Route path="/qr-code" element={<QRScannerComponent />} /> 
-            <Route path="/create-booking-tour" element={<CreateBookingTourByNV />} /> 
+            <Route path="/create-booking-tour" element={<CreateBookingTourByNV />} />
+            <Route path="/customer-care/user" element={<User2 />} />
 
              {/* nhan vien quản lí */}
               <Route path="/quanly-tintuc" element={<QuanLyTinTuc />} />
+              <Route path="/manager/new-booking-tour" element={<NewBookingTour3 />} />
+              <Route path="/manager/approved-application" element={<ApprovedApplication3 />} />
+              <Route path="/manager/refund-booking-tour" element={<RefundBookingTour3 />} />
+              <Route path="/manager/booking-records" element={<BookingRecord3 />} />
+
 
             {/* khach hang */}
                 {/* <Section /> */}

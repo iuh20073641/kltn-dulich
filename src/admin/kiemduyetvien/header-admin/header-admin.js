@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 function HeaderCensor() {
 
   const [isOpenTour, setIsOpenTour] = useState(false);
+  const [isOpenRating, setIsOpenRating] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,6 +27,9 @@ function HeaderCensor() {
     setIsOpenTour(!isOpenTour);
   };
 
+  const toggleMenuRating = () => {
+    setIsOpenRating(!isOpenRating);
+  };
 
   return (
     <div className=''>
@@ -52,6 +56,11 @@ function HeaderCensor() {
               id="adminDropdown"
             >
               <ul className="list-none pl-0 mb-0">
+                <li className="">
+                  <div className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to={"/customer-care/user"}>Người dùng</Link>
+                  </div>
+                </li>
                 <li className="">
                   <div className="inline-block py-2 px-4 no-underline text-white">
                     <Link to="/chat-real-time">Trò Chuyện Khách Hàng</Link>
@@ -98,9 +107,32 @@ function HeaderCensor() {
 
                 </li>
                 <li className="">
-                  <div className="inline-block py-2 px-4 no-underline text-white">
+                  {/* <div className="inline-block py-2 px-4 no-underline text-white">
                     <Link to="/rating-tour">Đánh giá</Link>
+                  </div> */}
+
+                  <button onClick={toggleMenuRating} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-4 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
+                    <span>Đánh giá</span>
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+
+                    </span>
+                  </button>
+
+                  <div className={`mt-1 px-3 text-xs mb-1 transition-all duration-500 ease-in-out transform ${isOpenRating ? 'opacity-100 max-h-96 scale-100' : 'opacity-0 max-h-0 scale-95'
+                    } overflow-hidden`} id="bookingLinksTour">
+                    <ul className="flex flex-wrap list-none pl-0 mb-0  flex-col rounded border border-gray-600">
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/rating-tour">Tour</Link>
+                      </li>
+                      <li className="inline-block py-2 px-4 no-underline text-white">
+                        <Link to="/approved-application">Khách sạn</Link>
+                      </li>
+                    </ul>
                   </div>
+
                 </li>
               </ul>
             </div>

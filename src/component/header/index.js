@@ -146,7 +146,7 @@ function Header(){
         </div>
         <nav className="w-full mx-auto flex flex-row justify-between items-center py-6 bg-white">
           <div className="logo basis-2/6 text-center text-xl font-semibold cursor-pointer">
-            <Link to={"/"}>TravelVN.</Link> 
+            <Link to={"/"}>Venture</Link> 
           </div>
           <ul className="tqd-top-menu text-sm lg:basis-3/6 font-medium hidden lg:flex lg:items-center lg:justify-center lg:gap-8 text-gray-600 uppercase">
             <li className="ct-top-menu-item">

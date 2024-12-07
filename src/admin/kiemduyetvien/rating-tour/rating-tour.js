@@ -1,7 +1,11 @@
 import HeaderCensor from "../header-admin/header-admin";
 import { fetchAllTourRating } from "../../../component/api/tours";
 import React, { useEffect, useState } from 'react';
-// import CustomPieChart from "../../../component/service/chart";
+import { toast } from 'react-toastify';
+import config from "../../../component/config.json";
+
+const { SERVER_API } = config;
+
 
 function RatingTour(){
 
@@ -73,6 +77,30 @@ function RatingTour(){
         return isWithinDateRange && matchesSearchQuery;
     });
 
+    const cancelRatingTour = (rating_id) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) {
+            fetch(`${SERVER_API}/admin/delete_rating_tour_byid.php`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rating_id: rating_id }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        setRattings(rattings.filter(rating => rating.id !== rating_id));
+                        toast.success(data.message);
+                    } else if (data.status === 'error') {
+                        toast.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    toast.error('lỗi.');
+                    console.log('Có lỗi xảy ra:');
+                });
+        }
+    };
 
     return(
         <div>
@@ -123,9 +151,9 @@ function RatingTour(){
                                                 <th scope="col" className="pl-3 sticky top-0 z-10">STT</th>
                                                 <th scope="col" className="sticky top-0 z-10">Mã tour</th>
                                                 <th scope="col" className="sticky top-0 z-10">Tên tour</th>
-                                                <th scope="col" className="sticky top-0 z-10">Tên người dùng</th>
+                                                <th scope="col" className="sticky top-0 z-10">Tên ND</th>
                                                 <th scope="col" className="sticky top-0 z-10">Đánh giá<i className="fa-solid fa-star text-white ml-2"></i></th>
-                                                <th scope="col" className="sticky top-0 z-10">Nhận xét</th>
+                                                <th scope="col" className="sticky top-0 z-10 w-[250px]">Nhận xét</th>
                                                 <th scope="col" className="sticky top-0 z-10">Ngày đánh giá</th>
                                                 <th scope="col" className="sticky top-0 z-10">Trạng thái</th>
                                             </tr>
@@ -140,6 +168,11 @@ function RatingTour(){
                                                     <td>{ratting.rating}</td>
                                                     <td>{ratting.review}</td>
                                                     <td>{ratting.date}</td>
+                                                    <td>
+                                                        <button type='button' onClick={() => cancelRatingTour(ratting.id)} className='px-2 py-1 rounded-md btn border-[1px] border-[#dc3545] text-[#dc3545] hover:bg-[#dc3545] hover:text-white text-sm shadow-none'>
+                                                            Xóa
+                                                        </button>
+                                                    </td>
                                                 </tr>  
                                             ))}
                                         </tbody>

@@ -294,7 +294,7 @@ function BookingTour() {
                     { length: participantCount - updatedCustomers.length },
                     () => ({
                         name: '',
-                        sex: 'nam',
+                        sex: 'Nam',
                         dob: ''
                     })
                 );
@@ -326,7 +326,7 @@ function BookingTour() {
                     { length: toddlersCount - updatedToddlers.length },
                     () => ({
                         name: '',
-                        sex: 'nam',
+                        sex: 'Nam',
                         dob: '',
                     })
                 );
@@ -358,7 +358,7 @@ function BookingTour() {
                     { length: childrenCount - updatedChildren.length },
                     () => ({
                         name: '',
-                        sex: 'nam',
+                        sex: 'Nam',
                         dob: '',
                     })
                 );
@@ -386,7 +386,7 @@ function BookingTour() {
                     { length: babyCount - updatedBaby.length },
                     () => ({
                         name: '',
-                        sex: 'nam',
+                        sex: 'Nam',
                         dob: '',
                     })
                 );
