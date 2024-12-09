@@ -133,6 +133,12 @@ function Header(){
                       </li>
                       <li>
                         <div className="flex items-center my-2">
+                          <i className="fa-solid fa-bell mx-2"></i>
+                          <Link to={"/chat-kh1"}><p className='text-sm'>Chat</p></Link>
+                        </div>
+                      </li>
+                      <li>
+                        <div className="flex items-center my-2">
                           <i className="fa-solid fa-arrow-right-from-bracket mx-2"></i>
                           <button onClick={handleLogout}><p className='text-sm'>Đăng xuất</p></button>
                         </div>

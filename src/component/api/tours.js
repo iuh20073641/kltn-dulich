@@ -157,4 +157,9 @@ export const fetchDataScheduleTourByIdtour = (schedule_id) => {
   return api.get(`/admin/get_tour_schedule_byId.php?id_schedule=${schedule_id}`);
 };
 
-
+// api lịch tour được phân công của hướng dẫn viên
+export const fetchAssignmentBooking = (staffId) => {
+  return api.post(`/admin/get_All_Assignment_tour.php`, {
+    staff_id: staffId, // Truyền user_id trong body
+  });
+};

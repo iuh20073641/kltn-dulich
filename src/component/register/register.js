@@ -106,11 +106,11 @@ function Register() {
     return (
         <div className="travel-login min-h-screen bg-center bg-no-repeat bg-cover">
             <div className='text-left mx-7 py-5 font-semibold text-3xl'>
-                <Link to={"/"}>TravelVN.</Link>
+                <Link to={"/"}>Venture</Link>
             </div>
             <div className='signin w-[95%] mx-auto bg-slate-50 rounded-2xl'>
                 <div className='text-3xl font-semibold text-left pb-7 pt-14 px-16'>
-                    Sign Up
+                    Đăng ký
                 </div>
                 <div className='flex ml-16'>
                     <div className='basis-2/5'>
@@ -130,36 +130,36 @@ function Register() {
                         <form id='basis-form' onSubmit={handleSubmit}>
                             <div className='flex gap-5'>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
-                                    <input type='text' placeholder='Name' name='name' value={formValue.name} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
+                                    <input type='text' placeholder='Tên tài khoản' name='name' value={formValue.name} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
                                 </div>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
-                                    <input type='text' placeholder='Email Address' name='mail' value={formValue.mail} onChange={handleChange} className='bg-slate-50 w-[200px] mt-2 outline-none' required></input>
+                                    <input type='text' placeholder='Email' name='mail' value={formValue.mail} onChange={handleChange} className='bg-slate-50 w-[200px] mt-2 outline-none' required></input>
                                 </div>
                             </div>
                             <div className='flex gap-5'>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
-                                    <input type='tel' placeholder='Phone' name='phone' value={formValue.phone} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
+                                    <input type='tel' placeholder='Số điện thoại' name='phone' value={formValue.phone} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
                                 </div>
                                 <div className='mb-6 w-[240px] h-10 '>
                                     <input type='file' name='image' onChange={handleImageChange} className='bg-slate-50 w-[200px] mt-2 outline-none'></input>
                                 </div>
                             </div>
                             <div className='border-[1px] border-gray-300 mb-6 w-[500px] h-10 rounded-md'>
-                                <input type='text' name='address' placeholder='Address' value={formValue.address} onChange={handleChange} className='bg-slate-50 w-[450px] mt-2 outline-none' required></input>
+                                <input type='text' name='address' placeholder='Địa chỉ' value={formValue.address} onChange={handleChange} className='bg-slate-50 w-[450px] mt-2 outline-none' required></input>
                             </div>
                             <div className='border-[1px] border-gray-300 mb-6 w-[500px] h-10 rounded-md'>
                                 <input type='date' max={today} name='birthDate' value={formValue.birthDate} onChange={handleChange} className='bg-slate-50 w-[450px] mt-2 outline-none' required></input>
                             </div>
                             <div className='flex gap-5'>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
-                                    <input type='password' name='pass' placeholder='Password' value={formValue.pass} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
+                                    <input type='password' name='pass' placeholder='Mật khẩu' value={formValue.pass} onChange={handleChange} className='w-[200px] bg-slate-50 mt-2 outline-none' required></input>
                                 </div>
                                 <div className='border-[1px] border-gray-300 mb-6 w-[240px] h-10 rounded-md '>
-                                    <input type='password' name='rePass' placeholder='Re-enter Password' value={formValue.rePass} onChange={handleChange} className='bg-slate-50 w-[200px] mt-2 outline-none' required></input>
+                                    <input type='password' name='rePass' placeholder='Nhập lại mật khẩu' value={formValue.rePass} onChange={handleChange} className='bg-slate-50 w-[200px] mt-2 outline-none' required></input>
                                 </div>
                             </div>
                             <div className='bg-[#FFD000] mb-10 rounded-md'>
-                                <button type='submit' className='py-3 font-semibold text-xl'><p>Create a New Account</p></button>
+                                <button type='submit' className='py-3 font-semibold text-xl'><p>Tạo tài khoản mới</p></button>
                             </div>
                         </form>
                         {message && <p>{message}</p>}
@@ -169,23 +169,23 @@ function Register() {
                     </div>
                     <div className='basis-2/5 text-left'>
                         <div className="text-xl font-semibold mx-2 mt-4 pb-4 tracking-wider">
-                            Why they choose TravelVN?
+                            Tạo sao mọi người chọn Venture?
                         </div>
                         <div className="flex flex-row items-center my-4">
                             <i className="fa-solid fa-money-bill-1-wave mx-3 text-[#F8BB00]"></i>
-                            <p className="font-light">Good Price</p>
+                            <p className="font-light">Giá tốt</p>
                         </div>
                         <div className="flex flex-row items-center my-4">
                             <i className="fa-solid fa-headphones mx-3 text-[#F8BB00]"></i>
-                            <p className="font-light">Top-notch Services</p>
+                            <p className="font-light">Dịch vụ hàng đầu</p>
                         </div>
                         <div className="flex flex-row items-center my-4">
                             <i className="fa-solid fa-shield-halved mx-3 text-[#F8BB00]"></i>
-                            <p className="font-light">Secure Payment</p>
+                            <p className="font-light">Thanh toán an toàn</p>
                         </div>
                         <div className="flex flex-row items-center my-4">
                             <i className="fa-solid fa-user-group mx-3 text-[#F8BB00]"></i>
-                            <p className="font-light">Trustworthy</p>
+                            <p className="font-light">Đáng tin cậy</p>
                         </div>
                     </div>
                 </div>

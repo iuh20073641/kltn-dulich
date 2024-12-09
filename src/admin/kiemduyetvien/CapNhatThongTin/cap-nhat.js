@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import HeaderCensor from "../header-admin/header-admin";
 //import Chat from "../../../chat/Chat"; // Đường dẫn tới file Chat.js
 import { toast } from "react-toastify";
+import config from "../../../component/config.json";
+
+const { SERVER_API } = config;
+
 
 function CapNhatNVKD() {
   const [employee, setEmployee] = useState({
@@ -13,14 +17,14 @@ function CapNhatNVKD() {
     address: "",
   });
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const id = localStorage.getItem("userId") || "";
     const fetchEmployee = async () => {
       try {
         const response = await fetch(
-          `http://localhost:88/api_travel/api/admin/get_dsnv.php?id=${id}`
+          `${SERVER_API}/admin/get_dsnv.php?id=${id}`
         );
         const data = await response.json();
         //console.log("Fetched employee data:", data); // In ra dữ liệu nhân viên được lấy về
@@ -37,11 +41,11 @@ function CapNhatNVKD() {
             address: employeeData.address || "",
           });
         }
-        setIsLoading(false);
+        // setIsLoading(false);
       } catch (err) {
         console.error("Error fetching employee data:", err);
         setError(err);
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     };
 
@@ -62,7 +66,7 @@ function CapNhatNVKD() {
     //console.log("Sending data:", employee); // Thêm dòng này để kiểm tra dữ liệu trước khi gửi
     try {
       const response = await fetch(
-        "http://localhost:88/api_travel/api/admin/update_employee.php",
+        `${SERVER_API}/admin/update_employee.php`,
         {
           method: "PUT",
           headers: {
@@ -84,7 +88,7 @@ function CapNhatNVKD() {
     }
   };
 
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
+  // if (isLoading) return <div>Đang tải dữ liệu...</div>;
 
   if (error) return <div>Error: {error.message}</div>;
 
@@ -92,10 +96,10 @@ function CapNhatNVKD() {
     <div className="bg-gray-100 w-full">
       <HeaderCensor />
       <div
-        className="container mx-auto sm:px-4 max-w-full -mt-[650px]"
+        className="container mx-auto sm:px-4 max-w-full -mt-[660px]"
         id="main-content"
       >
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap h-screen">
           <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
             <h3 className="mb-4 text-left font-semibold text-2xl">
               CẬP NHẬT THÔNG TIN NHÂN VIÊN

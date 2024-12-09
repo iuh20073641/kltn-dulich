@@ -35,11 +35,12 @@ function HeaderManager() {
         <h3 className="font-medium text-xl mx-5">
           <Link to="/user">VENTURE</Link>
         </h3>
+        <div className='font-semibold tracking-widest'>NHÂN VIÊN QUẢN LÝ</div>
         <button
           onClick={handleLogout}
           className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded no-underline bg-gray-100 text-gray-800 hover:bg-gray-200 py-1 px-2 leading-tight text-xs"
         >
-          LOG OUT
+          Đăng xuất
         </button>
       </div>
       <div

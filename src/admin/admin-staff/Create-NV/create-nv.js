@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import HeaderAdmin from "../header-admin/header-admin";
 import { toast } from "react-toastify";
+import config from "../../../component/config.json";
+
+const { SERVER_API } = config;
 
 const CreateNV = () => {
   const [username, setUsername] = useState("");
+  const [tennhanvien, setTenNhanVien] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState(""); // Thêm email
   const [phoneNumber, setPhoneNumber] = useState(""); // Thêm số điện thoại
@@ -13,7 +17,15 @@ const CreateNV = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Validate user information
-    if (!username || !password || !role || !email || !phoneNumber || !address) {
+    if (
+      !username ||
+      !tennhanvien ||
+      !password ||
+      !role ||
+      !email ||
+      !phoneNumber ||
+      !address
+    ) {
       alert("Vui lòng nhập đầy đủ thông tin");
       return;
     }
@@ -29,6 +41,7 @@ const CreateNV = () => {
     // Create a new user account
     const newUser = {
       username,
+      tennhanvien,
       password,
       email,
       phoneNumber,
@@ -39,7 +52,7 @@ const CreateNV = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:88/api_travel/api/admin/create_nhanvien.php",
+        `${SERVER_API}/admin/create_nhanvien.php`,
         {
           method: "POST",
           headers: {
@@ -49,22 +62,23 @@ const CreateNV = () => {
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+
+      if (response.ok && data.status !== "error") {
         console.log("Tạo tài khoản thành công", data);
         toast.success("Tạo nhân viên thành công");
 
         // Reset form fields
         setUsername("");
+        setTenNhanVien("");
         setPassword("");
         setEmail("");
         setPhoneNumber("");
         setAddress("");
         setRole("");
       } else {
-        const errorData = await response.json();
-        console.error("Lỗi khi tạo tài khoản", errorData);
-        alert("Lỗi khi tạo tài khoản: " + errorData.message);
+        console.error("Lỗi khi tạo tài khoản", data);
+        toast.error("Thông tin đăng nhập bị trùng");
       }
     } catch (error) {
       console.error("Lỗi khi gọi API", error);
@@ -85,13 +99,24 @@ const CreateNV = () => {
           </h2>
           <div className="flex flex-wrap -mx-2">
             <div className="w-1/2 px-2 mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Tên đăng nhập:
+<label className="block text-gray-700 text-sm font-bold mb-2">
+                Mã Nhân Viên:
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                className="block w-full border border-gray-300 p-2 rounded"
+              />
+            </div>
+            <div className="w-1/2 px-2 mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Tên Nhân Viên:
+              </label>
+              <input
+                type="text"
+                value={tennhanvien}
+                onChange={(e) => setTenNhanVien(e.target.value)}
                 className="block w-full border border-gray-300 p-2 rounded"
               />
             </div>
@@ -148,11 +173,11 @@ const CreateNV = () => {
                 onChange={(e) => setRole(e.target.value)}
                 className="block w-full border border-gray-300 p-2 rounded"
               >
-                <option value="">Chọn vai trò</option>
+<option value="">Chọn vai trò</option>
                 <option value="hướng dẫn viên">Hướng dẫn viên</option>
                 <option value="kiểm duyệt viên">Kiểm duyệt viên</option>
                 <option value="nhân viên quản lý dịch vụ">
-                  Nhân viên quản lý dịch vụ
+                  Nhân viên chăm sóc khách hàng
                 </option>
               </select>
             </div>

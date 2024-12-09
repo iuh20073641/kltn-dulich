@@ -10,6 +10,9 @@ import { fetchRoomFacilities } from "../api/room";
 import { fetchRoomImages } from "../api/room";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import config from "../../component/config.json";
+
+const { SERVER_API } = config;
 
 function RoomDetail(){
 
@@ -209,9 +212,9 @@ function RoomDetail(){
                         <p className='font-medium'>/5</p> 
                         <p className="mx-1">trong {totalReviews} đánh giá</p>
                     </div>
-                    <div className="ml-auto bg-[#13357B] text-white rounded-md hover:bg-black duration-100">
+                    {/* <div className="ml-auto bg-[#13357B] text-white rounded-md hover:bg-black duration-100">
                         <button type="button" className="mx-2 my-1 font-medium">Tải về PDF</button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* phần thông tin chi tiết */}
@@ -223,7 +226,7 @@ function RoomDetail(){
                         // Trường hợp có duy nhất một hình ảnh
                        
                                 <div className="mb-10">
-                                    <img src={`http://localhost:88/api_travel/api/Images/room/${roomImages[0].image}`} className='w-[963px] h-[490px] object-cover' alt="" />
+                                    <img src={`${SERVER_API}/Images/room/${roomImages[0].image}`} className='w-[963px] h-[490px] object-cover' alt="" />
                                 </div>
                             
                         
@@ -231,7 +234,7 @@ function RoomDetail(){
                         <Slider {...settings}>
                             {roomImages.map((image) => (
                                 <div className="mb-10">
-                                    <img src={`http://localhost:88/api_travel/api/Images/room/${image.image}`} className='w-[963px] h-[490px] object-cover' alt="" />
+                                    <img src={`${SERVER_API}/Images/room/${image.image}`} className='w-[963px] h-[490px] object-cover' alt="" />
                                 </div>
                             ))}
                         </Slider>
@@ -260,7 +263,7 @@ function RoomDetail(){
                                 <div className="mb-4">
                                     <div className="flex items-center">
                                         <div>
-                                            <img src={`http://localhost:88/api_travel/api/Images/user/${rating.image_user}`} className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
+                                            <img src={`${SERVER_API}/Images/user/${rating.image_user}`} className='w-[20px] h-[20px] object-cover rounded-full' alt="" />
                                         </div>
                                         <div className="mx-2 font-medium">{rating.user_name}</div>
                                     </div>

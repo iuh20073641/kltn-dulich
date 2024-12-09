@@ -554,7 +554,7 @@ function CreateBookingTourByNV() {
         <div>
             <HeaderCensor />
 
-            <div className="w-full bg-gray-100 -mt-[660px] lg:w-4/5 pr-4 pl-4 ms-auto min-h-screen">
+            <div className="w-full bg-gray-100 -mt-[660px] lg:w-4/5 pr-4 pl-4 ms-auto h-screen">
                 <div className="mx-auto">
                     <div className="font-semibold uppercase text-2xl text-center mb-5 pt-5">Thông tin đặt tour</div>
                     <div className="w-[80%] mx-auto bg-white px-2 py-3 rounded-md mb-4 max-h-[500px] overflow-y-auto">

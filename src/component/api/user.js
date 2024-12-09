@@ -48,6 +48,6 @@ export const getUsersDataByKey = (key) => {
 };
 
 // api lấy danh sách nhân viên
-export const getListHdv = () => {
-  return api.get(`/admin/get_list_hdv.php`);
+export const getListHdv = (day_depar, timetour) => {
+  return api.get(`/admin/get_list_hdv.php?day_depart=${day_depar}&timetour=${timetour}`);
 };

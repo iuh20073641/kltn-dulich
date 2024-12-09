@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import HeaderManager from "../header-manager/header-manager";
 import { toast } from "react-toastify";
 import Modal from "react-modal";
+import { useDropzone } from "react-dropzone";
 import "./style.css";
+import config from "../../../component/config.json";
 
-Modal.setAppElement("#root"); // Thiết lập phần tử gốc cho modal
+const { SERVER_API } = config;
+
+Modal.setAppElement("#root");
 
 function QuanLyTinTuc() {
   const [articles, setArticles] = useState([]);
   const [error, setError] = useState(null);
-  // const [searchQuery, setSearchQuery] = useState("");
-  const [noResults, setNoResults] = useState(false);
   const [newArticle, setNewArticle] = useState({
     title: "",
     summary: "",
@@ -18,21 +20,19 @@ function QuanLyTinTuc() {
     image: "",
     published_at: "",
   });
-  const [showModal, setShowModal] = useState(false); // State để điều khiển việc hiển thị modal
-  const [isEditing, setIsEditing] = useState(false); // State để kiểm tra xem có đang chỉnh sửa hay không
-  const [currentArticleId, setCurrentArticleId] = useState(null); // State để lưu trữ ID của bài viết hiện tại
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentArticleId, setCurrentArticleId] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
-    // Hàm để gọi API và cập nhật state
     const fetchData = async () => {
       try {
-        // Gọi API để lấy danh sách tin tức
         const response = await fetch(
-          "http://localhost:88/api_travel/api/news.php"
+          `${SERVER_API}/news.php`
         );
         const data = await response.json();
         setArticles(Array.isArray(data) ? data : []);
-        setNoResults(false); // Reset noResults khi có dữ liệu
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err);
@@ -40,40 +40,7 @@ function QuanLyTinTuc() {
     };
 
     fetchData();
-  }, []); // Chạy một lần khi component được mount
-
-  // const handleSearch = async (e) => {
-  //   const query = e.target.value;
-  //   setSearchQuery(query);
-
-  //   if (query.trim() === "") {
-  //     // Nếu từ khóa tìm kiếm trống, lấy lại danh sách tin tức ban đầu
-  //     const response = await fetch(
-  //       "http://localhost/api-dulich-main/api-dulich/api/news.php"
-  //     );
-  //     const data = await response.json();
-  //     setArticles(Array.isArray(data) ? data : []);
-  //     setNoResults(false); // Reset noResults khi có dữ liệu
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:88/api_travel/api/admin/search_article.php?query=${query}`
-  //     );
-  //     if (response.status === 404) {
-  //       setArticles([]);
-  //       setNoResults(true);
-  //     } else {
-  //       const data = await response.json();
-  //       setArticles(Array.isArray(data) ? data : []);
-  //       setNoResults(data.length === 0); // Cập nhật noResults nếu không có kết quả
-  //     }
-  //   } catch (err) {
-  //     console.error("Error searching data:", err);
-  //     setError(err);
-  //   }
-  // };
+  }, []);
 
   const deleteArticle = (articleId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
@@ -120,16 +87,44 @@ function QuanLyTinTuc() {
     setNewArticle({ ...newArticle, [name]: value });
   };
 
-  const handleAddArticle = (e) => {
+  const handleAddArticle = async (e) => {
     e.preventDefault();
+    let imageUrl = "";
+
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+
+      try {
+        const response = await fetch(
+          `${SERVER_API}/upload_image1.php`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const data = await response.json();
+        if (data.status === "success") {
+          imageUrl = data.path;
+        } else {
+          toast.error("Tải ảnh lên thất bại. Vui lòng thử lại.");
+          return;
+        }
+      } catch (error) {
+        toast.error("Lỗi API khi tải ảnh lên.");
+        console.error("Có lỗi xảy ra:", error);
+        return;
+      }
+    }
+
     fetch(
-      "http://localhost:88/api_travel/api/admin/add_article.php",
+      `${SERVER_API}/admin/add_article.php`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newArticle),
+        body: JSON.stringify({ ...newArticle, image: imageUrl }),
       }
     )
       .then((response) => {
@@ -140,7 +135,7 @@ function QuanLyTinTuc() {
       })
       .then((data) => {
         if (data.status === "success") {
-          setArticles([...articles, data.article]); // Cập nhật state articles
+          setArticles([...articles, data.article]);
           toast.success("Bài viết đã được thêm thành công");
           setNewArticle({
             title: "",
@@ -149,7 +144,7 @@ function QuanLyTinTuc() {
             image: "",
             published_at: "",
           });
-          setShowModal(false); // Ẩn modal sau khi thêm thành công
+          setShowModal(false);
         } else if (data.status === "error") {
           toast.error(data.message);
         } else {
@@ -163,22 +158,58 @@ function QuanLyTinTuc() {
   };
 
   const handleEditArticle = (article) => {
-    setNewArticle(article);
+    // Chuyển đổi định dạng ngày từ yyyy-MM-dd HH:mm:ss sang yyyy-MM-dd
+    const formattedDate = article.published_at.split(" ")[0];
+    setNewArticle({ ...article, published_at: formattedDate });
     setCurrentArticleId(article.id);
     setIsEditing(true);
     setShowModal(true);
   };
-
-  const handleUpdateArticle = (e) => {
+  const handleUpdateArticle = async (e) => {
     e.preventDefault();
+    let imageUrl = newArticle.image;
+  
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+  
+      try {
+        const response = await fetch(
+          `${SERVER_API}/upload_image1.php`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const data = await response.json();
+        if (data.status === "success") {
+          imageUrl = data.path;
+        } else {
+          toast.error("Tải ảnh lên thất bại. Vui lòng thử lại.");
+          return;
+        }
+      } catch (error) {
+        toast.error("Lỗi API khi tải ảnh lên.");
+        console.error("Có lỗi xảy ra:", error);
+        return;
+      }
+    }
+  
+    const updatedArticle = {
+      ...newArticle,
+      image: imageUrl,
+    };
+  
+    console.log("Dữ liệu gửi lên API:", updatedArticle);
+  
     fetch(
-      `http://localhost:88/api_travel/api/admin/update_article.php?id=${currentArticleId}`,
+      `${SERVER_API}/admin/update_article.php?article_id=${currentArticleId}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newArticle),
+        body: JSON.stringify(updatedArticle),
       }
     )
       .then((response) => {
@@ -191,7 +222,9 @@ function QuanLyTinTuc() {
         if (data.status === "success") {
           setArticles(
             articles.map((article) =>
-              article.id === currentArticleId ? data.article : article
+              article.id === currentArticleId
+                ? { ...article, ...updatedArticle }
+                : article
             )
           );
           toast.success("Bài viết đã được cập nhật thành công");
@@ -202,7 +235,7 @@ function QuanLyTinTuc() {
             image: "",
             published_at: "",
           });
-          setShowModal(false); // Ẩn modal sau khi cập nhật thành công
+          setShowModal(false);
           setIsEditing(false);
           setCurrentArticleId(null);
         } else if (data.status === "error") {
@@ -224,10 +257,16 @@ function QuanLyTinTuc() {
       summary: "",
       content: "",
       image: "",
-      published_at: new Date().toISOString().split("T")[0], // Đặt ngày hiện tại
+      published_at: new Date().toISOString().split("T")[0], // Định dạng yyyy-MM-dd
     });
     setShowModal(true);
   };
+
+  const onDrop = (acceptedFiles) => {
+    setImageFile(acceptedFiles[0]);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   if (error) return <div>Error: {error.message}</div>;
 
@@ -246,15 +285,6 @@ function QuanLyTinTuc() {
             </h3>
             <div className="relative flex flex-col h-[500px] min-w-0 rounded break-words bg-white border-1 border-gray-300 shadowc mb-12 overflow-y-auto">
               <div className="flex-auto p-4">
-                {/* <div className="text-end mb-4">
-                  <input
-                    type="text"
-                    className="block w-[20%] appearance-none  py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none ms-auto"
-                    placeholder="Type to search...."
-                    value={searchQuery}
-                    onChange={handleSearch}
-                  />
-                </div> */}
                 <div className="text-end mb-4">
                   <button
                     onClick={openAddModal}
@@ -267,22 +297,17 @@ function QuanLyTinTuc() {
                   <table className="w-full max-w-full mb-4 bg-transparent table-hover border text-center text-sm">
                     <thead>
                       <tr className="bg-gray-900 text-gray-100 h-9">
-                        <th scope="col">ID</th>
-                        <th scope="col">Title</th>
+                        <th scope="col">Mã</th>
+                        <th scope="col">Tiêu đề</th>
                         <th scope="col" className="summary">
-                          Summary
+                          Tóm tắt
                         </th>
-                        <th scope="col">Published Date</th>
-                        <th scope="col">Action</th>
+                        <th scope="col">Ngày đăng</th>
+                        <th scope="col">Tùy chọn</th>
                       </tr>
                     </thead>
                     <tbody id="articles-data">
-                      {noResults ? (
-                        <tr>
-                          <td colSpan="5">Không tìm thấy bài viết nào.</td>
-                        </tr>
-                      ) : (
-                        Array.isArray(articles) &&
+                      {Array.isArray(articles) &&
                         articles.map(
                           (article) =>
                             article &&
@@ -310,8 +335,7 @@ function QuanLyTinTuc() {
                                 </td>
                               </tr>
                             )
-                        )
-                      )}
+                        )}
                     </tbody>
                   </table>
                 </div>
@@ -364,15 +388,14 @@ function QuanLyTinTuc() {
                       />
                     </div>
                     <div className="mb-2">
-                      <input
-                        type="text"
-                        name="image"
-                        placeholder="Image URL"
-                        value={newArticle.image}
-                        onChange={handleInputChange}
-                        className="block w-full appearance-none py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none"
-                        required
-                      />
+                      <div {...getRootProps()} className="dropzone">
+                        <input {...getInputProps()} />
+                        {imageFile ? (
+                          <p>{imageFile.name}</p>
+                        ) : (
+                          <p>Kéo và thả ảnh vào đây, hoặc nhấp để chọn ảnh</p>
+                        )}
+                      </div>
                     </div>
                     <div className="mb-2">
                       <input

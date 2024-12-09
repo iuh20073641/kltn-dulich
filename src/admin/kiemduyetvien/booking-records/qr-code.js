@@ -325,7 +325,8 @@ function QRScannerComponent() {
                                                 <tr className='border-[1px] border-gray-400'>
                                                     <th className='border-[1px] border-gray-400 w-[50px]'>STT</th>
                                                     <th className='border-[1px] border-gray-400 w-[300px]'>Họ tên</th>
-                                                    <th className='border-[1px] border-gray-400 w-[150px]'>Cccd</th>
+                                                    <th className='border-[1px] border-gray-400 w-[150px]'>Giới tính</th>
+                                                    <th className='border-[1px] border-gray-400 w-[150px]'>Ngày sinh</th>
                                                 </tr>
                                             </thead>
                                                 <tbody>
@@ -333,7 +334,8 @@ function QRScannerComponent() {
                                                     <tr key={participant.id}>
                                                         <td className='border-[1px] border-gray-400 text-left px-2'>{index + 1}</td>
                                                         <td className='border-[1px] border-gray-400 text-left px-2'>{participant.name}</td>
-                                                        <td className='border-[1px] border-gray-400 text-left px-2'>{participant.cccd}</td>
+                                                        <td className='border-[1px] border-gray-400 text-left px-2'>{participant.gender}</td>
+                                                        <td className='border-[1px] border-gray-400 text-left px-2'>{participant.dob}</td>
                                                     </tr>
                                                 ))}
                                                 </tbody>

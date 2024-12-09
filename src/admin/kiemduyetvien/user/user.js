@@ -4,6 +4,9 @@ import { toast } from 'react-toastify';
 
 import { selectAllUsers } from "../../../component/api/user";
 // import "./user.css";
+import config from "../../../component/config.json";
+
+const { SERVER_API } = config;
 
 function User2(){
 
@@ -30,7 +33,7 @@ function User2(){
 
     const deleteUser = (userId) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-          fetch('http://localhost:88/api_travel/api/admin/delete_usernd.php', {
+          fetch(`${SERVER_API}/admin/delete_usernd.php`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -70,27 +73,27 @@ function User2(){
             <div className="container mx-auto sm:px-4 max-w-full -mt-[650px]" id="main-content">
                 <div className="flex flex-wrap ">
                     <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
-                        <h3 className="mb-4 text-left font-semibold text-2xl ">USERS</h3>
+                        <h3 className="mb-4 text-left font-semibold text-2xl ">Người dùng</h3>
                         <div className="relative flex flex-col h-[500px] min-w-0 rounded break-words bg-white border-1 border-gray-300 shadowc mb-12 overflow-y-auto">
                             <div className="flex-auto p-4">
                                 <div className="text-end mb-4">
                                     <input type="text" 
                                         className="block w-[20%] appearance-none  py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none ms-auto" 
-                                        placeholder="Type to search...."
+                                        placeholder="Tìm kiếm"
                                     />
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch">
                                     <table className="w-full max-w-full mb-4 bg-transparent table-hover border text-center text-sm">
                                         <thead>
                                             <tr className="bg-gray-900 text-gray-100 h-9">
-                                                <th scope="col">#</th>
-                                                <th scope="col">Name</th>
+                                                <th scope="col">Mã</th>
+                                                <th scope="col">Tên</th>
                                                 <th scope="col">Email</th>
-                                                <th scope="col">Phone no</th>
-                                                <th scope="col">Adress</th>
-                                                <th scope="col">Dob</th>
-                                                <th scope="col">Date</th>
-                                                <th scope="col">Action</th>
+                                                <th scope="col">SĐT</th>
+                                                <th scope="col">Địa chỉ</th>
+                                                <th scope="col">Ngày sinh</th>
+                                                <th scope="col">Ngày tạo TK</th>
+                                                <th scope="col">Tùy chọn</th>
                                             </tr>
                                         </thead>
                                         <tbody id="users-data">

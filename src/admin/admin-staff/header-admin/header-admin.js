@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 function HeaderAdmin() {
 
-  const [isOpenTour, setIsOpenTour] = useState(false);
+  // const [isOpenTour, setIsOpenTour] = useState(false);
   const [isOpenDashboard, setIsOpenDoard] = useState(false);
 
 
@@ -24,9 +24,9 @@ function HeaderAdmin() {
     navigate("/login-nv");
   };
 
-  const toggleMenuTour = () => {
-    setIsOpenTour(!isOpenTour);
-  };
+  // const toggleMenuTour = () => {
+  //   setIsOpenTour(!isOpenTour);
+  // };
 
   const toggleDashboard = () => {
     setIsOpenDoard(!isOpenDashboard);
@@ -38,11 +38,12 @@ function HeaderAdmin() {
         <h3 className="font-medium text-xl mx-5">
           <Link to="/quanly-nv">VENTURE</Link>
         </h3>
+        <div className='font-semibold tracking-widest'>QUẢN TRỊ VIÊN</div>
         <button
           onClick={handleLogout}
           className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded no-underline bg-gray-100 text-gray-800 hover:bg-gray-200 py-1 px-2 leading-tight text-xs"
         >
-          LOG OUT
+          Đăng xuất
         </button>
       </div>
       <div
@@ -95,7 +96,7 @@ function HeaderAdmin() {
                     <Link to="/quanly-nv">Quản Lý Nhân Viên</Link>
                   </div>
                 </li>
-                <li className="">
+                {/* <li className="">
                   <button onClick={toggleMenuTour} className="align-middle text-center select-none font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white w-full shadow-none flex items-center justify-between" type="button">
                     <span>Bookings Tour</span>
                     <span>
@@ -127,7 +128,7 @@ function HeaderAdmin() {
                     </ul>
                   </div>
 
-                </li>
+                </li> */}
                 <li className="">
                   <div className="inline-block py-2 px-3 no-underline text-white">
                     <Link to={"/banner"}>Quảng cáo</Link>

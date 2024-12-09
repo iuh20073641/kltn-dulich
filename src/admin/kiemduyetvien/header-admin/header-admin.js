@@ -37,11 +37,12 @@ function HeaderCensor() {
         <h3 className="font-medium text-xl mx-5">
           <Link to="/cap-nhat-kd">VENTURE</Link>
         </h3>
+        <div className='font-semibold tracking-widest'>NHÂN VIÊN CHĂM SÓC KHÁCH HÀNG</div>
         <button
           onClick={handleLogout}
           className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded no-underline bg-gray-100 text-gray-800 hover:bg-gray-200 py-1 px-2 leading-tight text-xs"
         >
-          LOG OUT
+          Đăng xuất
         </button>
       </div>
       <div
@@ -61,11 +62,11 @@ function HeaderCensor() {
                         <Link to={"/customer-care/user"}>Người dùng</Link>
                   </div>
                 </li>
-                <li className="">
+                {/* <li className="">
                   <div className="inline-block py-2 px-4 no-underline text-white">
                     <Link to="/chat-real-time">Trò Chuyện Khách Hàng</Link>
                   </div>
-                </li>
+                </li> */}
                 <li className="">
                   <div className="inline-block py-2 px-4 no-underline text-white">
                     <Link to="/cap-nhat-kd">Cập Nhật Thông Tin</Link>

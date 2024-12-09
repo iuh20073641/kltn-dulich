@@ -493,7 +493,7 @@ function ManagerTour() {
                             <div className="card-body p-6">
                                 <div className="text-end mb-4">
                                     <button id="openModalBtn" type="button" onClick={handleModalClick} className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded  no-underline bg-gray-900 text-white hover:bg-gray-900 shadow-none py-1 px-2 leading-tight text-xs ">
-                                        <i className="fa-regular fa-square-plus"></i> Add
+                                        <i className="fa-regular fa-square-plus"></i> Thêm
                                     </button>
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch" style={{ height: 450, overflowY: "scroll" }}>

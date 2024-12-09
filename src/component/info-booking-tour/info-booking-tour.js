@@ -685,9 +685,13 @@ function InfoBookingTour() {
                                                             <div className="mx-2">{bookingDetails.booking_id}</div>
                                                         </div>
                                                         <div className="flex w-2/3 text-left">
-                                                            <div className="font-semibold w-[20%]">Tên tour:</div>
-                                                            <div className="w-[80%]">{bookingDetails.tour_name}</div>
+                                                            <div className="font-semibold w-[25%]">TG diễn ra tour:</div>
+                                                            <div className="w-[75%]">{bookingDetails.timetour} ngày</div>
                                                         </div>
+                                                    </div>
+                                                    <div className="flex text-left">
+                                                        <div className="font-semibold">Tên tour:</div>
+                                                        <div className="mx-2">{bookingDetails.tour_name}</div>
                                                     </div>
                                                     <div className="flex">
                                                         <div className="flex w-1/3">
@@ -849,10 +853,10 @@ function InfoBookingTour() {
                                                                             <div className="font-semibold ">Loại phòng: </div>
                                                                             <div className="mx-2">{Hotel.type}</div>
                                                                         </div>
-                                                                        <div className="flex w-1/3">
+                                                                        {/* <div className="flex w-1/3">
                                                                             <div className="font-semibold">Số lượng: </div>
                                                                             <div className="mx-2">{Hotel.quantity}</div>
-                                                                        </div>
+                                                                        </div> */}
                                                                         <div className="flex">
                                                                             <div className="flex items-center w-1/2">
                                                                                 <div className="font-semibold">Ngày nhận: </div>

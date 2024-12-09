@@ -78,7 +78,7 @@ function Contact (){
                     <div className="bg-white rounded shadow p-6 text-left">
                         {/* <iframe className="w-full rounded mb-4" height="320px" src="" loading="lazy" /> */}
                         <iframe className="w-full rounded mb-4" height="320px" title="bản đồ" src={contact.jframe} loading="lazy"></iframe>
-                        <h5 className="text-left text-lg font-medium">Address</h5>
+                        <h5 className="text-left text-lg font-medium">Địa chỉ</h5>
                         <a href={contact.gmap} className="inline-block text-gray-900 fs-5 me-2">
                             <div className="flex my-2 items-center">
                                 <div className="">
@@ -92,7 +92,7 @@ function Contact (){
                                 </div>
                             </div>
                         </a>
-                        <h5 className="mt-4">Call us</h5>
+                        <h5 className="mt-4">Liên lạc</h5>
                         <div className="flex my-2 items-center">
                             <div className="gap-1/2">
                                 <i className="fa-solid fa-phone"></i>
@@ -120,7 +120,7 @@ function Contact (){
                                 {contact.email}
                             </div>
                         </div>
-                        <h5 className="mt-4">Follow us</h5>
+                        <h5 className="mt-4">Theo dõi chúng tôi</h5>
                         <div className="flex">
                         
                             <br />
@@ -142,9 +142,9 @@ function Contact (){
                 <div className="lg:w-1/2 pr-4 pl-4 md:w-1/2 mb-5 px-4">
                     <div className="bg-white rounded shadow p-6 text-left">
                         <form method="POST" onSubmit={hendleSubmit}>
-                            <h5 className="text-left font-medium text-xl">Send a message</h5>
+                            <h5 className="text-left font-medium text-xl">Gửi ý kiến</h5>
                             <div className="mt-3">
-                                <label className="form-label" style={{ fontWeight: 500 }}>Name</label>
+                                <label className="form-label" style={{ fontWeight: 500 }}>Tên</label>
                                 <input name="name" value={formValue.name} onChange={handleChange} className="block focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" />
                             </div>
                             <div className="mt-3">
@@ -152,15 +152,15 @@ function Contact (){
                                 <input name="email" value={formValue.email} onChange={handleChange} type="text" className="block focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" />
                             </div>
                             <div className="mt-3">
-                                <label className="form-label" style={{ fontWeight: 500 }}>Subject</label>
+                                <label className="form-label" style={{ fontWeight: 500 }}>Chủ đề</label>
                                 <input name="subject" value={formValue.subject} onChange={handleChange} type="text" className="block focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" />
                             </div>
                             <div className="mt-3">
-                                <label className="form-label" style={{ fontWeight: 500 }}>Message</label>
+                                <label className="form-label" style={{ fontWeight: 500 }}>Tin nhắn</label>
                                 <textarea name="message" type="text" value={formValue.message} onChange={handleChange} className="block focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded shadow-none" rows={5} style={{ resize: "none" }} />
                             </div>
                             <button type="submit" name="send" className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline text-white custom-bg mt-3 bg-[#2ec1ac]">
-                                SEND
+                                Gửi
                             </button>
                         </form>
                         {/* {message && <p>{message}</p>} */}

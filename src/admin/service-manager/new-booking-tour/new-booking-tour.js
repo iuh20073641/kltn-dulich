@@ -27,7 +27,6 @@ function NewBookingTour3() {
     const [tourGuides, setTourGuides] = useState([]);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
         // Hàm để gọi API và cập nhật state
         const newBookingData = async () => {
             try {
@@ -42,6 +41,7 @@ function NewBookingTour3() {
             }
         };
 
+    useEffect(() => {
         newBookingData();
     }, []); // Chạy một lần khi component được mount
 
@@ -161,14 +161,14 @@ function NewBookingTour3() {
     };
 
     // Bật/ẩn của sổ đánh giá tour
-    const handleModalAssignmentClick = async (booking_id) => {
+    const handleModalAssignmentClick = async (newBooking) => {
         setIsOpenModalAssignment(!isOpenAssignment);
 
-        const guideResponse = await getListHdv();
+        const guideResponse = await getListHdv(newBooking.day_depar, newBooking.timetour);
         const guideData = guideResponse.data; // Giả sử API trả về mảng các tour
 
         setFormHdv({
-            booking_id: booking_id,
+            booking_id: newBooking.booking_id,
         });
 
         setTourGuides(guideData);
@@ -201,7 +201,7 @@ function NewBookingTour3() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') { // Kiểm tra 'success' thay vì 'status'
-                    // setTourImages(tourImages.filter(tourImage => tourImage.id !== imageId));
+                    newBookingData();
                     toast.success(data.message);
                 } else {
                     toast.error(data.message);
@@ -220,7 +220,7 @@ function NewBookingTour3() {
         <div className="h-screen">
             <HeaderManager />
 
-            <div className="container -mt-[590px] mx-auto sm:px-4 max-w-full" id="main-content">
+            <div className="container -mt-[602px] mx-auto sm:px-4 max-w-full" id="main-content">
                 <div className="flex flex-wrap ">
                     <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6">
                         <h3 className="mb-4 text-left font-semibold text-2xl uppercase">Đơn đặt mới</h3>
@@ -309,7 +309,7 @@ function NewBookingTour3() {
                                                         </div>
                                                     </td>
                                                     <td className="">
-                                                        <button type='button' onClick={() => handleModalAssignmentClick(newBooking.booking_id)} className='btn text-white px-2 py-1 bg-[#2ec1ac] hover:bg-[#2c7c70] rounded-md text-sm custom-bg shadow-none' data-bs-toggle='modal' data-bs-target='#assign-room'>
+                                                        <button type='button' onClick={() => handleModalAssignmentClick(newBooking)} className='btn text-white px-2 py-1 bg-[#2ec1ac] hover:bg-[#2c7c70] rounded-md text-sm custom-bg shadow-none' data-bs-toggle='modal' data-bs-target='#assign-room'>
                                                             <i className="fa-regular fa-square-check"></i> Phân công HDV
                                                         </button>
                                                         {/* <br></br>
@@ -345,7 +345,7 @@ function NewBookingTour3() {
                                     <option value="">Chọn hướng dẫn viên</option> {/* Tùy chọn mặc định */}
                                     {tourGuides && Array.isArray(tourGuides) && tourGuides.length > 0 ? (
                                         tourGuides.map((tourGuide) => (
-                                            <option key={tourGuide.id} value={tourGuide.id}>{tourGuide.username}</option>
+                                            <option key={tourGuide.id} value={tourGuide.id}>{tourGuide.code} - {tourGuide.staffName}</option>
                                         ))
                                         ) : (
                                         <option value="">Chưa có hướng dẫn viên</option> /* Tùy chọn mặc định */

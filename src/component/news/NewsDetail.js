@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import Header from "../header";
 import Footer from "../footer/footer";
 import "./style.css"; // Import file CSS
+import config from "../../component/config.json";
+
+const { SERVER_API } = config;
 
 function NewsDetail() {
   const { id } = useParams();
@@ -11,7 +14,7 @@ function NewsDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:88/api_travel/api/news.php?id=${id}`)
+    fetch(`${SERVER_API}/news.php?id=${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -55,18 +58,18 @@ function NewsDetail() {
   return (
     <div className="page-container">
       <Header />
-      <div className="content-wrap">
+      <div className="content-wrap pt-[140px] w-[95%] mx-auto">
         <div className="article-header">
-          <h1>{article.title}</h1>
+          <h1 className="font-semibold text-2xl">{article.title}</h1>
           <p className="article-summary">{article.summary}</p>{" "}
           {/* Thêm lớp CSS cho summary */}
-          {/* <img
-            src={article.image}
+          <img
+            src={`${SERVER_API}/Images/news/${article.image}`}
             alt={article.title}
             className="article-image"
-          /> */}
+          />
         </div>
-        <hr className="divider" /> {/* Thêm đường kẻ ngang */}
+        <div className="w-[80%] h-[2px] bg-gray-200 rounded-md mx-auto my-4"></div>
         <div
           className="article-content"
           dangerouslySetInnerHTML={{ __html: article.content }}

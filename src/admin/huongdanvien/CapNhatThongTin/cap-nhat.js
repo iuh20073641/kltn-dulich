@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import HeaderAdmin from "../header-admin/header-admin";
 //import Chat from "../../../chat/Chat"; // Đường dẫn tới file Chat.js
 import { toast } from "react-toastify";
+import config from "../../../component/config.json";
+
+const { SERVER_API } = config;
 
 function CapNhatNV() {
   const [employee, setEmployee] = useState({
     id: "",
+    code: "",
     username: "",
     password: "",
     email: "",
@@ -13,14 +17,14 @@ function CapNhatNV() {
     address: "",
   });
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const id = localStorage.getItem("userId") || "";
     const fetchEmployee = async () => {
       try {
         const response = await fetch(
-          `http://localhost:88/api_travel/api/admin/get_dsnv.php?id=${id}`
+          `${SERVER_API}/admin/get_dsnv.php?id=${id}`
         );
         const data = await response.json();
         //console.log("Fetched employee data:", data); // In ra dữ liệu nhân viên được lấy về
@@ -30,18 +34,19 @@ function CapNhatNV() {
         if (employeeData) {
           setEmployee({
             id: employeeData.id,
-            username: employeeData.username || "",
+            code: employeeData.code || "",
+            username: employeeData.staffname || "",
             password: employeeData.password || "", // Đảm bảo trường password được lấy đúng cách
             email: employeeData.email || "",
             phoneNumber: employeeData.phoneNumber || "",
             address: employeeData.address || "",
           });
         }
-        setIsLoading(false);
+        // setIsLoading(false);
       } catch (err) {
         console.error("Error fetching employee data:", err);
         setError(err);
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     };
 
@@ -62,7 +67,7 @@ function CapNhatNV() {
     console.log("Sending data:", employee); // Thêm dòng này để kiểm tra dữ liệu trước khi gửi
     try {
       const response = await fetch(
-        "http://localhost:88/api_travel/api/admin/update_employee.php",
+        `${SERVER_API}/admin/update_employee.php`,
         {
           method: "PUT",
           headers: {
@@ -84,7 +89,7 @@ function CapNhatNV() {
     }
   };
 
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
+  // if (isLoading) return <div>Đang tải dữ liệu...</div>;
 
   if (error) return <div>Error: {error.message}</div>;
 
@@ -92,10 +97,10 @@ function CapNhatNV() {
     <div className="bg-gray-100 w-full">
       <HeaderAdmin />
       <div
-        className="container mx-auto sm:px-4 max-w-full -mt-[650px]"
+        className="container mx-auto sm:px-4 max-w-full -mt-[660px]"
         id="main-content"
       >
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap h-screen">
           <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
             <h3 className="mb-4 text-left font-semibold text-2xl">
               CẬP NHẬT THÔNG TIN NHÂN VIÊN
@@ -109,7 +114,24 @@ function CapNhatNV() {
                         className="block text-gray-700 text-sm font-bold mb-2"
                         htmlFor="username"
                       >
-                        Tên đăng nhập
+                        Mã nhân viên
+                      </label>
+                      <input
+                        type="text"
+                        name="code"
+                        id="code"
+                        value={employee.code || ""} // Xử lý khi giá trị chưa load
+                        onChange={handleChange}
+                        disabled
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    <div className="w-1/2 px-2 mb-4">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2"
+                        htmlFor="username"
+                      >
+                        Tên nhân viên
                       </label>
                       <input
                         type="text"

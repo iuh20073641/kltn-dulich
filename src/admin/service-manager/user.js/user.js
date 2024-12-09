@@ -72,7 +72,7 @@ function User(){
             <div className="container mx-auto sm:px-4 max-w-full -mt-[650px]" id="main-content">
                 <div className="flex flex-wrap ">
                     <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
-                        <h3 className="mb-4 text-left font-semibold text-2xl ">USERS</h3>
+                        <h3 className="mb-4 text-left font-semibold text-2xl ">Người dùng</h3>
                         <div className="relative flex flex-col h-[500px] min-w-0 rounded break-words bg-white border-1 border-gray-300 shadowc mb-12 overflow-y-auto">
                             <div className="flex-auto p-4">
                                 <div className="text-end mb-4">

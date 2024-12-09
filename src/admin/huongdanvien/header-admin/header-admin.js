@@ -25,11 +25,12 @@ function HeaderAdmin() {
         <h3 className="font-medium text-xl mx-5">
           <Link to="/cap-nhat">VENTURE</Link>
         </h3>
+        <div className="font-semibold tracking-widest">HƯỚNG DẪN VIÊN</div>
         <button
           onClick={handleLogout}
           className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded no-underline bg-gray-100 text-gray-800 hover:bg-gray-200 py-1 px-2 leading-tight text-xs"
         >
-          LOG OUT
+          Đăng xuất
         </button>
       </div>
       <div
@@ -46,7 +47,12 @@ function HeaderAdmin() {
               <ul className="list-none pl-0 mb-0">
                 <li className="">
                   <div className="inline-block py-2 px-4 no-underline text-white">
-                    <Link to="/cap-nhat">Cập Nhật Thông Tin</Link>
+                    <Link to="/tour-guide/update-info">Cập Nhật Thông Tin</Link>
+                  </div>
+                </li>
+                <li className="">
+                  <div className="inline-block py-2 px-4 no-underline text-white">
+                    <Link to="/tour-guide/Assignment-Schedule">Lịch phân công</Link>
                   </div>
                 </li>
                 {/* <li className="">

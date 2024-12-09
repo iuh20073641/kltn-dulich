@@ -60,7 +60,8 @@ const LoginNV = () => {
             navigate("/dashboard-admin-hotel");
             break;
           case "hướng dẫn viên":
-            navigate("/dashboard-huong-dan-vien");
+            // localStorage.setItem("hdv", JSON.stringify(staffId));
+            navigate("/tour-guide/update-info");
             break;
           case "kiểm duyệt viên": // nhân viên chăm soc khach hàng
             navigate("/customer-care/user");
@@ -133,7 +134,7 @@ const LoginNV = () => {
                 required
                 type="text"
                 className="form-control shadow-none text-center"
-                placeholder="Tên đăng nhập"
+                placeholder="Mã nhân viên"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />

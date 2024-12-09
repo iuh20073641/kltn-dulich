@@ -60,6 +60,7 @@ import RefundBookingTour2 from './admin/admin-staff/dashboard-tours/refund-booki
 // hướng dẫn viên
 import DashboardHDV from "./admin/huongdanvien/dashboard/dashboard-hotel";
 import CapNhatNV from "./admin/huongdanvien/CapNhatThongTin/cap-nhat";
+import AssignmentSchedule from './admin/huongdanvien/assignment schedule/assignment schedule';
 
 // kiểm duyệt viên
 import DashboardKDV from "./admin/kiemduyetvien/dashboard/dashboard-hotel";
@@ -79,6 +80,10 @@ import NewBookingTour3 from './admin/service-manager/new-booking-tour/new-bookin
 import ApprovedApplication3 from './admin/service-manager/approved-application/approved-application';
 import RefundBookingTour3 from './admin/service-manager/refund-booking-tour/refund-booking-tour';
 import BookingRecord3 from './admin/service-manager/booking-records/booking-records';
+
+//khach hang
+import CustomerChat1 from "./chat1/Chat";
+
 
 // app.render(
 //   <BrowserRouter>
@@ -157,7 +162,8 @@ function App() {
               path="/dashboard-huong-dan-vien"
               element={<DashboardHDV />}
             />
-            <Route path="/cap-nhat" element={<CapNhatNV />} />
+            <Route path="/tour-guide/update-info" element={<CapNhatNV />} />
+            <Route path="/tour-guide/Assignment-Schedule" element={<AssignmentSchedule />} />
 
             {/* kiểm duyệt viên */}
             <Route
@@ -183,7 +189,7 @@ function App() {
 
 
             {/* khach hang */}
-                {/* <Section /> */}
+              <Route path="/chat-kh1" element={<CustomerChat1 />} />  
               </Routes>
             {/* </BrowserRouter> */}
             

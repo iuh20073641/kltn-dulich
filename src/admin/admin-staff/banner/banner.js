@@ -125,7 +125,7 @@ function Banner() {
                                 {carouselImages.map((image) => (
                                     <div className="h-[150px]" key={image.id}>
                                         <div className="h-full rounded-md bg-no-repeat bg-center bg-cover" style={{
-                                            backgroundImage: `url('http://localhost:88/api_travel/api/Images/carousel/${image.image}')`
+                                            backgroundImage: `url('${SERVER_API}/Images/carousel/${image.image}')`
                                         }}>
                                             <div className="w-full h-full hover:transition-all relative group">
                                                 <button onClick={() => deleteCarouselImage(image.id)} className="absolute rounded-[3px] bg-[#dc3545] text-white font-medium py-[2px] px-2 top-3 right-3 text-center">

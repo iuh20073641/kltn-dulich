@@ -489,12 +489,12 @@ function RoomManager() {
             <div className="container mx-auto sm:px-4 -mt-[650px] max-w-full z-20" id="main-content">
                 <div className="">
                     <div className="lg:w-4/5 pr-4 pl-4 ms-auto p-6 overflow-hidden">
-                        <h3 className="mb-4 text-left text-2xl font-medium">Rooms</h3>
+                        <h3 className="mb-4 text-left text-2xl font-medium">Phòng</h3>
                         <div className="bg-white card border-0 shadow mb-4 rounded-lg">
                             <div className="card-body p-6">
                                 <div className="text-end mb-4">
                                     <button id="openModalBtn" onClick={handleModalClick} type="button" className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded  no-underline bg-gray-900 text-white hover:bg-gray-900 shadow-none py-1 px-2 leading-tight text-xs ">
-                                        <i className="fa-regular fa-square-plus"></i> Add
+                                        <i className="fa-regular fa-square-plus"></i> Thêm
                                     </button>
                                 </div>
                                 <div className="block w-full overflow-auto scrolling-touch" style={{ height: 450, overflowY: "scroll" }}>
@@ -558,8 +558,8 @@ function RoomManager() {
             {/* Add room modal  */}
             {isOpenModalAdd && (
                 <div className="w-full bg-black bg-opacity-25 inset-0 backdrop-blur-sm fixed">
-                    <div className="lg:w-3/5 h-[95%] mt-4 pr-4 pl-4 mx-auto p-6 bg-white overflow-hidden rounded-md overflow-y-auto">
-                        <div className="modal " id="add-room" tabIndex={-1}>
+                    {/* <div className="lg:w-3/5 h-[95%] mt-4 pr-4 pl-4 mx-auto p-6 bg-white overflow-hidden rounded-md overflow-y-auto"> */}
+                        <div className="modal h-[600px] overflow-y-auto" id="add-room" tabIndex={-1}>
                             <div className="modal-dialog modal-lg">
                                 <form id="add_room_form" onSubmit={hendleSubmit}>
                                     <div className="modal-content">
@@ -644,7 +644,7 @@ function RoomManager() {
                                 </form>
                             </div>
                         </div>
-                    </div>
+                    {/* </div> */}
                 </div>
             )}
 
